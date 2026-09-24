@@ -241,6 +241,8 @@ Annotations tell clients how careful to be. OpenSMS marks anything that spends m
 | [`list_sender_ids`](#list_sender_ids) | `sender-ids:read` | yes | no | yes | no | no |
 | [`create_batch`](#create_batch) | `messages:write` | no | yes | yes | yes | confirm only |
 
+The examples below are `tools/call` requests. Example results are not shown yet: they will be added from a real run once the server is deployed, rather than written by hand.
+
 Phone numbers are E.164 everywhere (`^\+[1-9][0-9]{7,14}$`, for example `+254712345678`). Every input object rejects unknown properties.
 
 ### `send_message`
