@@ -67,6 +67,58 @@
     ta.remove();
   }
 
+  /* ---------- code tabs ---------- */
+  // One choice of language for every tabbed block on the page, remembered per
+  // browser. Blocks without that language keep their current tab.
+  var TAB_KEY = 'opensms-code-lang';
+  function selectTab(group, label, focus) {
+    var tabs = group.querySelectorAll('[data-code-tab]');
+    var found = false;
+    for (var i = 0; i < tabs.length; i++) if (tabs[i].getAttribute('data-code-tab') === label) found = true;
+    if (!found) return false;
+    for (var j = 0; j < tabs.length; j++) {
+      var on = tabs[j].getAttribute('data-code-tab') === label;
+      tabs[j].setAttribute('aria-selected', String(on));
+      tabs[j].tabIndex = on ? 0 : -1;
+      var panel = doc.getElementById(tabs[j].getAttribute('aria-controls'));
+      if (panel) panel.hidden = !on;
+      if (on && focus) tabs[j].focus();
+      if (on) {
+        // On phones the tab row scrolls sideways: bring the chosen tab into view
+        // (clear of the copy button on the right).
+        var list = tabs[j].parentNode;
+        var left = tabs[j].offsetLeft - list.offsetLeft;
+        if (list.scrollWidth > list.clientWidth && (left < list.scrollLeft || left + tabs[j].offsetWidth > list.scrollLeft + list.clientWidth - 96)) list.scrollLeft = Math.max(0, left - 8);
+      }
+    }
+    return true;
+  }
+  function selectEverywhere(label, anchor) {
+    var top = anchor ? anchor.getBoundingClientRect().top : 0;
+    var groups = doc.querySelectorAll('[data-code-group]');
+    for (var i = 0; i < groups.length; i++) selectTab(groups[i], label, false);
+    // Keep the block the reader clicked where it was when others above change height.
+    if (anchor) window.scrollBy(0, anchor.getBoundingClientRect().top - top);
+    try { localStorage.setItem(TAB_KEY, label); } catch (e) { /* storage unavailable */ }
+  }
+  (function () {
+    var saved = null;
+    try { saved = localStorage.getItem(TAB_KEY); } catch (e) { /* storage unavailable */ }
+    if (!saved) return;
+    var groups = doc.querySelectorAll('[data-code-group]');
+    for (var i = 0; i < groups.length; i++) selectTab(groups[i], saved, false);
+  })();
+  doc.addEventListener('keydown', function (ev) {
+    var tab = ev.target.closest && ev.target.closest('[data-code-tab]');
+    if (!tab || !/^(ArrowLeft|ArrowRight|Home|End)$/.test(ev.key)) return;
+    var tabs = Array.prototype.slice.call(tab.parentNode.querySelectorAll('[data-code-tab]'));
+    var i = tabs.indexOf(tab);
+    var next = ev.key === 'Home' ? 0 : ev.key === 'End' ? tabs.length - 1 : (i + (ev.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
+    ev.preventDefault();
+    selectTab(tab.closest('[data-code-group]'), tabs[next].getAttribute('data-code-tab'), true);
+    selectEverywhere(tabs[next].getAttribute('data-code-tab'), tab.closest('[data-code-group]'));
+  });
+
   /* ---------- search ---------- */
   var dialog = doc.getElementById('search');
   var input = doc.getElementById('search-input');
@@ -233,6 +285,8 @@
     if (t.closest('[data-drawer-open]')) { setDrawer(true); return; }
     if (t.closest('[data-drawer-close]')) { setDrawer(false); return; }
     if (sidebar && doc.body.classList.contains('drawer-open') && t.closest('#sidebar a')) { setDrawer(false); }
+    var codeTab = t.closest('[data-code-tab]');
+    if (codeTab) { selectEverywhere(codeTab.getAttribute('data-code-tab'), codeTab.closest('[data-code-group]')); return; }
     var copyBtn = t.closest('[data-copy]');
     if (copyBtn) {
       var code = copyBtn.closest('.code').querySelector('code');

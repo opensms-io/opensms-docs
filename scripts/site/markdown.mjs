@@ -36,7 +36,7 @@ for (const [name, def] of Object.entries({ go, php, ruby, java, csharp, swift, k
 // for formats with no brand mark. Code blocks are dark in both themes, so the
 // language logos are the dark-surface variants (see logos/README.md).
 const LANG = {
-  bash: ['bash', 'Shell', 'lang:bash'], sh: ['bash', 'Shell', 'lang:bash'], shell: ['bash', 'Shell', 'lang:bash'],
+  curl: ['bash', 'cURL', 'lang:bash'], bash: ['bash', 'Shell', 'lang:bash'], sh: ['bash', 'Shell', 'lang:bash'], shell: ['bash', 'Shell', 'lang:bash'],
   json: ['json', 'JSON', 'lang:json'],
   js: ['javascript', 'JavaScript', 'lang:javascript'], javascript: ['javascript', 'JavaScript', 'lang:javascript'],
   ts: ['typescript', 'TypeScript', 'lang:typescript'], typescript: ['typescript', 'TypeScript', 'lang:typescript'],
@@ -47,6 +47,12 @@ const LANG = {
   http: ['http', 'HTTP', 'icon:document-code'], text: ['plaintext', 'Text', 'icon:document-code'],
   csv: ['plaintext', 'CSV', 'icon:document-code'], '': ['plaintext', 'Text', 'icon:document-code'],
 };
+
+/** Language logos that are wordmarks (they spell the language name). */
+const WORDMARKS = new Set(['lang:go', 'lang:php']);
+
+/** Languages that can share a tabbed code block (see docs_code_groups). */
+const TAB_LANGS = new Set(['curl', 'bash', 'sh', 'shell', 'js', 'javascript', 'ts', 'typescript', 'python', 'py', 'go', 'php', 'ruby', 'java', 'csharp', 'cs', 'swift', 'kotlin', 'rust']);
 
 /** GitHub-style heading id, identical to scripts/gen-reference.mjs anchor(). */
 export const slugify = (text) => text.toLowerCase().replace(/[^\p{L}\p{N} _-]/gu, '').replace(/ /g, '-');
@@ -94,6 +100,25 @@ export function createRenderer({ icon }) {
   // Drop HTML comments (generator banners, test markers) from the output.
   md.core.ruler.push('docs_comments', (state) => {
     state.tokens = state.tokens.filter((t) => !(t.type === 'html_block' && /^<!--[\s\S]*-->\s*$/.test(t.content)));
+  });
+
+  // Code tabs: two or more fenced blocks in a row, each in a different programming
+  // language (or shell), become one tabbed block. Request and response pairs
+  // (shell then JSON, code then text output) are never grouped.
+  md.core.ruler.push('docs_code_groups', (state) => {
+    const tokens = state.tokens;
+    const lang = (t) => (t.info || '').trim().split(/\s+/)[0].toLowerCase();
+    for (let i = 0; i < tokens.length; i += 1) {
+      if (tokens[i].type !== 'fence' || !TAB_LANGS.has(lang(tokens[i]))) continue;
+      let j = i;
+      while (tokens[j + 1]?.type === 'fence' && TAB_LANGS.has(lang(tokens[j + 1]))) j += 1;
+      const run = tokens.slice(i, j + 1);
+      const labels = run.map((t) => (LANG[lang(t)] ?? [])[1]);
+      if (run.length > 1 && new Set(labels).size === run.length) {
+        run.forEach((t, n) => { t.meta = { ...t.meta, group: { n, size: run.length, tabs: run.map(lang) } }; });
+      }
+      i = j;
+    }
   });
 
   // Callouts: a blockquote that opens with a bold label.
@@ -225,7 +250,10 @@ export function createRenderer({ icon }) {
   const codeLang = (label, badge) => {
     const [kind, name] = badge.split(':');
     const mark = kind === 'lang' ? logo('lang', name, 16) : icon(name, 16, 'code-lang-icon');
-    return `<span class="code-lang">${mark}<span>${escapeHtml(label)}</span></span>`;
+    // Go and PHP logos are wordmarks that already spell the name, so the label is
+    // kept for screen readers only.
+    const text = WORDMARKS.has(badge) ? `<span class="sr-only">${escapeHtml(label)}</span>` : `<span>${escapeHtml(label)}</span>`;
+    return `<span class="code-lang">${mark}${text}</span>`;
   };
 
   rules.fence = (tokens, idx, opts, env) => {
@@ -236,9 +264,26 @@ export function createRenderer({ icon }) {
     const code = t.content.replace(/\n$/, '');
     const html = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
     env.codeBlocks = (env.codeBlocks ?? 0) + 1;
-    return `<div class="code"><div class="code-head">${codeLang(label, badge)}`
+    const g = t.meta?.group;
+    let before = '';
+    let after = '';
+    let panel = '';
+    if (g) {
+      if (g.n === 0) env.codeGroups = (env.codeGroups ?? 0) + 1;
+      const id = `code-${env.codeGroups}`;
+      if (g.n === 0) {
+        const tabs = g.tabs.map((l, n) => {
+          const [, tl, tb] = LANG[l];
+          return `<button type="button" role="tab" class="code-tab" id="${id}-tab-${n}" aria-controls="${id}-panel-${n}" aria-selected="${n === 0}" tabindex="${n === 0 ? 0 : -1}" data-code-tab="${escapeHtml(tl)}">${codeLang(tl, tb)}</button>`;
+        }).join('');
+        before = `<div class="code-group" data-code-group><div class="code-tabs" role="tablist" aria-label="Language">${tabs}</div>`;
+      }
+      if (g.n === g.size - 1) after = '</div>';
+      panel = ` role="tabpanel" id="${id}-panel-${g.n}" aria-labelledby="${id}-tab-${g.n}" data-code-panel="${escapeHtml(label)}"${g.n === 0 ? '' : ' hidden'}`;
+    }
+    return `${before}<div class="code"${panel}><div class="code-head">${codeLang(label, badge)}`
       + `<button type="button" class="code-copy" data-copy aria-label="Copy code">${icon('copy', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
-      + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>\n`;
+      + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>${after}\n`;
   };
   rules.code_block = rules.fence;
 
