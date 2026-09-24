@@ -6,13 +6,103 @@ Number lookup tells you, for a phone number, its country, its current carrier, w
 
 `POST /v1/lookup` with a key that has `lookup:request` (or an owner, admin or developer session with `X-Workspace-ID` and `X-Environment`). `Idempotency-Key` is required (up to 200 characters).
 
+<!-- tabs label="Request a lookup" -->
 <!-- test:lookup-curl -->
-```sh
+```sh tab="cURL" title="Terminal"
 curl -s -X POST $OPENSMS_API/v1/lookup \
   -H "authorization: Bearer $OPENSMS_API_KEY" -H 'content-type: application/json' \
   -H 'idempotency-key: lookup-1' \
   -d '{"to":"+254700000001"}'
 ```
+
+```ts tab="TypeScript" logo="typescript" title="lookup.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const lookup = await opensms.lookups.create({ to: '+254700000001' }, { idempotencyKey: 'lookup-1' });
+
+console.log(lookup.id, lookup.state, lookup.country, lookup.source);
+```
+
+```python tab="Python" logo="python" title="lookup.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+lookup = client.lookups.create(to="+254700000001", idempotency_key="lookup-1")
+
+print(lookup["id"], lookup["state"], lookup["country"], lookup["source"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+lookup, err := client.Lookups.Create(context.Background(),
+	opensms.CreateLookupParams{To: "+254700000001"}, opensms.WithIdempotencyKey("lookup-1"))
+if err != nil {
+	log.Fatal(err)
+}
+log.Println(lookup.ID, lookup.State, lookup.Country, lookup.Source)
+```
+
+```php tab="PHP" logo="php" title="lookup.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$lookup = $opensms->lookups->create(['to' => '+254700000001'], ['idempotencyKey' => 'lookup-1']);
+
+echo $lookup['id'], ' ', $lookup['state'], ' ', $lookup['country'], ' ', $lookup['source'], PHP_EOL;
+```
+
+```java tab="Java" logo="java" title="CreateLookup.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Lookup lookup = opensms.lookups().create("+254700000001", RequestOptions.idempotencyKey("lookup-1"));
+
+System.out.println(lookup.id + " " + lookup.state + " " + lookup.country + " " + lookup.source);
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var lookup = await client.Lookups.CreateAsync(
+    new CreateLookupParams { To = "+254700000001" },
+    new RequestOptions { IdempotencyKey = "lookup-1" });
+
+Console.WriteLine($"{lookup.Id} {lookup.State} {lookup.Country} {lookup.Source}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="lookup.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+lookup = client.lookups.create(to: "+254700000001", idempotency_key: "lookup-1")
+
+puts lookup.values_at(:id, :state, :country, :source).join(" ")
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let lookup = client
+    .lookups()
+    .create_with(
+        &CreateLookup { to: "+254700000001".into() },
+        &RequestOptions::idempotency_key("lookup-1"),
+    )
+    .await?;
+
+let (state, country) = (lookup.state.unwrap_or_default(), lookup.country.unwrap_or_default());
+println!("{} {} {} {}", lookup.id, state, country, lookup.source.unwrap_or_default());
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let lookup = try await opensms.lookups.create(to: "+254700000001", idempotencyKey: "lookup-1")
+
+print(lookup.id, lookup.state ?? "", lookup.country ?? "", lookup.source ?? "")
+```
+<!-- /tabs -->
 
 Real sandbox response (`200`):
 
@@ -42,9 +132,104 @@ The status code tells you whether you already have the answer:
 
 `GET /v1/lookup/{id}` with `lookup:read` (or any member's session). Operations from other workspaces or environments return `404`.
 
-```sh
+<!-- tabs label="Read a lookup" -->
+```sh tab="cURL" title="Terminal"
 curl -s $OPENSMS_API/v1/lookup/db365f9f-89a4-439e-845b-2b41c83d3192 -H "authorization: Bearer $OPENSMS_API_KEY"
 ```
+
+```ts tab="TypeScript" logo="typescript" title="get-lookup.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const lookup = await opensms.lookups.get('db365f9f-89a4-439e-845b-2b41c83d3192');
+
+console.log(lookup.state, lookup.country, lookup.ported, lookup.valid);
+```
+
+```python tab="Python" logo="python" title="get_lookup.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+lookup = client.lookups.get("db365f9f-89a4-439e-845b-2b41c83d3192")
+
+print(lookup["state"], lookup["country"], lookup["ported"], lookup["valid"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+lookup, err := client.Lookups.Get(context.Background(), "db365f9f-89a4-439e-845b-2b41c83d3192")
+if err != nil {
+	log.Fatal(err)
+}
+log.Println(lookup.State, lookup.Country)
+if lookup.Valid != nil {
+	log.Println("valid:", *lookup.Valid) // nil means no validity claim
+}
+```
+
+```php tab="PHP" logo="php" title="get-lookup.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$lookup = $opensms->lookups->get('db365f9f-89a4-439e-845b-2b41c83d3192');
+
+var_dump($lookup['state'], $lookup['country'], $lookup['ported'], $lookup['valid']);
+```
+
+```java tab="Java" logo="java" title="GetLookup.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Lookup lookup = opensms.lookups().get("db365f9f-89a4-439e-845b-2b41c83d3192");
+
+System.out.println(lookup.state + " " + lookup.country + " " + lookup.ported + " " + lookup.valid);
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var lookup = await client.Lookups.GetAsync("db365f9f-89a4-439e-845b-2b41c83d3192");
+
+Console.WriteLine($"{lookup.State} {lookup.Country} {lookup.Ported} {lookup.Valid}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="get_lookup.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+lookup = client.lookups.get("db365f9f-89a4-439e-845b-2b41c83d3192")
+
+p lookup.values_at(:state, :country, :ported, :valid)
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let lookup = client
+    .lookups()
+    .get("db365f9f-89a4-439e-845b-2b41c83d3192")
+    .await?;
+
+// None for ported or valid means no claim either way; it prints as "none".
+let claim = |v: Option<bool>| v.map_or("none".to_string(), |b| b.to_string());
+println!(
+    "{} {} {} {}",
+    lookup.state.as_deref().unwrap_or_default(),
+    lookup.country.as_deref().unwrap_or_default(),
+    claim(lookup.ported),
+    claim(lookup.valid),
+);
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let lookup = try await opensms.lookups.get("db365f9f-89a4-439e-845b-2b41c83d3192")
+
+// nil for ported or valid means no claim either way.
+print(lookup.state ?? "", lookup.country ?? "", lookup.ported as Any, lookup.valid as Any)
+```
+<!-- /tabs -->
 
 returns the same object as above. You can also subscribe to the `lookup.completed`, `lookup.failed` and `lookup.unknown` [webhook events](delivery-reports-and-webhooks.md#events), which carry the lookup `id`.
 

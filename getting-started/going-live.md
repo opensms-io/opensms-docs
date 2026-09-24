@@ -4,6 +4,8 @@ This page walks through everything between a working sandbox integration and rea
 
 The server enforces every requirement again when the workspace is activated, so the order below is the order that works.
 
+Most calls on this page need a console session with `X-Workspace-ID`, not an API key, so they are not in the SDKs and are shown with cURL only. The two an API key can make, a card or mobile money top-up (step 5) and a sender ID fee quote (step 10), are shown for every SDK.
+
 ![The console's Go live page, showing the five required checks, the sandbox workspace status and the Request to go live button](../assets/screens/developer/go-live.png)
 
 ## Summary
@@ -103,6 +105,142 @@ Live traffic is prepaid. Either method sets `wallet_funded` to `approved` once m
 
 **Card or mobile money.** Owner, admin or finance session (or an API key with `wallet:topup`) calls `POST /v1/wallet/topups` with `X-Environment: live`, `amount`, `currency`, `channel` (`card`, `mobile_money` or `bank_transfer`) and the payer `email`, which must belong to a verified workspace member. The response contains an `authorization_url` to send the payer to. The wallet is credited only when the payment provider confirms it. A payer email that does not belong to a verified workspace member gets `403` `"payer email must belong to a verified workspace member"`.
 
+With a live key (`sk_live_`, scope `wallet:topup`), which needs no `X-Environment` header:
+
+<!-- tabs label="Top up the live wallet" -->
+```sh tab="cURL" title="Terminal"
+curl -s -X POST $OPENSMS_API/v1/wallet/topups \
+  -H "authorization: Bearer $OPENSMS_API_KEY" -H 'content-type: application/json' \
+  -H 'idempotency-key: topup-2026-09-24-001' \
+  -d '{"amount":"5000.00","currency":"KES","channel":"mobile_money","email":"billing@acme.co.ke"}'
+```
+
+```ts tab="TypeScript" logo="typescript" title="top-up.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const topup = await opensms.wallet.createTopup(
+  { amount: '5000.00', currency: 'KES', channel: 'mobile_money', email: 'billing@acme.co.ke' },
+  { idempotencyKey: 'topup-2026-09-24-001' },
+);
+
+console.log(topup.authorizationUrl); // send the payer here
+```
+
+```python tab="Python" logo="python" title="top_up.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+topup = client.wallet.create_topup(
+    amount="5000.00",
+    currency="KES",
+    channel="mobile_money",
+    email="billing@acme.co.ke",
+    idempotency_key="topup-2026-09-24-001",
+)
+
+print(topup["authorization_url"])  # send the payer here
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+topup, err := client.Wallet.CreateTopup(context.Background(), opensms.CreateTopupParams{
+	Amount:   "5000.00",
+	Currency: "KES",
+	Channel:  "mobile_money",
+	Email:    "billing@acme.co.ke",
+}, opensms.WithIdempotencyKey("topup-2026-09-24-001"))
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(topup.AuthorizationURL) // send the payer here
+```
+
+```php tab="PHP" logo="php" title="top-up.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$topup = $opensms->wallet->createTopup([
+    'amount' => '5000.00',
+    'currency' => 'KES',
+    'channel' => 'mobile_money',
+    'email' => 'billing@acme.co.ke',
+], ['idempotencyKey' => 'topup-2026-09-24-001']);
+
+echo $topup['authorization_url'], PHP_EOL; // send the payer here
+```
+
+```java tab="Java" logo="java" title="TopUp.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Topup topup = opensms.wallet().createTopup(
+    new TopupParams("5000.00", "KES", "mobile_money", "billing@acme.co.ke"),
+    RequestOptions.idempotencyKey("topup-2026-09-24-001"));
+
+System.out.println(topup.authorizationUrl); // send the payer here
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var topup = await client.Wallet.CreateTopupAsync(new CreateTopupParams
+{
+    Amount = "5000.00",
+    Currency = "KES",
+    Channel = "mobile_money",
+    Email = "billing@acme.co.ke",
+}, new RequestOptions { IdempotencyKey = "topup-2026-09-24-001" });
+
+Console.WriteLine(topup.AuthorizationUrl); // send the payer here
+```
+
+```ruby tab="Ruby" logo="ruby" title="top_up.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+topup = client.wallet.create_topup(
+  amount: "5000.00",
+  currency: "KES",
+  channel: "mobile_money",
+  email: "billing@acme.co.ke",
+  idempotency_key: "topup-2026-09-24-001"
+)
+
+puts topup[:authorization_url] # send the payer here
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let params = CreateTopup {
+    amount: "5000.00".into(),
+    currency: "KES".into(),
+    channel: "mobile_money".into(),
+    email: "billing@acme.co.ke".into(),
+};
+let topup = client
+    .wallet()
+    .create_topup_with(&params, &RequestOptions::idempotency_key("topup-2026-09-24-001"))
+    .await?;
+
+println!("{}", topup.authorization_url.as_deref().unwrap_or_default()); // send the payer here
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let topup = try await opensms.wallet.createTopup(
+    .init(amount: "5000.00", currency: "KES", channel: "mobile_money", email: "billing@acme.co.ke"),
+    idempotencyKey: "topup-2026-09-24-001"
+)
+
+print(topup.authorizationUrl ?? "") // send the payer here
+```
+<!-- /tabs -->
+
+A sandbox key gets `422` `"sandbox wallets cannot use payment providers"`.
+
 **Bank transfer.** Upload the proof of transfer. This needs a browser session of an owner, admin or finance member with two-factor authentication on, `X-Environment: live`, and an `Idempotency-Key`:
 
 ```sh
@@ -179,7 +317,125 @@ Live messages need an approved sender ID: one approved for your workspace, or a 
 {"type":"about:blank","title":"Unprocessable Entity","status":422,"detail":"certificate, signatory-id, and authorization documents are required for a custom sender ID"}
 ```
 
-An operator decides on the request and, where the carrier requires it, registers it with the provider. Some markets charge a registration fee; `GET /v1/sender-ids/quote?countries=KE` shows it before you submit. The console's **Sender IDs** page walks through the same flow.
+An operator decides on the request and, where the carrier requires it, registers it with the provider. Some markets charge a registration fee; `GET /v1/sender-ids/quote?countries=KE` (key scope `sender-ids:read`) shows it before you submit:
+
+<!-- tabs label="Sender ID fee quote" -->
+```sh tab="cURL" title="Terminal"
+curl -s "$OPENSMS_API/v1/sender-ids/quote?countries=KE" -H "authorization: Bearer $OPENSMS_API_KEY"
+```
+
+```ts tab="TypeScript" logo="typescript" title="sender-id-fees.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const quote = await opensms.senderIds.quote({ countries: ['KE'] });
+
+console.log(quote.quoteId);
+for (const fee of quote.entries ?? []) console.log(fee.country, fee.provider, fee.feeAmount, fee.feeCurrency);
+```
+
+```python tab="Python" logo="python" title="sender_id_fees.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+quote = client.sender_ids.quote(countries=["KE"])
+
+print(quote["quote_id"])
+for fee in quote["entries"]:
+    print(fee["country"], fee["provider"], fee["fee_amount"], fee["fee_currency"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+quote, err := client.SenderIDs.Quote(context.Background(), opensms.QuoteSenderIDParams{
+	Countries: []string{"KE"},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(quote.QuoteID)
+for _, fee := range quote.Entries {
+	fmt.Println(fee.Country, fee.Provider, fee.FeeAmount, fee.FeeCurrency)
+}
+```
+
+```php tab="PHP" logo="php" title="sender-id-fees.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$quote = $opensms->senderIds->quote(['countries' => ['KE']]);
+
+echo $quote['quote_id'], PHP_EOL;
+foreach ($quote['entries'] as $fee) {
+    echo $fee['country'], ' ', $fee['provider'], ' ', $fee['fee_amount'], ' ', $fee['fee_currency'], PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="SenderIdFees.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+SenderIdQuote quote = opensms.senderIds().quote(List.of("KE"));
+
+System.out.println(quote.quoteId);
+for (SenderIdQuote.Entry fee : quote.entries) {
+    System.out.println(fee.country + " " + fee.provider + " " + fee.feeAmount + " " + fee.feeCurrency);
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var quote = await client.SenderIds.QuoteAsync(new SenderIdQuoteParams { Countries = new[] { "KE" } });
+
+Console.WriteLine(quote.QuoteId);
+foreach (var fee in quote.Entries ?? [])
+    Console.WriteLine($"{fee.Country} {fee.Provider} {fee.FeeAmount} {fee.FeeCurrency}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="sender_id_fees.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+quote = client.sender_ids.quote(countries: ["KE"])
+
+puts quote[:quote_id]
+quote[:entries].each { |fee| puts fee.values_at(:country, :provider, :fee_amount, :fee_currency).join(" ") }
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let quote = client
+    .sender_ids()
+    .quote(&QuoteSenderId { countries: vec!["KE".into()] })
+    .await?;
+
+println!("{}", quote.quote_id.as_deref().unwrap_or_default());
+for fee in quote.entries.unwrap_or_default() {
+    println!("{} {} {} {}", fee.country.as_deref().unwrap_or_default(), fee.provider.as_deref().unwrap_or_default(), fee.fee_amount.as_deref().unwrap_or_default(), fee.fee_currency.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let quote = try await opensms.senderIds.quote(countries: ["KE"])
+
+print(quote.quoteId ?? "")
+for fee in quote.entries ?? [] {
+    print(fee.country ?? "", fee.provider ?? "", fee.feeAmount ?? "", fee.feeCurrency ?? "")
+}
+```
+<!-- /tabs -->
+
+In the sandbox the quote comes from the mock provider and costs nothing:
+
+```json
+{"quote_id":"sq_3500e728cd584131...","entries":[{"country":"KE","provider":"Mock provider (sandbox)","fee_amount":"0","fee_currency":""}],"totals":[]}
+```
+
+The console's **Sender IDs** page walks through the same flow.
 
 ## 11. Create live keys and switch over
 

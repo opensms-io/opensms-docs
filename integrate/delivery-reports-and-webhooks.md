@@ -1,6 +1,6 @@
 # Delivery reports and webhooks
 
-OpenSMS tells your system about message status changes and other events by POSTing signed JSON to HTTPS endpoints you register. This page covers registering endpoints, the event envelope and the events you will see, verifying signatures with working Node and Python code, retries, and replaying failed deliveries. It is for developers who want delivery reports without polling.
+OpenSMS tells your system about message status changes and other events by POSTing signed JSON to HTTPS endpoints you register. This page covers registering endpoints, the event envelope and the events you will see, verifying signatures with the SDK helper in each language (or by hand), retries, and replaying failed deliveries. It is for developers who want delivery reports without polling.
 
 Carrier delivery reports (DLRs) reach OpenSMS from its providers; OpenSMS turns them into message status changes and then into `message.delivered`, `message.failed` and `message.expired` events for your webhooks. You never receive raw provider callbacks.
 
@@ -8,12 +8,132 @@ Carrier delivery reports (DLRs) reach OpenSMS from its providers; OpenSMS turns 
 
 `POST /v1/webhooks` with a key that has `webhooks:write` or `webhooks:manage` (or an owner, admin or developer session with `X-Workspace-ID` and `X-Environment`). `Idempotency-Key` is required.
 
-```sh
+<!-- tabs label="Register a webhook endpoint" -->
+```sh tab="cURL" title="Terminal"
 curl -s -X POST $OPENSMS_API/v1/webhooks \
   -H "authorization: Bearer $OPENSMS_API_KEY" -H 'content-type: application/json' \
-  -H 'idempotency-key: wh-1' \
+  -H 'idempotency-key: webhook-orders-1' \
   -d '{"url":"https://example.com/hooks/opensms","events":["*"]}'
 ```
+
+```ts tab="TypeScript" logo="typescript" title="register-webhook.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const hook = await opensms.webhooks.create(
+  { url: 'https://example.com/hooks/opensms', events: ['*'] },
+  { idempotencyKey: 'webhook-orders-1' },
+);
+
+console.log(hook.id, hook.secret); // store the secret now, it is shown once
+```
+
+```python tab="Python" logo="python" title="register_webhook.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+hook = client.webhooks.create(
+    url="https://example.com/hooks/opensms",
+    events=["*"],
+    idempotency_key="webhook-orders-1",
+)
+
+print(hook["id"], hook["secret"])  # store the secret now, it is shown once
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+hook, err := client.Webhooks.Create(context.Background(), opensms.CreateWebhookParams{
+	URL:    "https://example.com/hooks/opensms",
+	Events: []string{"*"},
+}, opensms.WithIdempotencyKey("webhook-orders-1"))
+if err != nil {
+	log.Fatal(err)
+}
+log.Println(hook.ID, hook.Secret) // store the secret now, it is shown once
+```
+
+```php tab="PHP" logo="php" title="register-webhook.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$hook = $opensms->webhooks->create([
+    'url' => 'https://example.com/hooks/opensms',
+    'events' => ['*'],
+], ['idempotencyKey' => 'webhook-orders-1']);
+
+echo $hook['id'], ' ', $hook['secret'], PHP_EOL; // store the secret now, it is shown once
+```
+
+```java tab="Java" logo="java" title="RegisterWebhook.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+WebhookEndpoint hook = opensms.webhooks().create(
+    new WebhookParams("https://example.com/hooks/opensms", List.of("*")),
+    RequestOptions.idempotencyKey("webhook-orders-1"));
+
+System.out.println(hook.id + " " + hook.secret); // store the secret now, it is shown once
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var hook = await client.Webhooks.CreateAsync(
+    new CreateWebhookParams
+    {
+        Url = "https://example.com/hooks/opensms",
+        Events = new[] { "*" },
+    },
+    new RequestOptions { IdempotencyKey = "webhook-orders-1" });
+
+Console.WriteLine($"{hook.Id} {hook.Secret}"); // store the secret now, it is shown once
+```
+
+```ruby tab="Ruby" logo="ruby" title="register_webhook.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+hook = client.webhooks.create(
+  url: "https://example.com/hooks/opensms",
+  events: ["*"],
+  idempotency_key: "webhook-orders-1"
+)
+
+puts hook[:id], hook[:secret] # store the secret now, it is shown once
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let hook = client
+    .webhooks()
+    .create_with(
+        &CreateWebhook {
+            url: "https://example.com/hooks/opensms".into(),
+            events: vec!["*".into()],
+            enabled: None,
+        },
+        &RequestOptions::idempotency_key("webhook-orders-1"),
+    )
+    .await?;
+
+// Store the secret now, it is shown once.
+println!("{} {}", hook.id, hook.secret.unwrap_or_default());
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let hook = try await opensms.webhooks.create(
+    url: "https://example.com/hooks/opensms",
+    events: ["*"],
+    idempotencyKey: "webhook-orders-1"
+)
+
+print(hook.id, hook.secret ?? "") // store the secret now, it is shown once
+```
+<!-- /tabs -->
 
 ```json
 {
@@ -121,6 +241,154 @@ X-OpenSMS-Signature: t=1790224046,v1=e21445a9ff34fad1bb2c8daa767922de1f9fb0c2845
 - `v1` is the lowercase hex HMAC-SHA256 of `t` + `.` + the raw body, keyed with the whole endpoint secret including the `whsec_` prefix.
 - Reject timestamps more than 5 minutes from your clock, to stop replays.
 
+Every SDK ships a helper that does this check the same way the server signs: it parses the header, rejects a timestamp more than 300 seconds from your clock, and compares the HMAC-SHA256 of `timestamp.body` in constant time. It needs only the endpoint secret, not an API key. Pass it the raw request bytes and the `X-OpenSMS-Signature` header. `constructEvent` also parses the envelope and `verifySignature` returns a plain boolean (each SDK spells them in its own style, for example `construct_event` in Python, Ruby and Rust).
+
+<!-- tabs label="Verify a webhook delivery" -->
+```ts tab="TypeScript" logo="typescript" title="webhook.ts"
+const secret = process.env.OPENSMS_WEBHOOK_SECRET!; // whsec_...
+
+// Call with the exact request bytes and the X-OpenSMS-Signature header.
+export function handleDelivery(rawBody: Uint8Array, signature: string | undefined): number {
+  try {
+    const event = constructEvent(rawBody, signature, secret);
+    console.log(event.type, event.id);
+    return 204;
+  } catch (err) {
+    if (err instanceof OpensmsError) return 400; // invalid_signature or expired_signature
+    throw err;
+  }
+}
+```
+
+```python tab="Python" logo="python" title="webhook.py"
+SECRET = os.environ["OPENSMS_WEBHOOK_SECRET"]  # whsec_...
+
+def handle_delivery(raw_body: bytes, signature: str) -> int:
+    """Call with the exact request bytes and the X-OpenSMS-Signature header."""
+    try:
+        event = construct_event(raw_body, signature, SECRET)
+    except OpensmsError:
+        return 400  # invalid_signature or expired_signature
+    print(event["type"], event.get("id"))
+    return 204
+```
+
+```go tab="Go" logo="golang" title="webhooks.go"
+// HandleDelivery takes the exact request bytes and the X-OpenSMS-Signature header.
+func HandleDelivery(rawBody []byte, signature string) int {
+	event, err := opensms.ConstructEvent(rawBody, signature, os.Getenv("OPENSMS_WEBHOOK_SECRET"))
+	if err != nil {
+		return http.StatusBadRequest // invalid_signature or expired_signature
+	}
+	log.Println(event.Type, event.ID)
+	return http.StatusNoContent
+}
+```
+
+```php tab="PHP" logo="php" title="webhook.php"
+// Call with the exact request bytes and the X-OpenSMS-Signature header.
+function handleDelivery(string $rawBody, string $signature): int
+{
+    try {
+        $event = Webhook::constructEvent($rawBody, $signature, getenv('OPENSMS_WEBHOOK_SECRET'));
+    } catch (OpensmsException $e) {
+        return 400; // invalid_signature or expired_signature
+    }
+    error_log($event['type'] . ' ' . ($event['id'] ?? ''));
+    return 204;
+}
+
+http_response_code(handleDelivery(file_get_contents('php://input'), $_SERVER['HTTP_X_OPENSMS_SIGNATURE'] ?? ''));
+```
+
+```java tab="Java" logo="java" title="OpensmsWebhook.java"
+public final class OpensmsWebhook {
+    private static final String SECRET = System.getenv("OPENSMS_WEBHOOK_SECRET"); // whsec_...
+
+    /** Call with the exact request bytes and the X-OpenSMS-Signature header. */
+    public static int handleDelivery(byte[] rawBody, String signature) {
+        try {
+            WebhookEvent event = WebhookSignature.constructEvent(rawBody, signature, SECRET);
+            System.out.println(event.type + " " + event.id);
+            return 204;
+        } catch (OpensmsException e) {
+            return 400; // invalid_signature or expired_signature
+        }
+    }
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="OpensmsWebhook.cs"
+public static class OpensmsWebhook
+{
+    static readonly string Secret = Environment.GetEnvironmentVariable("OPENSMS_WEBHOOK_SECRET")!; // whsec_...
+
+    // Call with the exact request bytes and the X-OpenSMS-Signature header.
+    public static int HandleDelivery(byte[] rawBody, string? signature)
+    {
+        try
+        {
+            var evt = WebhookSignature.ConstructEvent(rawBody, signature, Secret);
+            Console.WriteLine($"{evt.Type} {evt.Id}");
+            return 204;
+        }
+        catch (OpensmsException e) when (e.Code is "invalid_signature" or "expired_signature")
+        {
+            return 400;
+        }
+    }
+}
+```
+
+```ruby tab="Ruby" logo="ruby" title="webhook.rb"
+SECRET = ENV.fetch("OPENSMS_WEBHOOK_SECRET") # whsec_...
+
+# Call with the exact request bytes and the X-OpenSMS-Signature header.
+def handle_delivery(raw_body, signature)
+  event = Opensms::Webhook.construct_event(raw_body, signature, SECRET)
+  puts "#{event.type} #{event.id}"
+  204
+rescue Opensms::Error
+  400 # invalid_signature or expired_signature
+end
+```
+
+```rust tab="Rust" logo="rust" title="src/webhook.rs"
+/// Call with the exact request bytes and the X-OpenSMS-Signature header.
+pub fn handle_delivery(raw_body: &[u8], signature: &str) -> u16 {
+    let secret = std::env::var("OPENSMS_WEBHOOK_SECRET").unwrap(); // whsec_...
+    if !verify_signature(raw_body, signature, &secret, VerifyOptions::default()) {
+        return 400; // invalid or expired signature
+    }
+    // The webhook.test delivery has no envelope (no id), so only log real events.
+    if let Ok(event) = construct_event(raw_body, signature, &secret, VerifyOptions::default()) {
+        println!("{} {}", event.r#type.unwrap_or_default(), event.id);
+    }
+    204
+}
+```
+
+```swift tab="Swift" logo="swift" title="Webhook.swift"
+let secret = ProcessInfo.processInfo.environment["OPENSMS_WEBHOOK_SECRET"] ?? "" // whsec_...
+
+/// Call with the exact request bytes and the X-OpenSMS-Signature header.
+func handleDelivery(rawBody: Data, signature: String) -> Int {
+    guard OpensmsWebhooks.verifySignature(payload: rawBody, header: signature, secret: secret) else {
+        return 400 // invalid or expired signature
+    }
+    // The webhook.test delivery has no envelope (no id), so only log real events.
+    if let event = try? OpensmsWebhooks.constructEvent(payload: rawBody, header: signature, secret: secret) {
+        print(event.type ?? "", event.id)
+    }
+    return 204
+}
+```
+<!-- /tabs -->
+
+The `webhook.test` delivery has no envelope and no `id` (see [test an endpoint](#test-an-endpoint)). The Rust and Swift event types require an `id`, so those two check the signature first and only parse real events.
+
+### Without an SDK
+
 These functions implement exactly the check OpenSMS applies when it signs: HMAC-SHA256 over `timestamp.body`, compared in constant time.
 
 <!-- test:verify-node -->
@@ -219,6 +487,116 @@ Delivery states: `pending` (waiting for its first attempt), `failed` (waiting fo
 ### The delivery log
 
 `GET /v1/webhooks/{id}/deliveries` (`limit` 1 to 1000, default 100, and `cursor`) shows recent deliveries, newest first:
+
+<!-- tabs label="List webhook deliveries" -->
+```sh tab="cURL" title="Terminal"
+curl -s "$OPENSMS_API/v1/webhooks/4da369a4-50a8-4638-8869-db30c3fed46a/deliveries?limit=20" \
+  -H "authorization: Bearer $OPENSMS_API_KEY"
+```
+
+```ts tab="TypeScript" logo="typescript" title="deliveries.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.webhooks.listDeliveries('4da369a4-50a8-4638-8869-db30c3fed46a', { limit: 20 });
+
+for (const d of page.items) console.log(d.id, d.event, d.status, d.attempts);
+```
+
+```python tab="Python" logo="python" title="deliveries.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.webhooks.list_deliveries("4da369a4-50a8-4638-8869-db30c3fed46a", limit=20)
+
+for d in page.items:
+    print(d["id"], d["event"], d["status"], d["attempts"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+page, err := client.Webhooks.ListDeliveries(context.Background(),
+	"4da369a4-50a8-4638-8869-db30c3fed46a", opensms.ListParams{Limit: 20})
+if err != nil {
+	log.Fatal(err)
+}
+for _, d := range page.Items {
+	log.Println(d.ID, d.Event, d.Status, d.Attempts)
+}
+```
+
+```php tab="PHP" logo="php" title="deliveries.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->webhooks->listDeliveries('4da369a4-50a8-4638-8869-db30c3fed46a', ['limit' => 20]);
+
+foreach ($page->items as $d) {
+    echo $d['id'], ' ', $d['event'], ' ', $d['status'], ' ', $d['attempts'], PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="ListDeliveries.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Page<WebhookDelivery> page = opensms.webhooks().listDeliveries(
+    "4da369a4-50a8-4638-8869-db30c3fed46a", ListParams.ofLimit(20));
+
+for (WebhookDelivery d : page.items) {
+    System.out.println(d.id + " " + d.event + " " + d.status + " " + d.attempts);
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Webhooks.ListDeliveriesAsync(
+    "4da369a4-50a8-4638-8869-db30c3fed46a", new ListParams { Limit = 20 });
+
+foreach (var d in page.Items)
+{
+    Console.WriteLine($"{d.Id} {d.Event} {d.Status} {d.Attempts}");
+}
+```
+
+```ruby tab="Ruby" logo="ruby" title="deliveries.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.webhooks.list_deliveries("4da369a4-50a8-4638-8869-db30c3fed46a", limit: 20)
+
+page.items.each do |d|
+  puts [d[:id], d[:event], d[:status], d[:attempts]].join(" ")
+end
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .webhooks()
+    .list_deliveries("4da369a4-50a8-4638-8869-db30c3fed46a", ListParams::limit(20))
+    .await?;
+
+for d in page.items {
+    let (event, status) = (d.event.unwrap_or_default(), d.status.unwrap_or_default());
+    println!("{} {} {} {}", d.id, event, status, d.attempts.unwrap_or(0));
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.webhooks.listDeliveries(
+    "4da369a4-50a8-4638-8869-db30c3fed46a", ListParams(limit: 20)
+)
+
+for d in page.items {
+    print(d.id, d.event ?? "", d.status ?? "", d.attempts ?? 0)
+}
+```
+<!-- /tabs -->
 
 ```json
 {
