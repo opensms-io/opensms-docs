@@ -1,6 +1,8 @@
 # Quickstart: your first sandbox message
 
-This guide takes you from nothing to a sandbox message in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status. It is for developers trying OpenSMS for the first time. The outputs shown are real API responses (secrets are shortened).
+This guide takes you from nothing to a sandbox message in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status. It is for developers trying OpenSMS for the first time.
+
+> **About the example output.** Every response on this page was returned by a running OpenSMS API (secrets are shortened). The workspace used for them had not verified its owner's email, and an unverified workspace cannot send, so steps 4 and 5 show the `403` refusal and an empty message list. No successful send is reproduced here. The `201` response is described field by field in the API reference: the [`POST /v1/messages` responses](../reference/api/messages.md#post-v1messages) and the [Message schema](../reference/api/schemas.md#message).
 
 You need `curl`, and optionally Node 18 or newer, or Python 3.9 or newer with `requests`.
 
@@ -114,10 +116,10 @@ curl -s -X POST $OPENSMS_API/v1/messages \
   -H "authorization: Bearer $OPENSMS_API_KEY" \
   -H 'content-type: application/json' \
   -H 'idempotency-key: quickstart-001' \
-  -d '{"to":"+254700000001","text":"Hello from the opensms sandbox"}'
+  -d '{"to":"+254700000001","text":"Hello from the OpenSMS sandbox"}'
 ```
 
-With a verified email this returns `201 Created` and the message object, with `status` `queued` and `price` `0`. See [sending messages](../integrate/sending-messages.md) for every field.
+With a verified email this returns `201 Created` and the message object, with `status` `queued` and `price` `0`. That response was not captured for this page (see the note at the top); its fields are in the [Message schema](../reference/api/schemas.md#message), and [sending messages](../integrate/sending-messages.md#response) explains each one.
 
 If the owner's email is not verified yet, the same call is refused:
 
@@ -130,7 +132,7 @@ The response also carries an `X-Request-Id` header. It identifies the recorded r
 ### The same call from Node
 
 <!-- test:quickstart-node -->
-```js
+```js title="send.mjs"
 // send.mjs: send one sandbox message and read it back (Node 18 or newer).
 import { randomUUID } from 'node:crypto';
 
@@ -149,7 +151,7 @@ async function opensms(method, path, { body, idempotencyKey } = {}) {
 
 try {
   const message = await opensms('POST', '/v1/messages', {
-    body: { to: '+254700000001', text: 'Hello from the opensms sandbox' },
+    body: { to: '+254700000001', text: 'Hello from the OpenSMS sandbox' },
     idempotencyKey: randomUUID(),
   });
   console.log('accepted', message.id, message.status);
@@ -171,7 +173,7 @@ opensms error 403 {"type":"about:blank","title":"Forbidden","status":403,"detail
 ### The same call from Python
 
 <!-- test:quickstart-python -->
-```python
+```python title="send.py"
 # send.py: send one sandbox message and read it back (Python 3.9+, requests).
 import os, sys, uuid
 import requests
@@ -183,7 +185,7 @@ session.headers["Authorization"] = f"Bearer {KEY}"
 
 res = session.post(
     f"{API}/v1/messages",
-    json={"to": "+254700000001", "text": "Hello from the opensms sandbox"},
+    json={"to": "+254700000001", "text": "Hello from the OpenSMS sandbox"},
     headers={"Idempotency-Key": str(uuid.uuid4())},
     timeout=10,
 )

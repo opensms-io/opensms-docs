@@ -10,21 +10,80 @@ The source, per-language READMEs and the shared contract live in
 
 ## Clients
 
-All nine are published at version 0.1.0.
+| Language | Package | Registry | Status |
+|---|---|---|---|
+| <span id="sdk-typescript">TypeScript</span> | `@opensms/sdk` | npm | Published, 0.1.0 |
+| <span id="sdk-python">Python</span> | `opensms` | PyPI | Published, 0.1.0 |
+| <span id="sdk-go">Go</span> | `github.com/opensms-io/opensms-go` | Go modules | Published, v0.1.0 |
+| <span id="sdk-dotnet">.NET (C#)</span> | `Opensms` | NuGet | Published, 0.1.0 |
+| <span id="sdk-java">Java</span> | `io.opensms:opensms-java` | Maven Central | Published, 0.1.0 |
+| <span id="sdk-rust">Rust</span> | `opensms` | crates.io | Published, 0.1.0 |
+| <span id="sdk-ruby">Ruby</span> | `opensms` | RubyGems | Published, 0.1.0 |
+| <span id="sdk-php">PHP</span> | `opensms/opensms-php` | Packagist | Published, v0.1.0 |
+| <span id="sdk-swift">Swift</span> | `opensms-swift` (product `Opensms`) | SwiftPM (git tag) | Tagged, 0.1.0 |
 
-| Language | Install | Registry |
-|---|---|---|
-| <span id="sdk-typescript">TypeScript / JavaScript</span> | `npm install @opensms/sdk` | [npm](https://www.npmjs.com/package/@opensms/sdk) |
-| <span id="sdk-python">Python</span> | `pip install opensms` | [PyPI](https://pypi.org/project/opensms/) |
-| <span id="sdk-go">Go</span> | `go get github.com/opensms-io/opensms-go` | [pkg.go.dev](https://pkg.go.dev/github.com/opensms-io/opensms-go) |
-| <span id="sdk-dotnet">.NET (C#)</span> | `dotnet add package Opensms` | [NuGet](https://www.nuget.org/packages/Opensms) |
-| <span id="sdk-java">Java</span> | `io.opensms:opensms-java:0.1.0` | [Maven Central](https://central.sonatype.com/artifact/io.opensms/opensms-java) |
-| <span id="sdk-rust">Rust</span> | `cargo add opensms` | [crates.io](https://crates.io/crates/opensms) |
-| <span id="sdk-ruby">Ruby</span> | `gem install opensms` | [RubyGems](https://rubygems.org/gems/opensms) |
-| <span id="sdk-php">PHP</span> | `composer require opensms/opensms-php` | [Packagist](https://packagist.org/packages/opensms/opensms-php) |
-| <span id="sdk-swift">Swift</span> | `.package(url: "https://github.com/opensms-io/opensms-swift", from: "0.1.0")` | [SwiftPM](https://github.com/opensms-io/opensms-swift) |
+### Install
 
-Each package README has the full install and usage guide.
+<!-- tabs label="Install command" -->
+```sh tab="TypeScript" logo="typescript" title="Terminal"
+npm install @opensms/sdk
+```
+
+```sh tab="Python" logo="python" title="Terminal"
+pip install opensms
+```
+
+```sh tab="Go" logo="golang" title="Terminal"
+go get github.com/opensms-io/opensms-go@v0.1.0
+```
+
+```sh tab=".NET" logo="dotnet" title="Terminal"
+dotnet add package Opensms
+```
+
+```kotlin tab="Java" logo="java" title="build.gradle.kts"
+dependencies {
+    implementation("io.opensms:opensms-java:0.1.0")
+}
+```
+
+```sh tab="Rust" logo="rust" title="Terminal"
+cargo add opensms
+cargo add tokio --features full
+```
+
+```sh tab="Ruby" logo="ruby" title="Terminal"
+bundle add opensms
+```
+
+```sh tab="PHP" logo="php" title="Terminal"
+composer require opensms/opensms-php
+```
+
+```swift tab="Swift" logo="swift" title="Package.swift"
+dependencies: [
+    .package(
+        url: "https://github.com/opensms-io/opensms-swift",
+        from: "0.1.0"
+    ),
+],
+targets: [
+    .target(name: "YourApp", dependencies: [
+        .product(name: "Opensms", package: "opensms-swift"),
+    ]),
+]
+```
+<!-- /tabs -->
+
+On Maven rather than Gradle, add the same coordinates to `pom.xml`:
+
+```xml title="pom.xml"
+<dependency>
+  <groupId>io.opensms</groupId>
+  <artifactId>opensms-java</artifactId>
+  <version>0.1.0</version>
+</dependency>
+```
 
 ## What the clients cover
 
@@ -40,22 +99,162 @@ session token.
 
 ## Quick example
 
-```ts
+Send one message with a sandbox key in `OPENSMS_API_KEY`. Every client reads the same way: build
+it once with the key, call `messages.send`, get the message back with its `id` and `status`.
+
+<!-- tabs label="SDK language" -->
+```ts title="send.ts"
 import { Opensms } from '@opensms/sdk';
 
 const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
-const message = await opensms.messages.send({ to: '+254712345678', text: 'Your order has shipped' });
+
+const message = await opensms.messages.send({
+  to: '+254712345678',
+  text: 'Your Acme order #1042 has shipped',
+});
+
 console.log(message.id, message.status);
 ```
 
-```python
+```python title="send.py"
 import os
+
 from opensms import Opensms
 
 opensms = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
-message = opensms.messages.send(to="+254712345678", text="Your order has shipped")
-print(message.id, message.status)
+
+message = opensms.messages.send(
+    to="+254712345678",
+    text="Your Acme order #1042 has shipped",
+)
+
+print(message["id"], message["status"])
 ```
+
+```go title="main.go"
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	opensms "github.com/opensms-io/opensms-go"
+)
+
+func main() {
+	client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+	if err != nil {
+		log.Fatal(err) // the key is malformed; no request was made
+	}
+
+	ctx := context.Background()
+	msg, err := client.Messages.Send(ctx, opensms.SendMessageParams{
+		To:   "+254712345678",
+		Text: "Your Acme order #1042 has shipped",
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("sent %s (%s)", msg.ID, msg.Status)
+}
+```
+
+```csharp tab=".NET" title="Program.cs"
+using Opensms;
+
+var apiKey = Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!;
+using var client = new OpensmsClient(apiKey);
+
+var message = await client.Messages.SendAsync(new SendMessageParams
+{
+    To = "+254712345678",
+    Text = "Your Acme order #1042 has shipped",
+});
+
+Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```java title="Send.java"
+import io.opensms.*;
+import io.opensms.models.*;
+
+public class Send {
+    public static void main(String[] args) {
+        var opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+        Message message = opensms.messages().send(new SendMessageParams(
+            "+254712345678", "Your Acme order #1042 has shipped"));
+
+        System.out.println(message.id + " " + message.status);
+    }
+}
+```
+
+```rust title="src/main.rs"
+use opensms::{Client, SendMessage};
+
+#[tokio::main]
+async fn main() -> Result<(), opensms::OpensmsError> {
+    let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+    let message = client
+        .messages()
+        .send(&SendMessage::new(
+            "+254712345678",
+            "Your Acme order #1042 has shipped",
+        ))
+        .await?;
+
+    println!("{} is {:?}", message.id, message.status);
+    Ok(())
+}
+```
+
+```ruby title="send.rb"
+require "opensms"
+
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+message = client.messages.send(
+  to: "+254712345678",
+  text: "Your Acme order #1042 has shipped"
+)
+
+puts message[:id], message[:status]
+```
+
+```php title="send.php"
+<?php
+
+require 'vendor/autoload.php';
+
+use Opensms\Client;
+
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$message = $opensms->messages->send([
+    'to' => '+254712345678',
+    'text' => 'Your Acme order #1042 has shipped',
+]);
+
+echo $message['id'], ' ', $message['status'], PHP_EOL;
+```
+
+```swift title="main.swift"
+import Foundation
+import Opensms
+
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let message = try await opensms.messages.send(
+    .init(to: "+254712345678", text: "Your Acme order #1042 has shipped")
+)
+
+print(message.id, message.status ?? "")
+```
+<!-- /tabs -->
 
 A sandbox key (`sk_test_...`) talks to your sandbox; a live key (`sk_live_...`) to live traffic. The
 key alone selects the workspace, so the clients never send `X-Workspace-ID`.
@@ -64,19 +263,24 @@ A fuller example: read the wallet, send, and handle a refusal. Save it as `examp
 with `OPENSMS_API_KEY` set (and `OPENSMS_BASE_URL` when you are not calling the hosted API):
 
 <!-- test:sdk-example -->
-```js
+```js title="example.mjs"
 import { Opensms, OpensmsError } from '@opensms/sdk';
 
 const opensms = new Opensms({
   apiKey: process.env.OPENSMS_API_KEY,
-  baseUrl: process.env.OPENSMS_BASE_URL, // omit to use https://api.opensms.io
+  // Leave OPENSMS_BASE_URL unset to call https://api.opensms.io
+  baseUrl: process.env.OPENSMS_BASE_URL,
 });
 
 const [wallet] = await opensms.wallet.balances();
-console.log('wallet', wallet.environment, wallet.currency, wallet.balance);
+const { environment, currency, balance } = wallet;
+console.log('wallet', environment, currency, balance);
 
 try {
-  const message = await opensms.messages.send({ to: '+254712345678', text: 'Your order has shipped' });
+  const message = await opensms.messages.send({
+    to: '+254712345678',
+    text: 'Your Acme order #1042 has shipped',
+  });
   console.log('sent', message.id, message.status);
 } catch (err) {
   if (!(err instanceof OpensmsError)) throw err;
