@@ -20,7 +20,7 @@ Only operators can change it. Over the limit you get `429` with `Retry-After` in
 {"type":"about:blank","title":"Too Many Requests","status":429,"detail":"API key rate limit exceeded"}
 ```
 
-Observed on the local stack: 80 concurrent `GET /v1/wallet` requests with one key gave 58 responses from the endpoint and 22 `429`s with `Retry-After: 1`. The key is verified (an Argon2id hash check) before the limit is applied, so on a heavily loaded server the same burst can spread over more than a second and see no `429` at all; do not rely on the limit as back-pressure, pace your own requests.
+In one test, 80 concurrent `GET /v1/wallet` requests with one key gave 58 responses from the endpoint and 22 `429`s with `Retry-After: 1`. The key is verified (an Argon2id hash check) before the limit is applied, so on a heavily loaded server the same burst can spread over more than a second and see no `429` at all; do not rely on the limit as back-pressure, pace your own requests.
 
 ### Per recipient
 

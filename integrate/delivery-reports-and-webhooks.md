@@ -1,10 +1,8 @@
 # Delivery reports and webhooks
 
-opensms tells your system about message status changes and other events by POSTing signed JSON to HTTPS endpoints you register. This page covers registering endpoints, the event envelope and the events you will see, verifying signatures with working Node and Python code, retries, and replaying failed deliveries. It is for developers who want delivery reports without polling.
+OpenSMS tells your system about message status changes and other events by POSTing signed JSON to HTTPS endpoints you register. This page covers registering endpoints, the event envelope and the events you will see, verifying signatures with working Node and Python code, retries, and replaying failed deliveries. It is for developers who want delivery reports without polling.
 
-Carrier delivery reports (DLRs) reach opensms from its providers; opensms turns them into message status changes and then into `message.delivered`, `message.failed` and `message.expired` events for your webhooks. You never receive raw provider callbacks.
-
-> **Local stack limitation.** The local docs stack runs with outgoing webhook delivery switched off (`OPENSMS_WEBHOOK_DELIVERY_ENABLED=false`), so no request ever reaches an endpoint there. Endpoints, event recording and the delivery log all work, and the payloads below are real payloads read back from that log. The signature code is checked against the platform's own signing function.
+Carrier delivery reports (DLRs) reach OpenSMS from its providers; OpenSMS turns them into message status changes and then into `message.delivered`, `message.failed` and `message.expired` events for your webhooks. You never receive raw provider callbacks.
 
 ## Register an endpoint
 
@@ -123,7 +121,7 @@ X-OpenSMS-Signature: t=1790224046,v1=e21445a9ff34fad1bb2c8daa767922de1f9fb0c2845
 - `v1` is the lowercase hex HMAC-SHA256 of `t` + `.` + the raw body, keyed with the whole endpoint secret including the `whsec_` prefix.
 - Reject timestamps more than 5 minutes from your clock, to stop replays.
 
-These functions implement exactly the platform's check (`api/internal/webhooks/signature.go`). The [tests](../tests/developer.test.mjs) run both against a signature produced by that Go code.
+These functions implement exactly the check OpenSMS applies when it signs: HMAC-SHA256 over `timestamp.body`, compared in constant time.
 
 <!-- test:verify-node -->
 ```js

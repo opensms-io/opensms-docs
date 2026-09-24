@@ -6,15 +6,15 @@ Account-level data export and deletion for the signed-in user. For developers bu
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/account/export`](#post-v1accountexport) | Request workspace export; owner/admin only | yes |
-| POST | [`/v1/account/delete`](#post-v1accountdelete) | Schedule workspace deletion; owner only | yes |
-| POST | [`/v1/account/delete/cancel`](#post-v1accountdeletecancel) | Cancel scheduled deletion; owner only | yes |
-| GET | [`/v1/account/export/{id}`](#get-v1accountexportid) | Read workspace export status | yes |
-| GET | [`/v1/account/export/{id}/download`](#get-v1accountexportiddownload) | Download ready workspace export | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/account/export`](#post-v1accountexport) | Request workspace export; owner/admin only |
+| POST | [`/v1/account/delete`](#post-v1accountdelete) | Schedule workspace deletion; owner only |
+| POST | [`/v1/account/delete/cancel`](#post-v1accountdeletecancel) | Cancel scheduled deletion; owner only |
+| GET | [`/v1/account/export/{id}`](#get-v1accountexportid) | Read workspace export status |
+| GET | [`/v1/account/export/{id}/download`](#get-v1accountexportiddownload) | Download ready workspace export |
 
-### POST /v1/account/export
+## POST /v1/account/export
 
 **Request workspace export; owner/admin only**
 
@@ -56,7 +56,7 @@ Response `202` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/account/export" \
@@ -76,7 +76,7 @@ Response `202` (`application/json`):
 }
 ```
 
-### POST /v1/account/delete
+## POST /v1/account/delete
 
 **Schedule workspace deletion; owner only**
 
@@ -114,7 +114,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `429` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/account/delete" \
@@ -135,7 +135,7 @@ Response `202` (`application/json`):
 }
 ```
 
-### POST /v1/account/delete/cancel
+## POST /v1/account/delete/cancel
 
 **Cancel scheduled deletion; owner only**
 
@@ -166,7 +166,7 @@ Authenticated owner with explicit workspace selection. No authenticator code req
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/account/delete/cancel" \
@@ -183,7 +183,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/account/export/{id}
+## GET /v1/account/export/{id}
 
 **Read workspace export status**
 
@@ -215,7 +215,7 @@ Owner/admin only, membership checked on every request. 404 for another workspace
 | `410` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/account/export/f4bff7ec-c0cd-4e21-bbe1-6c74cc62d090" \
@@ -235,7 +235,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/account/export/{id}/download
+## GET /v1/account/export/{id}/download
 
 **Download ready workspace export**
 
@@ -267,7 +267,7 @@ Owner/admin only, membership checked on every request. 404 for another workspace
 | `410` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/account/export/f4bff7ec-c0cd-4e21-bbe1-6c74cc62d090/download" \

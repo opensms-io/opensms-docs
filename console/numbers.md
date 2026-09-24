@@ -4,7 +4,7 @@ The Numbers page is where a live workspace rents its own phone numbers (long cod
 
 **Where to find it:** Numbers is not in the left-hand menu in this version of the console. Open it by going to `/app/numbers`.
 
-**Live workspaces only.** Numbers are real inventory, so they only exist for [live](go-live.md) workspaces. In sandbox the page opens, but "My numbers" is always empty and a search finds nothing. Everything below the screenshots was checked against the product's rules; the rent and release steps themselves could not be run on the local docs stack, which has no live workspace and no number inventory.
+**Live workspaces only.** Numbers are real inventory, so they only exist for [live](go-live.md) workspaces. In sandbox the page opens, but "My numbers" is always empty and a search finds nothing. The screenshots below show a sandbox workspace.
 
 ## Who can do what
 
@@ -37,7 +37,7 @@ The **My numbers** tab lists the numbers assigned to your workspace, with the **
 
 The first rental fee is taken from your wallet at once, and the number renews each rental period. Retrying the same rental does not charge twice.
 
-On the docs stack the search always comes back empty:
+In sandbox the search always comes back empty:
 
 ![No numbers available](../assets/screens/console/numbers/available-results.png)
 

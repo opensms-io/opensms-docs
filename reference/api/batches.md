@@ -6,16 +6,16 @@ Bulk sending: submit a batch of recipients, read its validation report and items
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/messages/batch`](#post-v1messagesbatch) | Stage a message batch for later admission | yes |
-| GET | [`/v1/batches/{id}`](#get-v1batchesid) | Get batch detail | yes |
-| GET | [`/v1/batches/{id}/validation`](#get-v1batchesidvalidation) | Get batch validation results | yes |
-| POST | [`/v1/batches/{id}/start`](#post-v1batchesidstart) | Admit eligible rows and start a ready batch | yes |
-| POST | [`/v1/batches/{id}/stop`](#post-v1batchesidstop) | Stop a batch | error path only |
-| GET | [`/v1/batches/{id}/items`](#get-v1batchesiditems) | List messages in a batch | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/messages/batch`](#post-v1messagesbatch) | Stage a message batch for later admission |
+| GET | [`/v1/batches/{id}`](#get-v1batchesid) | Get batch detail |
+| GET | [`/v1/batches/{id}/validation`](#get-v1batchesidvalidation) | Get batch validation results |
+| POST | [`/v1/batches/{id}/start`](#post-v1batchesidstart) | Admit eligible rows and start a ready batch |
+| POST | [`/v1/batches/{id}/stop`](#post-v1batchesidstop) | Stop a batch |
+| GET | [`/v1/batches/{id}/items`](#get-v1batchesiditems) | List messages in a batch |
 
-### POST /v1/messages/batch
+## POST /v1/messages/batch
 
 **Stage a message batch for later admission**
 
@@ -60,7 +60,7 @@ Type: string (binary).
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/messages/batch" \
@@ -103,7 +103,7 @@ Response `202` (`application/json`):
 }
 ```
 
-### GET /v1/batches/{id}
+## GET /v1/batches/{id}
 
 **Get batch detail**
 
@@ -133,7 +133,7 @@ Status, totals, estimated cost and timestamps for one batch. Workspace and envir
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59" \
@@ -158,7 +158,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/batches/{id}/validation
+## GET /v1/batches/{id}/validation
 
 **Get batch validation results**
 
@@ -184,7 +184,7 @@ Operation ID: `getBatchValidation`. Tag: `Batches`.
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/validation" \
@@ -230,7 +230,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/batches/{id}/start
+## POST /v1/batches/{id}/start
 
 **Admit eligible rows and start a ready batch**
 
@@ -256,7 +256,7 @@ Operation ID: `startBatch`. Tag: `Batches`.
 | `200` | Running batch. | `application/json`: [Batch](schemas.md#batch) |
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/start" \
@@ -282,9 +282,9 @@ Response `200` (`application/json`):
 }
 ```
 
-Why this is not the success path: The start call succeeds, but every row is refused at admission because sandbox sending needs a verified email (disabled here), so the batch ends `failed`.
+The start call succeeds. Here the workspace owner had not verified their email yet, so every row was refused at admission and the batch ended `failed`.
 
-### POST /v1/batches/{id}/stop
+## POST /v1/batches/{id}/stop
 
 **Stop a batch**
 
@@ -309,7 +309,7 @@ Operation ID: `stopBatch`. Tag: `Batches`.
 | --- | --- | --- |
 | `200` | Stopped batch. | `application/json`: [BatchStop](schemas.md#batchstop) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/stop" \
@@ -328,9 +328,9 @@ Response `409` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: The only batch that can exist locally has already finished, so stopping it is a 409.
+Only a batch that is still running can be stopped. This one had already finished, so the answer is `409`.
 
-### GET /v1/batches/{id}/items
+## GET /v1/batches/{id}/items
 
 **List messages in a batch**
 
@@ -367,7 +367,7 @@ Response `200` fields:
 | `items` | array of [Message](schemas.md#message) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/items" \

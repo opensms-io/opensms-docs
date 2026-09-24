@@ -1,9 +1,11 @@
-# opensms overview
+# OpenSMS overview
 
-opensms is a prepaid SMS platform with an HTTP API. You create an account and a workspace, get a sandbox API key, and send simulated messages right away. When you are ready for real traffic, you pass a verification review, fund a prepaid wallet, and switch to a live key. This page is for developers who are about to integrate opensms into a product. It explains the moving parts and the vocabulary used in the rest of these docs.
+OpenSMS is a prepaid SMS platform with an HTTP API. You create an account and a workspace, get a sandbox API key, and send simulated messages right away. When you are ready for real traffic, you pass a verification review, fund a prepaid wallet, and switch to a live key. This page is for developers who are about to integrate OpenSMS into a product. It explains the moving parts and the vocabulary used in the rest of these docs.
 
 - New here? Go to the [quickstart](quickstart.md).
 - Ready for production? Read [going live](going-live.md).
+
+> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access, with the API origin to use, comes with an invitation from the [waitlist](https://opensms.io/#docs).
 
 ## What the API does
 
@@ -20,11 +22,11 @@ opensms is a prepaid SMS platform with an HTTP API. You create an account and a 
 | Balances, ledger, prices, spend cap, invoices | `/v1/wallet`, `/v1/pricing`, `/v1/invoices` | [Billing and wallet](../integrate/billing-and-wallet.md) |
 | Sending analytics: totals, breakdowns by country, carrier and sender ID, time series (key scope `analytics:read`) | `/v1/analytics/*` | [API reference: analytics](../reference/api/analytics.md) |
 
-The OpenAPI 3.1 contract for every customer endpoint is `api/openapi/customer.yaml` in the opensms repository, and the [customer API reference](../reference/api/README.md) documents every operation with request and response examples. These guides cover the flows; team members, invitations, account export and deletion, notifications and password reset are in that reference. Official clients for nine languages are described in [SDKs](../integrate/sdk.md).
+Every customer endpoint is described by an OpenAPI 3.1 contract, and the [customer API reference](../reference/api/README.md) documents every operation with request and response examples. These guides cover the flows; team members, invitations, account export and deletion, notifications and password reset are in that reference. Official clients for nine languages are described in [SDKs](../integrate/sdk.md).
 
 ## Base URL
 
-Every customer endpoint lives under one origin, with paths starting `/v1/`. The examples in these docs use the local development stack at `http://127.0.0.1:18180`. Replace it with the API origin you were given for your deployment.
+Every customer endpoint lives under one origin, with paths starting `/v1/`. The examples in these docs write that origin as `$OPENSMS_API`; set it to the API origin from your sandbox invitation.
 
 `GET /healthz` answers `ok` when the process is up, and `GET /readyz` answers `ready` when its database, Redis and other dependencies respond. Neither needs credentials.
 
@@ -59,7 +61,7 @@ The workspace's registration country fixes its currency. A workspace registered 
 
 ## Wallets and money
 
-opensms is prepaid. Each workspace has one wallet per environment in its currency.
+OpenSMS is prepaid. Each workspace has one wallet per environment in its currency.
 
 - When a live message is accepted, its price is **reserved** from the live wallet. The reservation becomes a charge when the message is sent, or is released if you cancel it or it cannot be sent.
 - `balance` is what the wallet holds. `reserved` is the part already set aside for accepted messages.

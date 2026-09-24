@@ -64,7 +64,7 @@ export const GROUPS = [
   { slug: 'workspaces', title: 'Workspaces and settings', prefixes: ['/v1/workspaces', '/v1/workspace', '/v1/settings'],
     intro: 'Read and update the current workspace, list and create workspaces, and manage workspace settings (retention, spend cap, routing preferences, notification defaults). All of these need a session token plus `X-Workspace-ID`. For developers automating workspace administration.' },
   { slug: 'members', title: 'Members and invitations', prefixes: ['/v1/members', '/v1/invitations', '/v1/auth/invitations'],
-    intro: 'Invite people to a workspace, change their role, remove them, transfer ownership and accept invitations. Session tokens only. For developers building team management around opensms.' },
+    intro: 'Invite people to a workspace, change their role, remove them, transfer ownership and accept invitations. Session tokens only. For developers building team management around OpenSMS.' },
   { slug: 'onboarding', title: 'Onboarding', prefixes: ['/v1/onboarding'],
     intro: 'The live-sending onboarding flow: onboarding state, phone verification, company details, KYC document upload and the request to go live. Session tokens only. For developers who script or embed the onboarding steps a workspace completes before it can send live traffic.' },
   { slug: 'legal', title: 'Legal', prefixes: ['/v1/legal'],
@@ -80,13 +80,13 @@ export const GROUPS = [
   { slug: 'inbound', title: 'Inbound', prefixes: ['/v1/inbound'],
     intro: 'Read inbound (mobile-originated) SMS received on the workspace\'s numbers and reply to them. For developers building two-way messaging.' },
   { slug: 'otp', title: 'OTP', tag: 'OTP',
-    intro: 'One-time passcodes: opensms generates, sends and verifies a code for you. API keys only. For developers adding phone verification or step-up authentication to their own product.' },
+    intro: 'One-time passcodes: OpenSMS generates, sends and verifies a code for you. API keys only. For developers adding phone verification or step-up authentication to their own product.' },
   { slug: 'templates', title: 'Templates', prefixes: ['/v1/templates'],
-    intro: 'Reusable message templates with variables. For developers who keep message copy in opensms rather than in their own code.' },
+    intro: 'Reusable message templates with variables. For developers who keep message copy in OpenSMS rather than in their own code.' },
   { slug: 'contacts', title: 'Contacts and groups', prefixes: ['/v1/contacts', '/v1/contact-groups'],
-    intro: 'Store contacts and contact groups, and send a message to a whole group. API keys need the `contacts:manage` scope. For developers syncing an address book into opensms.' },
+    intro: 'Store contacts and contact groups, and send a message to a whole group. API keys need the `contacts:manage` scope. For developers syncing an address book into OpenSMS.' },
   { slug: 'sender-ids', title: 'Sender IDs', prefixes: ['/v1/sender-ids', '/v1/sender-id-drafts'],
-    intro: 'Check, quote, draft, register and manage alphanumeric and numeric sender IDs. For developers automating sender ID registration.\n\n**Supporting documents (served, but not in the contract).** `POST /v1/sender-ids` needs the IDs of three uploaded documents, one of each kind `certificate`, `signatory-id` and `authorization`. They are uploaded with `POST /v1/sender-documents`, which the running API serves but `customer.yaml` does not declare (see [COVERAGE.md](COVERAGE.md#routes-served-but-not-in-the-contract)). It takes a session token with `X-Workspace-ID` and `X-Environment` (owner or admin only; API keys are refused with 401), and a `multipart/form-data` body with one `kind` field, one `file` (PDF, PNG or JPEG, at most 10 MiB) and an optional `replaces_document_id`. It answers `201` with `id`, `kind`, `filename`, `content_type`, `size`, `scan_status`, `review_status`, `version`, `is_current` and `created_at`. A document still `pending` its malware scan is accepted for registration. `GET /v1/sender-documents` lists the workspace\'s documents and `GET /v1/sender-documents/{id}/download` returns one once its scan is `clean`. The registration example below was captured after uploading three documents this way.' },
+    intro: 'Check, quote, draft, register and manage alphanumeric and numeric sender IDs. For developers automating sender ID registration.\n\n**Supporting documents (served, but not in the contract).** `POST /v1/sender-ids` needs the IDs of three uploaded documents, one of each kind `certificate`, `signatory-id` and `authorization`. They are uploaded with `POST /v1/sender-documents`, which is not yet in the OpenAPI contract. It takes a session token with `X-Workspace-ID` and `X-Environment` (owner or admin only; API keys are refused with 401), and a `multipart/form-data` body with one `kind` field, one `file` (PDF, PNG or JPEG, at most 10 MiB) and an optional `replaces_document_id`. It answers `201` with `id`, `kind`, `filename`, `content_type`, `size`, `scan_status`, `review_status`, `version`, `is_current` and `created_at`. A document still `pending` its malware scan is accepted for registration. `GET /v1/sender-documents` lists the workspace\'s documents and `GET /v1/sender-documents/{id}/download` returns one once its scan is `clean`. The registration example below was captured after uploading three documents this way.' },
   { slug: 'numbers', title: 'Numbers', tag: 'Numbers', prefixes: ['/v1/numbers'],
     intro: 'Search for, assign and release dedicated phone numbers and manage their inbound rules. Most number operations only work in the live environment. For developers building two-way or number-based messaging.' },
   { slug: 'webhooks', title: 'Webhooks', tag: 'Webhooks',
@@ -106,9 +106,9 @@ export const GROUPS = [
   { slug: 'notifications', title: 'Notifications', prefixes: ['/v1/notifications', '/v1/me/notifications'],
     intro: 'The signed-in user\'s in-app notification inbox and personal notification preferences. Session tokens only.' },
   { slug: 'realtime', title: 'Realtime', prefixes: ['/v1/realtime'],
-    intro: 'Short-lived tickets for the realtime (websocket) event stream the customer app uses. For developers building a live UI on top of opensms.' },
+    intro: 'Short-lived tickets for the realtime (websocket) event stream the customer app uses. For developers building a live UI on top of OpenSMS.' },
   { slug: 'status', title: 'Status', tag: 'Status',
-    intro: 'The public service status page data and status-update email subscriptions. No authentication. For developers who want to surface opensms health in their own tooling.' },
+    intro: 'The public service status page data and status-update email subscriptions. No authentication. For developers who want to surface OpenSMS health in their own tooling.' },
   { slug: 'health', title: 'Health', tag: 'Health', prefixes: ['/metrics'],
     intro: 'Liveness, readiness and metrics endpoints for whoever runs the API process. Not workspace-scoped and not something an integration normally calls.' },
   { slug: 'provider-callbacks', title: 'Provider callbacks', prefixes: ['/callbacks/'],
@@ -331,11 +331,12 @@ function responseRows(spec, o, ctx) {
 function renderOperation(spec, o, examples) {
   const ctx = { expandRefs: true };
   const lines = [];
-  lines.push(`### ${o.method} ${o.path}`, '');
+  lines.push(`## ${o.method} ${o.path}`, '');
   lines.push(`**${cell(o.op.summary ?? '(no summary in contract)')}**`, '');
   const meta = [`Operation ID: ${o.op.operationId ? `\`${o.op.operationId}\`` : '_none in contract_'}`];
   if (o.tag) meta.push(`Tag: \`${o.tag}\``); else meta.push('Tag: _none in contract_');
-  if (o.servers) meta.push(`Server: ${o.servers.map((s) => `\`${s.url}\``).join(', ')}`);
+  const servers = (o.servers ?? []).filter((s) => !LOOPBACK.test(s.url));
+  if (servers.length) meta.push(`Server: ${servers.map((s) => `\`${s.url}\``).join(', ')}`);
   lines.push(meta.join('. ') + '.', '');
   if (o.op.description) lines.push(o.op.description.trim(), '');
   lines.push(`**Auth:** ${authText(o.op)}`, '');
@@ -360,8 +361,8 @@ function renderOperation(spec, o, examples) {
   const skip = examples.__notExercised?.[o.key];
   if (ex.length) {
     for (const e of ex) lines.push(renderExample(e));
-  } else if (skip) {
-    lines.push(`**Example:** not exercised live. ${skip}`, '');
+  } else if (skip && publicNote(skip)) {
+    lines.push(`**Example:** none. ${publicNote(skip)}`, '');
   }
   return lines.join('\n');
 }
@@ -394,9 +395,83 @@ function truncateArrays(v, notesOut, path = '') {
   return v;
 }
 
+// ---------------------------------------------------------------------------
+// Public wording
+// ---------------------------------------------------------------------------
+//
+// The examples were captured against a development stack with email, payments,
+// webhook delivery and file scanning switched off. The published pages describe
+// the behaviour a customer sees, not that stack: notes are rewritten here, and
+// loopback hosts in captured requests and responses are swapped for neutral ones.
+// COVERAGE.md (not published) keeps the maintainer's wording.
+
+const LOOPBACK = /^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?/;
+
+const PUBLIC_NOTES = [
+  [/^(Why this is not the success path: )?Live environment only\..*/s, 'Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.'],
+  [/^(Why this is not the success path: )?Sandbox sending requires a verified email address\..*/s, 'Sending, including in the sandbox, requires the workspace owner to have verified their email address. Until then every send is refused with this `403`. The success shape is in the Responses table.'],
+  [/^(Why this is not the success path: )?Email login codes are delivered by email.*/s, 'This is the `503` returned when email delivery is unavailable. Normally the request answers `202` and the code is emailed.'],
+  [/^(Why this is not the success path: )?Email delivery is disabled.*/s, 'This is the `503` returned when email delivery is unavailable. Normally the request answers `202` and the verification email is sent.'],
+  [/^(Why this is not the success path: )?Reset links are emailed.*/s, 'This is the `503` returned when email delivery is unavailable. Normally the request answers `202` and the reset link is emailed.'],
+  [/^(Why this is not the success path: )?Tickets are issued only over HTTPS.*/s, 'Tickets are issued only over HTTPS and only to an allowed `Origin`. A request over plain HTTP, or from an origin that is not allowed, is refused like this.'],
+  [/^(Why this is not the success path: )?Cookie mode is off.*/s, 'Cookie mode is optional and needs HTTPS and an allowed `Origin`. Where a deployment does not enable it the route is not mounted and answers `404`.'],
+  [/^(Why this is not the success path: )?Phone codes are sent by SMS.*/s, 'This is the `503` returned when the SMS verification provider is unavailable. Normally the code is sent by SMS.'],
+  [/^(Why this is not the success path: )?Only documents whose malware scan is `clean`.*/s, 'Only documents whose malware scan is `clean` can be downloaded. While a document is still `pending` its scan, the download answers `404`.'],
+  [/^(Why this is not the success path: )?Saved cards exist only in the live environment.*/s, 'Saved cards exist only in the live environment, after a card payment, so a sandbox request is refused like this.'],
+  [/^(Why this is not the success path: )?Top-ups go through Paystack.*/s, 'Top-ups go through Paystack in the live environment, so a sandbox request is refused like this.'],
+  [/^(Why this is not the success path: )?Only terminal deliveries can be replayed.*/s, 'Only terminal deliveries can be replayed. A delivery that is still `pending` is refused with `409`, as here.'],
+  [/^(Why this is not the success path: )?Only a sender whose request or a registration was rejected.*/s, 'Only a sender ID whose request or registration was rejected can be amended. One that is still `pending_admin` is refused like this.'],
+  [/^(Why this is not the success path: )?The group send is accepted as a batch.*/s, 'The group send is accepted as a batch. Here the workspace owner had not verified their email yet, so every recipient was refused at admission and the batch is `failed` with all rows invalid.'],
+  [/^The docs stack has no customer-visible KE routes.*/s, 'No customer-visible routes were configured for KE when this was captured, so the list is empty.'],
+  [/^Empty because sandbox sending is refused.*/s, 'Empty here because no sandbox message had been sent from this workspace yet.'],
+  [/^The docs stack has no number inventory.*/s, 'No numbers matched this search when it was captured, so the list is empty.'],
+  [/^Served only on the optional dedicated metrics listener.*/s, 'Operator-only: served on a separate metrics listener that the operator enables, never on the public API. On the API itself this path answers `404`.'],
+  [/^No scenario written for this operation\.$/, ''],
+  [/^W.*Same limitation: there is no second member to remove\./s, 'This workspace has no second member, so removing one answers `404`, as here.'],
+  [/^W.*Same limitation: there is no second member to transfer ownership to\./s, 'Ownership can only move to an existing member of the workspace. Naming anyone else is refused like this.'],
+  [/^W.*No second member can join locally.*/s, 'The user named here is not a member of the workspace, so the call answers `404`.'],
+  [/^W.*Requires a verified email identity.*/s, 'This needs a verified email address. Until the account has one, the call is refused like this.'],
+  [/^W.*Invoices are issued for live spend only.*/s, 'Invoices are issued for live spend only. This shows the answer for an unknown invoice ID.'],
+  [/^W.*No scheduled message can be created locally.*/s, 'This shows the answer for an unknown message ID.'],
+  [/^W.*No message can be created locally.*/s, 'This shows the answer for an unknown message ID.'],
+  [/^W.*Only an upstream provider holding that provider's receipt credential.*/s, "Only an upstream provider holding that provider's receipt credential can post receipts. Without it the endpoint answers `401`, as here."],
+  [/^W.*Alias of \/v1\/auth\/password\/forgot.*/s, 'Alias of `/v1/auth/password/forgot`, with the same behaviour.'],
+  [/^W.*Alias of \/v1\/auth\/password\/reset.*/s, 'Alias of `/v1/auth/password/reset`, with the same behaviour.'],
+  [/^W.*Alias of the \/replay route.*/s, 'Alias of the `/replay` route, with the same behaviour.'],
+  [/^W.*Accepting requires the invitee to have a verified email.*/s, 'Accepting an invitation requires the invitee to have a verified email address. Until they do, it is refused like this.'],
+  [/^W.*No code can be received without email delivery.*/s, 'This shows the answer to a wrong or expired code.'],
+  [/^W.*No verification code can be received.*/s, 'This shows the answer to a wrong or expired verification code.'],
+  [/^W.*A valid reset token only arrives by email.*/s, 'This shows the answer to an invalid or expired reset token. A valid token arrives in the reset email.'],
+  [/^W.*The start call succeeds, but every row is refused at admission.*/s, 'The start call succeeds. Here the workspace owner had not verified their email yet, so every row was refused at admission and the batch ended `failed`.'],
+  [/^W.*The only batch that can exist locally has already finished.*/s, 'Only a batch that is still running can be stopped. This one had already finished, so the answer is `409`.'],
+  [/^W.*No challenge can be issued locally.*/s, 'This shows the answer for an unknown challenge ID.'],
+  [/^W.*Going live needs every onboarding step.*/s, 'Going live needs every onboarding step to be complete, including a verified email address. Until then the request is refused like this.'],
+  [/^W.*No OTP can be sent locally.*/s, 'This shows the answer for an unknown `otp_id`.'],
+];
+
+/** A note as a customer should read it. Fails the render on unmapped stack wording. */
+function publicNote(note) {
+  for (const [re, text] of PUBLIC_NOTES) if (re.test(note)) return text;
+  if (/docs stack|local stack|locally|not the success path|disabled here|127\.0\.0\.1|localhost/i.test(note)) {
+    throw new Error(`gen-reference: add a public wording for this note to PUBLIC_NOTES:\n  ${note}`);
+  }
+  return note;
+}
+
+/** A captured example with loopback hosts replaced by neutral documentation values. */
+function publicValue(v) {
+  if (typeof v === 'string') {
+    return v.replace(/https?:\/\/localhost:5190/g, 'https://app.example.com').replace(/\b127\.0\.0\.1\b/g, '203.0.113.24');
+  }
+  if (Array.isArray(v)) return v.map(publicValue);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, publicValue(x)]));
+  return v;
+}
+
 function renderExample(e) {
   const lines = [];
-  lines.push(`**Example${e.title ? `: ${e.title}` : ''}** (captured live from the local stack)`, '');
+  lines.push(`**Example${e.title ? `: ${e.title}` : ''}**`, '');
+  e = publicValue(e);
   const curl = [`curl -s -X ${e.request.method} "$OPENSMS_API${e.request.url}"`];
   for (const [h, v] of Object.entries(e.request.headers ?? {})) curl.push(`  -H ${shellQuote(`${h}: ${v}`)}`);
   if (e.request.body !== undefined) {
@@ -412,7 +487,7 @@ function renderExample(e) {
   else if (typeof body === 'string') lines.push('```text', body.length > 1200 ? body.slice(0, 1200) + '\n...' : body, '```', '');
   else lines.push('```json', pretty(truncateArrays(body, tn)), '```', '');
   if (tn.length) lines.push(`Truncated for length: ${tn.join('; ')}.`, '');
-  if (e.note) lines.push(e.note, '');
+  if (e.note && publicNote(e.note)) lines.push(publicNote(e.note), '');
   return lines.join('\n');
 }
 
@@ -431,21 +506,21 @@ const HEADER = '<!-- Generated by scripts/gen-reference.mjs from api/openapi/cus
 function renderGroupPage(spec, g, ops, examples) {
   const lines = [HEADER, `# ${g.title}`, '', g.intro, ''];
   lines.push(`Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).`, '');
-  lines.push('| Method | Path | Summary | Live example |', '| --- | --- | --- | --- |');
-  for (const o of ops) lines.push(`| ${o.method} | [\`${o.path}\`](#${anchor(`${o.method} ${o.path}`)}) | ${cell(o.op.summary)} | ${liveLabel(examples[o.key] ?? [])} |`);
+  lines.push('| Method | Path | Summary |', '| --- | --- | --- |');
+  for (const o of ops) lines.push(`| ${o.method} | [\`${o.path}\`](#${anchor(`${o.method} ${o.path}`)}) | ${cell(o.op.summary)} |`);
   lines.push('');
   for (const o of ops) lines.push(renderOperation(spec, o, examples), '');
   return lines.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
 function renderSchemasPage(spec) {
-  const lines = [HEADER, '# Schemas', '', 'Every named schema in the customer contract (`components.schemas` in `api/openapi/customer.yaml`), for developers who need the exact shape of a request or response body. Operation pages link here whenever a body is a named schema. Nested objects are flattened with dotted names, and `[]` marks the fields of array items.', '', 'Back to the [API reference index](README.md).', ''];
+  const lines = [HEADER, '# Schemas', '', 'Every named schema in the customer contract (`components.schemas` in the OpenAPI document), for developers who need the exact shape of a request or response body. Operation pages link here whenever a body is a named schema. Nested objects are flattened with dotted names, and `[]` marks the fields of array items.', '', 'Back to the [API reference index](README.md).', ''];
   const names = Object.keys(spec.components.schemas).sort((a, b) => a.localeCompare(b));
   lines.push(names.map((n) => `[${n}](#${anchor(n)})`).join(' · '), '');
   for (const n of names) {
     const s = spec.components.schemas[n];
     const ctx = { onSchemasPage: true };
-    lines.push(`### ${n}`, '');
+    lines.push(`## ${n}`, '');
     if (s.description) lines.push(s.description, '');
     if (isInlineObject(s)) {
       const c2 = { ...ctx, closed: false };
@@ -463,9 +538,9 @@ function renderSchemasPage(spec) {
 
 function renderIndex(spec, all, examples) {
   const lines = [HEADER, '# Customer API reference', ''];
-  lines.push('The exact contract of the opensms customer API, for developers integrating with it. It is generated from `api/openapi/customer.yaml`, the contract of record, and lists every operation with its auth, parameters, request fields, responses and error statuses. Operations that could be exercised against a local stack also carry a real request and response. If you are new to opensms, start with the task guides in [Integrate](../../integrate/) and come back here for field-level detail.', '');
-  const exercised = all.filter((o) => examples[o.key]?.length).length;
-  lines.push(`Contract version \`${spec.info.version}\` (OpenAPI \`${spec.openapi}\`): ${Object.keys(spec.paths).length} paths, ${all.length} operations, ${Object.keys(spec.components.schemas).length} named schemas. ${exercised} of ${all.length} operations have a live example (${all.filter((o) => liveLabel(examples[o.key] ?? []) === 'yes').length} with a success response, the others only up to a refusal the local stack cannot get past); [COVERAGE.md](COVERAGE.md) says which and why, and lists contract drift.`, '');
+  lines.push('The exact contract of the OpenSMS customer API, for developers integrating with it. It is generated from the OpenAPI contract of record and lists every operation with its auth, parameters, request fields, responses and error statuses, and almost every operation also carries an example request and response. If you are new to OpenSMS, start with the task guides in [Integrate](../../integrate/) and come back here for field-level detail.', '');
+  lines.push(`Contract version \`${spec.info.version}\` (OpenAPI \`${spec.openapi}\`): ${Object.keys(spec.paths).length} paths, ${all.length} operations, ${Object.keys(spec.components.schemas).length} named schemas.`, '');
+  lines.push('> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access, and the API origin to use as `$OPENSMS_API`, come with an invitation from the [waitlist](https://opensms.io/#docs).', '');
   lines.push('## Pages', '');
   lines.push('| Page | Operations | Contract tag | Covers |', '| --- | --- | --- | --- |');
   for (const g of GROUPS) {
@@ -473,10 +548,10 @@ function renderIndex(spec, all, examples) {
     const tags = [...new Set(all.filter((o) => o.group === g.slug).map((o) => o.tag ?? 'untagged'))].join(', ');
     lines.push(`| [${g.title}](${g.slug}.md) | ${n} | ${tags} | ${cell(g.intro.split('. ')[0])}. |`);
   }
-  lines.push(`| [Schemas](schemas.md) | | | Every named request and response schema. |`, `| [Coverage](COVERAGE.md) | | | Which operations were exercised live, and contract drift. |`, '');
+  lines.push(`| [Schemas](schemas.md) | | | Every named request and response schema. |`, '');
   lines.push('The contract tags only ' + all.filter((o) => o.tag).length + ` of ${all.length} operations. Tagged operations sit on their tag's page; untagged operations are placed by path prefix (for example \`/v1/contacts\` and \`/v1/contact-groups\` share "Contacts and groups"). The "Contract tag" column shows which is which.`, '');
   lines.push('## Conventions', '');
-  lines.push('**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL (they were captured against `http://127.0.0.1:18180`).', '');
+  lines.push('**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL: the API origin from your sandbox invitation.', '');
   lines.push('**Authentication.** Two bearer credentials exist (`components.securitySchemes`):', '');
   lines.push(table(['Scheme', 'Header', 'Used by', 'Workspace and environment'], [
     ['`Session`', '`Authorization: Bearer sess_...`', 'People: the customer app, or a script acting as a signed-in user. Returned by signup and login.', 'Send `X-Workspace-ID: <workspace uuid>` and `X-Environment: sandbox` or `live` on workspace-scoped calls. The contract marks both headers optional (because API keys ignore them), but session calls without `X-Environment` are rejected with 400.'],
@@ -487,8 +562,7 @@ function renderIndex(spec, all, examples) {
   const pe = Object.values(examples).flat().find((e) => e?.response?.body?.errors && e.response.status === 400) ?? Object.values(examples).flat().find((e) => e?.response?.status >= 400 && e?.response?.body?.detail);
   if (pe) lines.push('```json', pretty(pe.response.body), '```', '', `(from \`${pe.request.method} ${pe.request.url}\`)`, '');
   lines.push('**Pagination.** Most list endpoints return `{"items": [...], "next_cursor": "..."|null}` and accept `limit` and `cursor` (pass the previous page\'s `next_cursor`). Limits differ per operation (for example 1 to 200 with default 50 on most collections, 1 to 100 with default 20 on `GET /v1/messages`); each operation\'s Parameters table has the exact range. A few older lists return a bare array or a named array (`data`, `sessions`, `documents`); each operation shows its shape.', '');
-  lines.push('**Idempotency.** Many create operations require an `Idempotency-Key` header (1 to 200 or 255 bytes, see each operation). Repeating a request with the same key and body replays the original result instead of creating a duplicate; reusing a key with a different body is a `409`. Both are shown live under [POST /v1/templates](templates.md#post-v1templates).', '');
-  lines.push('**Regenerating.** From the docs repo: `node scripts/gen-reference.mjs` re-renders from the spec and the saved examples; `node scripts/gen-reference.mjs --capture` re-runs every example against a live API first (it needs `OPENSMS_API`, `OPENSMS_ADMIN_EMAIL` and `OPENSMS_ADMIN_PASSWORD`). `tests/reference.test.mjs` replays the examples and fails if a status code or key field changes.', '');
+  lines.push('**Idempotency.** Many create operations require an `Idempotency-Key` header (1 to 200 or 255 bytes, see each operation). Repeating a request with the same key and body replays the original result instead of creating a duplicate; reusing a key with a different body is a `409`. Both are shown under [POST /v1/templates](templates.md#post-v1templates).', '');
   return lines.join('\n').replace(/\n{3,}/g, '\n\n');
 }
 
@@ -498,6 +572,7 @@ function renderCoverage(spec, all, examples) {
   const yes = all.filter((o) => liveLabel(examples[o.key] ?? []) === 'yes').length;
   const errOnly = all.filter((o) => liveLabel(examples[o.key] ?? []) === 'error path only').length;
   lines.push(`Exercised live: **${yes + errOnly} of ${all.length}** operations. **${yes}** returned a success status; **${errOnly}** could only be exercised up to a refusal (\`error path only\`), and the "Notes" column says why. **${all.length - yes - errOnly}** not called.`, '');
+  lines.push('**Regenerating.** From the docs repo: `node scripts/gen-reference.mjs` re-renders from the spec and the saved examples; `node scripts/gen-reference.mjs --capture` re-runs every example against a live API first (it needs `OPENSMS_API`, `OPENSMS_ADMIN_EMAIL` and `OPENSMS_ADMIN_PASSWORD`). `tests/reference.test.mjs` replays the examples and fails if a status code or key field changes. The published pages reword the notes below for customers (`PUBLIC_NOTES` in the generator) and swap loopback hosts for documentation values.', '');
   lines.push(`Stack: API built from this repo, development mode, with email delivery, live SMS dispatch, webhook delivery, payments and top-ups disabled, so flows that depend on those can only be shown up to the point where they stop.`, '');
   lines.push('## Why some operations only show a refusal', '');
   lines.push(table(['Local limitation', 'Effect'], [

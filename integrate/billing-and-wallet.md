@@ -1,6 +1,6 @@
 # Billing and wallet
 
-opensms is prepaid: live messages, lookups, virtual numbers and sender registrations are paid from a wallet you top up in advance. This page is the developer's view of money: reading balances and the ledger, looking up prices, how a message is priced and charged, spend caps, top-ups and invoices. It is for developers who need to show balances, estimate costs or handle `402` responses.
+OpenSMS is prepaid: live messages, lookups, virtual numbers and sender registrations are paid from a wallet you top up in advance. This page is the developer's view of money: reading balances and the ledger, looking up prices, how a message is priced and charged, spend caps, top-ups and invoices. It is for developers who need to show balances, estimate costs or handle `402` responses.
 
 Money is always a decimal string (`"1.000000"`), never a float. Parse it with a decimal type.
 
@@ -85,9 +85,9 @@ curl -s "$OPENSMS_API/v1/pricing?country=KE" -H "authorization: Bearer $OPENSMS_
 | `converted_amount`, `converted_currency`, `fx_rate` | The sell price in your workspace currency, when an exchange rate is available. |
 | `carrier_id`, `carrier_name` | Set for carrier-specific prices; null for the country default. |
 
-Precedence is your workspace override, then country and carrier, then country. `product=lookup` returned no rows for Kenya on the local stack, so live lookups there would be refused with `lookup_price_unavailable`.
+Precedence is your workspace override, then country and carrier, then country. If a country has no `product=lookup` price, live lookups there are refused with `lookup_price_unavailable`.
 
-**Volume tiers are listed but not applied.** At send time the API uses only the `min_monthly_volume: 0` row (`api/internal/messages/billing.go`), so the 100,000-message tier above does not lower the price charged today.
+**Volume tiers are listed but not applied.** At send time the API uses only the `min_monthly_volume: 0` row, so the 100,000-message tier above does not lower the price charged today.
 
 ### Public catalogue
 
@@ -100,13 +100,13 @@ No credentials needed:
 | `GET /v1/countries/{iso2}/carriers` | Carriers and their prefixes. |
 | `GET /v1/countries/{iso2}/compliance` | Quiet hours, stop keywords, content rules. |
 
-From the local stack (abridged to one country; the list had six):
+Abridged to one country:
 
 ```json
 {"iso2":"KE","name":"Kenya","dial_code":"+254","currency":"KES","status":"active","price_per_message":{"amount":"1.000000","currency":"KES"},"sender_kinds":[],"providers_available":0}
 ```
 
-`GET /v1/countries/KE/routes` returned `[]` there because the local stack has no live provider configured.
+`GET /v1/countries/{iso2}/routes` returns `[]` for a country with no live provider configured.
 
 ## How a message is charged
 
@@ -148,7 +148,7 @@ curl -s -X PUT $OPENSMS_API/v1/settings/spend-cap \
 | Manual bank transfer | Owner, admin, finance session with two-factor | `POST /v1/wallet/topups/manual` (multipart: `amount`, `currency`, `file`) | Creates `awaiting_approval`; an operator credits the wallet after checking the proof. |
 | Automatic top-up | Owner, admin, finance session | `GET`, `PUT /v1/wallet/auto-topup` | Charges a saved card when the balance falls to a threshold. Needs a saved card from an earlier card payment. |
 
-Top-ups are live only. Real responses from the local stack, which has no payment provider configured:
+Top-ups are live only. Real refusals:
 
 ```json
 {"type":"about:blank","title":"Unprocessable Entity","status":422,"detail":"sandbox wallets cannot use payment providers"}

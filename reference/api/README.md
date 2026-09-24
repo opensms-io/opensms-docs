@@ -2,9 +2,11 @@
 
 # Customer API reference
 
-The exact contract of the opensms customer API, for developers integrating with it. It is generated from `api/openapi/customer.yaml`, the contract of record, and lists every operation with its auth, parameters, request fields, responses and error statuses. Operations that could be exercised against a local stack also carry a real request and response. If you are new to opensms, start with the task guides in [Integrate](../../integrate/) and come back here for field-level detail.
+The exact contract of the OpenSMS customer API, for developers integrating with it. It is generated from the OpenAPI contract of record and lists every operation with its auth, parameters, request fields, responses and error statuses, and almost every operation also carries an example request and response. If you are new to OpenSMS, start with the task guides in [Integrate](../../integrate/) and come back here for field-level detail.
 
-Contract version `0.1.0` (OpenAPI `3.1.0`): 136 paths, 173 operations, 87 named schemas. 172 of 173 operations have a live example (130 with a success response, the others only up to a refusal the local stack cannot get past); [COVERAGE.md](COVERAGE.md) says which and why, and lists contract drift.
+Contract version `0.1.0` (OpenAPI `3.1.0`): 136 paths, 173 operations, 87 named schemas.
+
+> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access, and the API origin to use as `$OPENSMS_API`, come with an invitation from the [waitlist](https://opensms.io/#docs).
 
 ## Pages
 
@@ -21,7 +23,7 @@ Contract version `0.1.0` (OpenAPI `3.1.0`): 136 paths, 173 operations, 87 named 
 | [Batches](batches.md) | 6 | Batches | Bulk sending: submit a batch of recipients, read its validation report and items, then start or stop it. |
 | [Sandbox](sandbox.md) | 1 | Sandbox | The sandbox message log: in the sandbox environment messages are accepted and recorded but never handed to a carrier, and this endpoint lets you read what would have been sent. |
 | [Inbound](inbound.md) | 2 | untagged | Read inbound (mobile-originated) SMS received on the workspace's numbers and reply to them. |
-| [OTP](otp.md) | 2 | OTP | One-time passcodes: opensms generates, sends and verifies a code for you. |
+| [OTP](otp.md) | 2 | OTP | One-time passcodes: OpenSMS generates, sends and verifies a code for you. |
 | [Templates](templates.md) | 5 | untagged | Reusable message templates with variables. |
 | [Contacts and groups](contacts.md) | 11 | untagged | Store contacts and contact groups, and send a message to a whole group. |
 | [Sender IDs](sender-ids.md) | 12 | untagged | Check, quote, draft, register and manage alphanumeric and numeric sender IDs. |
@@ -39,13 +41,12 @@ Contract version `0.1.0` (OpenAPI `3.1.0`): 136 paths, 173 operations, 87 named 
 | [Health](health.md) | 3 | untagged, Health | Liveness, readiness and metrics endpoints for whoever runs the API process. |
 | [Provider callbacks](provider-callbacks.md) | 1 | untagged | Inbound delivery-receipt callbacks from upstream SMS providers. |
 | [Schemas](schemas.md) | | | Every named request and response schema. |
-| [Coverage](COVERAGE.md) | | | Which operations were exercised live, and contract drift. |
 
 The contract tags only 57 of 173 operations. Tagged operations sit on their tag's page; untagged operations are placed by path prefix (for example `/v1/contacts` and `/v1/contact-groups` share "Contacts and groups"). The "Contract tag" column shows which is which.
 
 ## Conventions
 
-**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL (they were captured against `http://127.0.0.1:18180`).
+**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL: the API origin from your sandbox invitation.
 
 **Authentication.** Two bearer credentials exist (`components.securitySchemes`):
 
@@ -77,6 +78,4 @@ Each operation lists the alternatives it accepts. "API key with scope `x`" means
 
 **Pagination.** Most list endpoints return `{"items": [...], "next_cursor": "..."|null}` and accept `limit` and `cursor` (pass the previous page's `next_cursor`). Limits differ per operation (for example 1 to 200 with default 50 on most collections, 1 to 100 with default 20 on `GET /v1/messages`); each operation's Parameters table has the exact range. A few older lists return a bare array or a named array (`data`, `sessions`, `documents`); each operation shows its shape.
 
-**Idempotency.** Many create operations require an `Idempotency-Key` header (1 to 200 or 255 bytes, see each operation). Repeating a request with the same key and body replays the original result instead of creating a duplicate; reusing a key with a different body is a `409`. Both are shown live under [POST /v1/templates](templates.md#post-v1templates).
-
-**Regenerating.** From the docs repo: `node scripts/gen-reference.mjs` re-renders from the spec and the saved examples; `node scripts/gen-reference.mjs --capture` re-runs every example against a live API first (it needs `OPENSMS_API`, `OPENSMS_ADMIN_EMAIL` and `OPENSMS_ADMIN_PASSWORD`). `tests/reference.test.mjs` replays the examples and fails if a status code or key field changes.
+**Idempotency.** Many create operations require an `Idempotency-Key` header (1 to 200 or 255 bytes, see each operation). Repeating a request with the same key and body replays the original result instead of creating a duplicate; reusing a key with a different body is a `409`. Both are shown under [POST /v1/templates](templates.md#post-v1templates).

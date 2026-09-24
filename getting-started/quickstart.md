@@ -1,14 +1,14 @@
 # Quickstart: your first sandbox message
 
-This guide takes you from nothing to a sandbox message in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status. It is for developers trying opensms for the first time. Every command below was run against a local opensms stack, and the outputs are the real responses (secrets are shortened).
+This guide takes you from nothing to a sandbox message in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status. It is for developers trying OpenSMS for the first time. The outputs shown are real API responses (secrets are shortened).
 
 You need `curl`, and optionally Node 18 or newer, or Python 3.9 or newer with `requests`.
 
-```sh
-export OPENSMS_API=http://127.0.0.1:18180   # your API origin
-```
+> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access comes with an invitation from the [waitlist](https://opensms.io/#docs), and the invitation gives you the API origin to use below.
 
-> **Local stack limitation.** Step 2 (email verification) needs outgoing email. The local docs stack runs with email delivery disabled, so steps 4 and 5 below show the real `403` you get before verification. On a deployment with email enabled, verify your address and the same calls return the message.
+```sh
+export OPENSMS_API=<the API origin from your sandbox invitation>
+```
 
 ## 1. Create an account and workspace
 
@@ -69,12 +69,6 @@ curl -s -X POST $OPENSMS_API/v1/auth/verify-email -H "authorization: Bearer $SES
 
 Codes expire after 10 minutes, allow five wrong guesses, and you can ask for a new one once a minute (`429` with `Retry-After: 60` before that).
 
-On the local docs stack email delivery is disabled, so the first call returns this real response and verification cannot complete:
-
-```json
-{"type":"about:blank","title":"Service Unavailable","status":503,"detail":"email delivery is not configured"}
-```
-
 ## 3. Create a sandbox API key
 
 API keys are created with your session and the workspace header. `test: true` makes a sandbox key (`sk_test_`). Without `scopes` the key gets `messages:read` and `messages:write`.
@@ -125,7 +119,7 @@ curl -s -X POST $OPENSMS_API/v1/messages \
 
 With a verified email this returns `201 Created` and the message object, with `status` `queued` and `price` `0`. See [sending messages](../integrate/sending-messages.md) for every field.
 
-Before verification (the local docs stack) the same call returns:
+If the owner's email is not verified yet, the same call is refused:
 
 ```json
 {"type":"about:blank","title":"Forbidden","status":403,"detail":"email verification is required for sandbox sending"}
@@ -140,7 +134,7 @@ The response also carries an `X-Request-Id` header. It identifies the recorded r
 // send.mjs: send one sandbox message and read it back (Node 18 or newer).
 import { randomUUID } from 'node:crypto';
 
-const API = process.env.OPENSMS_API ?? 'http://127.0.0.1:18180';
+const API = process.env.OPENSMS_API; // the API origin from your sandbox invitation
 const KEY = process.env.OPENSMS_API_KEY; // sk_test_...
 
 async function opensms(method, path, { body, idempotencyKey } = {}) {
@@ -167,7 +161,7 @@ try {
 }
 ```
 
-Output on the local docs stack (unverified email):
+If the owner's email is not verified yet, it prints the refusal:
 
 ```text
 $ OPENSMS_API_KEY=sk_test_OHtA3aYT... node send.mjs
@@ -182,7 +176,7 @@ opensms error 403 {"type":"about:blank","title":"Forbidden","status":403,"detail
 import os, sys, uuid
 import requests
 
-API = os.environ.get("OPENSMS_API", "http://127.0.0.1:18180")
+API = os.environ["OPENSMS_API"]  # the API origin from your sandbox invitation
 KEY = os.environ["OPENSMS_API_KEY"]  # sk_test_...
 session = requests.Session()
 session.headers["Authorization"] = f"Bearer {KEY}"
@@ -202,7 +196,7 @@ current = session.get(f"{API}/v1/messages/{message['id']}", timeout=10).json()
 print("status now", current["status"])
 ```
 
-Output on the local docs stack (unverified email):
+If the owner's email is not verified yet, it prints the refusal:
 
 ```text
 $ OPENSMS_API_KEY=sk_test_OHtA3aYT... python3 send.py
@@ -224,9 +218,9 @@ curl -s "$OPENSMS_API/v1/messages?limit=5" -H "authorization: Bearer $OPENSMS_AP
 {"items":[],"next_cursor":null}
 ```
 
-(The list is empty here because the send in step 4 was refused.)
+This list is empty because nothing had been sent from the workspace yet. Once a send is accepted, the message appears in `items`.
 
-In the sandbox, a built-in mock provider settles each message moments after it is accepted, based on the destination number. The rules below come from the mock provider's code (`api/internal/providers/mock/mock.go`):
+In the sandbox, a built-in mock provider settles each message moments after it is accepted, based on the destination number:
 
 | Destination | Final status | `status_reason` |
 | --- | --- | --- |
@@ -235,7 +229,7 @@ In the sandbox, a built-in mock provider settles each message moments after it i
 | `+2547000002` followed by any two digits (for example `+254700000201`) | `expired` | `dlr_timeout` |
 | Any other number | `delivered` | none |
 
-Sandbox messages go straight from `queued` to their final status; they do not stop at `sent`. The console's **Sandbox** page currently lists different magic numbers (`+254700000002` fails, `+254700000003` expires, `+254700000004` stays `sent`); the table above is what the API actually does.
+Sandbox messages go straight from `queued` to their final status; they do not stop at `sent`.
 
 To be told about status changes instead of polling, add a [webhook](../integrate/delivery-reports-and-webhooks.md) or open a [realtime](../integrate/realtime.md) connection.
 

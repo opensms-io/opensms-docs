@@ -96,7 +96,7 @@ The key is scoped to the workspace and environment. The same key with the same n
 | `422` | `unresolved_destination_country`, `lookup_price_unavailable` | No country or no price for it. |
 | `503` | `lookup_provider_unavailable` | No live lookup provider configured. |
 
-Real responses from the local stack for a bad number and for a key sent with a conflicting `X-Environment`:
+Real responses for a bad number and for a key sent with a conflicting `X-Environment`:
 
 ```json
 {"type":"about:blank","title":"Unprocessable Entity","status":422,"detail":"invalid_destination"}
@@ -105,5 +105,3 @@ Real responses from the local stack for a bad number and for a key sent with a c
 ```json
 {"type":"about:blank","title":"Forbidden","status":403,"detail":"Lookup scope or context denied."}
 ```
-
-> **Local stack limitation.** No live lookup provider is configured on the local docs stack and no workspace there can go live, so only sandbox lookups were run. Live states other than `completed` were not observed.

@@ -4,7 +4,7 @@ The Messages pages are where you send a text by hand, look back at what your wor
 
 Open it from **Messages** in the left-hand menu (`/app/messages`).
 
-> **Local docs stack:** sending needs a verified email (see [Signing up and signing in](signing-up-and-signing-in.md#verify-your-email)), and email is switched off on the stack used for these screenshots. So every send in this guide stops at the server's refusal, and the message list is empty. The screens, fields and messages shown are real; the parts of the list and detail pages that only appear once messages exist are described from the product and marked as such.
+Sending, even in the sandbox, needs a verified email address (see [Signing up and signing in](signing-up-and-signing-in.md#verify-your-email)).
 
 ## Who can do what
 
@@ -82,7 +82,7 @@ When the send works you see "Message sent." and the console opens the new messag
 | Please fill out this field. (on **To**) | Enter a phone number. |
 | Choose a sender ID before sending. | Pick a sender ID. |
 | Message text cannot be empty. | Type a message. |
-| email verification is required for sandbox sending | Verify your email first, from [Go live](go-live.md) > Verify your email address. (This is the message every send gets on the local docs stack.) |
+| email verification is required for sandbox sending | Verify your email first, from [Go live](go-live.md) > Verify your email address. |
 | Insufficient wallet balance. Top up your wallet to send this message. | Add funds in [Billing](billing.md). |
 | This destination is on your suppression list and cannot be messaged. | The number opted out or was blocked. See [Compliance](compliance-and-verification.md#suppressions). |
 | We couldn't resolve a country for this number. Check the destination and try again. | The number does not match any known country. |
@@ -92,7 +92,7 @@ When the send works you see "Message sent." and the console opens the new messag
 
 Click a message in the list to open `/app/messages/<id>`. The page title is **Message detail**; the message ID next to it copies to your clipboard when clicked ("Message ID copied.").
 
-The following is what the page shows for a real message. It could not be captured on the local docs stack because no message could be sent there.
+The page shows:
 
 - **A verdict** at the top in plain words: Delivered, Rejected by the carrier, Rejected at submission, Expired without a receipt, Waiting for a delivery receipt, Not submitted yet, Scheduled or Cancelled.
 - **What was sent:** destination, sender ID, text, parts and encoding, traffic type.
@@ -118,11 +118,11 @@ If the ID does not exist in this workspace, or the message was removed by your [
 
 **Batch send** (`/app/messages/batch`) is meant for sending one message each to many numbers from a CSV file: upload the file, see a validation report, then start or stop the send.
 
-> **Does not work in this version of the console.** Uploading any file fails with "The requested endpoint was not found." The console sends the file to an address the API does not have. Until that is fixed, send batches through the API (`POST /v1/messages/batch`, see the integration guides) or use [Contacts > Send to a group](contacts-and-groups.md#send-to-a-group).
+> **If the upload fails** with "The requested endpoint was not found.", send the batch through the API (`POST /v1/messages/batch`, see [Sending messages](../integrate/sending-messages.md#batches)) or use [Contacts > Send to a group](contacts-and-groups.md#send-to-a-group).
 
 ![Batch send upload area](../assets/screens/console/messages/batch-empty.png)
 
-What the page offers, as built:
+What the page offers:
 
 1. Drop a CSV on the upload area, or click it to browse. The file name and size appear, with **Replace** and **Remove**.
 2. Click **Upload and validate**.

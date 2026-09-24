@@ -2,24 +2,24 @@
 
 # Members and invitations
 
-Invite people to a workspace, change their role, remove them, transfer ownership and accept invitations. Session tokens only. For developers building team management around opensms.
+Invite people to a workspace, change their role, remove them, transfer ownership and accept invitations. Session tokens only. For developers building team management around OpenSMS.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/members`](#get-v1members) | List workspace members (owner/admin sessions only) | yes |
-| POST | [`/v1/members`](#post-v1members) | Invite a member (owner/admin sessions only) | yes |
-| PUT | [`/v1/members/{user_id}/role`](#put-v1membersuser_idrole) | Change member role (owner/admin sessions only) | error path only |
-| DELETE | [`/v1/members/{user_id}`](#delete-v1membersuser_id) | Remove member while preserving last owner | error path only |
-| POST | [`/v1/members/{user_id}/transfer-ownership`](#post-v1membersuser_idtransfer-ownership) | Promote replacement owner and demote caller atomically | error path only |
-| GET | [`/v1/invitations`](#get-v1invitations) | List workspace invitations without token hashes | yes |
-| POST | [`/v1/invitations`](#post-v1invitations) | Invite a member (owner/admin sessions only) | yes |
-| GET | [`/v1/invitations/received`](#get-v1invitationsreceived) | List pending invitations for the signed-in user | error path only |
-| DELETE | [`/v1/invitations/{id}`](#delete-v1invitationsid) | Revoke pending workspace invitation | yes |
-| POST | [`/v1/auth/invitations/{token}/accept`](#post-v1authinvitationstokenaccept) | Accept invitation using verified matching session identity | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/members`](#get-v1members) | List workspace members (owner/admin sessions only) |
+| POST | [`/v1/members`](#post-v1members) | Invite a member (owner/admin sessions only) |
+| PUT | [`/v1/members/{user_id}/role`](#put-v1membersuser_idrole) | Change member role (owner/admin sessions only) |
+| DELETE | [`/v1/members/{user_id}`](#delete-v1membersuser_id) | Remove member while preserving last owner |
+| POST | [`/v1/members/{user_id}/transfer-ownership`](#post-v1membersuser_idtransfer-ownership) | Promote replacement owner and demote caller atomically |
+| GET | [`/v1/invitations`](#get-v1invitations) | List workspace invitations without token hashes |
+| POST | [`/v1/invitations`](#post-v1invitations) | Invite a member (owner/admin sessions only) |
+| GET | [`/v1/invitations/received`](#get-v1invitationsreceived) | List pending invitations for the signed-in user |
+| DELETE | [`/v1/invitations/{id}`](#delete-v1invitationsid) | Revoke pending workspace invitation |
+| POST | [`/v1/auth/invitations/{token}/accept`](#post-v1authinvitationstokenaccept) | Accept invitation using verified matching session identity |
 
-### GET /v1/members
+## GET /v1/members
 
 **List workspace members (owner/admin sessions only)**
 
@@ -65,7 +65,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/members" \
@@ -90,7 +90,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/members
+## POST /v1/members
 
 **Invite a member (owner/admin sessions only)**
 
@@ -140,7 +140,7 @@ Response `201` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/members" \
@@ -163,7 +163,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### PUT /v1/members/{user_id}/role
+## PUT /v1/members/{user_id}/role
 
 **Change member role (owner/admin sessions only)**
 
@@ -201,7 +201,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/members/d06972ac-49fe-4566-9940-89fa63f29bd8/role" \
@@ -223,9 +223,9 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No second member can join locally (invitation acceptance needs a verified email), so the call targets a real user who is not a member and gets 404.
+The user named here is not a member of the workspace, so the call answers `404`.
 
-### DELETE /v1/members/{user_id}
+## DELETE /v1/members/{user_id}
 
 **Remove member while preserving last owner**
 
@@ -257,7 +257,7 @@ Session-only team management. Owner/admin required; admins cannot grant or modif
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/members/d06972ac-49fe-4566-9940-89fa63f29bd8" \
@@ -277,9 +277,9 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Same limitation: there is no second member to remove.
+This workspace has no second member, so removing one answers `404`, as here.
 
-### POST /v1/members/{user_id}/transfer-ownership
+## POST /v1/members/{user_id}/transfer-ownership
 
 **Promote replacement owner and demote caller atomically**
 
@@ -311,7 +311,7 @@ Session-only team management. Owner/admin required; admins cannot grant or modif
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/members/d06972ac-49fe-4566-9940-89fa63f29bd8/transfer-ownership" \
@@ -333,9 +333,9 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Same limitation: there is no second member to transfer ownership to.
+Ownership can only move to an existing member of the workspace. Naming anyone else is refused like this.
 
-### GET /v1/invitations
+## GET /v1/invitations
 
 **List workspace invitations without token hashes**
 
@@ -383,7 +383,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/invitations" \
@@ -422,7 +422,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/invitations
+## POST /v1/invitations
 
 **Invite a member (owner/admin sessions only)**
 
@@ -472,7 +472,7 @@ Response `201` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/invitations" \
@@ -495,7 +495,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/invitations/received
+## GET /v1/invitations/received
 
 **List pending invitations for the signed-in user**
 
@@ -533,7 +533,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/invitations/received" \
@@ -551,9 +551,9 @@ Response `403` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Requires a verified email identity, which cannot be obtained without email delivery, so the call is refused.
+This needs a verified email address. Until the account has one, the call is refused like this.
 
-### DELETE /v1/invitations/{id}
+## DELETE /v1/invitations/{id}
 
 **Revoke pending workspace invitation**
 
@@ -585,7 +585,7 @@ Session-only team management. Owner/admin required; admins cannot grant or modif
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/invitations/0518069d-aad0-48e9-beba-dcadf454e2b6" \
@@ -598,7 +598,7 @@ Response `204` (`application/json`):
 
 _Empty body._
 
-### POST /v1/auth/invitations/{token}/accept
+## POST /v1/auth/invitations/{token}/accept
 
 **Accept invitation using verified matching session identity**
 
@@ -639,7 +639,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/invitations/189deb.../accept" \
@@ -657,5 +657,5 @@ Response `403` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Accepting requires the invitee to have a verified email, and email verification needs email delivery (disabled here), so only the refusal is shown.
+Accepting an invitation requires the invitee to have a verified email address. Until they do, it is refused like this.
 

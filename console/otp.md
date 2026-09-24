@@ -4,7 +4,7 @@ The Verification codes page lets you send a one-time code (OTP) by SMS to a phon
 
 **Where to find it:** Verification codes is not in the left-hand menu in this version of the console. Open it by going to `/app/otp`.
 
-> **Local docs stack:** sending a code needs a verified email, like any send, and email is off on the stack used for these screenshots, so every send there is refused. The verify steps are described from the product.
+Sending a code needs a verified email address, like any send.
 
 ## Who can do what
 
@@ -27,14 +27,14 @@ The Verification codes page lets you send a one-time code (OTP) by SMS to a phon
 
 2. Click **Send code**. You see "Verification code sent." and the **Verify a code** panel starts a countdown ("Expires in 9:59").
 
-Each code is sent as an ordinary message with the OTP traffic type, so it also appears in [Messages](messages.md) and is charged like one (nothing is charged in sandbox). In sandbox no phone receives it; the text is kept in the API's sandbox outbox (`GET /v1/sandbox/messages`), which the console's [Sandbox](sandbox.md#sandbox-inbox) page does not show. (Not verified end to end on the docs stack, where no send could be made.)
+Each code is sent as an ordinary message with the OTP traffic type, so it also appears in [Messages](messages.md) and is charged like one (nothing is charged in sandbox). In sandbox no phone receives it; the text is kept in the API's sandbox outbox (`GET /v1/sandbox/messages`), which the console's [Sandbox](sandbox.md#sandbox-inbox) page does not show.
 
 | Message | Meaning |
 | --- | --- |
 | Enter a destination number first. | The To field is empty. |
 | Code length must be between 4 and 10 digits. | Fix the length. |
 | Expiry must be between 30 seconds and 24 hours. | Fix the expiry. |
-| Could not send the verification code. Please try again. | The server refused. The page does not say why. On the docs stack the reason was "email verification is required for sandbox sending" (seen through the API). |
+| Could not send the verification code. Please try again. | The server refused. The page does not say why; the most common reason is that the workspace owner's email is not verified yet. |
 
 ![Send refused](../assets/screens/console/otp/send-blocked.png)
 

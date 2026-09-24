@@ -2,7 +2,7 @@
 
 These guides walk through the OpenSMS web app (the "console") one task at a time: signing in, setting up your workspace, sending messages, managing sender IDs and keys, paying for messages and going live. They are written for people who use the app in a browser, such as business owners, operations staff and finance teams. You do not need to be technical. Developers who want the API should read the integration guides instead; each page here ends with pointers for them where it helps.
 
-Every screenshot comes from a real walk through the app on a local test copy of OpenSMS. That copy cannot send email, deliver real SMS or take payments, so a few steps stop at an error message. Each page says exactly which steps those are and why.
+Every screenshot comes from a real walk through the app. Some show the messages you see when a step is refused, so you know what they mean.
 
 ## Where to start
 

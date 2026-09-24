@@ -6,17 +6,17 @@ Liveness, readiness and metrics endpoints for whoever runs the API process. Not 
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/metrics`](#get-metrics) | Operational Prometheus scrape on the optional dedicated listener | no |
-| GET | [`/healthz`](#get-healthz) | Check service health | yes |
-| GET | [`/readyz`](#get-readyz) | Check service readiness | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/metrics`](#get-metrics) | Operational Prometheus scrape on the optional dedicated listener |
+| GET | [`/healthz`](#get-healthz) | Check service health |
+| GET | [`/readyz`](#get-readyz) | Check service readiness |
 
-### GET /metrics
+## GET /metrics
 
 **Operational Prometheus scrape on the optional dedicated listener**
 
-Operation ID: _none in contract_. Tag: _none in contract_. Server: `http://127.0.0.1:19090`.
+Operation ID: _none in contract_. Tag: _none in contract_.
 
 Not served on the customer API port. Enable the separate metrics listener explicitly. Non-loopback listeners require their configured bearer token. Measurements are operational and are not financial accounting.
 
@@ -32,9 +32,9 @@ Not served on the customer API port. Enable the separate metrics listener explic
 | `401` | Missing or invalid metrics bearer token | No body |
 | `503` | Scrape concurrency or timeout limit reached | No body |
 
-**Example:** not exercised live. Served only on the optional dedicated metrics listener (a separate port), which the docs stack does not enable. On the API port the path answers 404.
+**Example:** none. Operator-only: served on a separate metrics listener that the operator enables, never on the public API. On the API itself this path answers `404`.
 
-### GET /healthz
+## GET /healthz
 
 **Check service health**
 
@@ -52,7 +52,7 @@ Reports process liveness without contacting dependencies. Use readiness to gate 
 | --- | --- | --- |
 | `200` | The API process is serving HTTP. | `text/plain`: string |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/healthz"
@@ -64,7 +64,7 @@ Response `200` (`text/plain`):
 ok
 ```
 
-### GET /readyz
+## GET /readyz
 
 **Check service readiness**
 
@@ -83,7 +83,7 @@ Checks shutdown state, PostgreSQL, Redis, and enabled JetStream and scanner depe
 | `200` | The service is ready. | `text/plain`: string |
 | `503` | A required dependency is unavailable. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/readyz"

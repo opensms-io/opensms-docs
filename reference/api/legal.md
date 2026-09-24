@@ -6,13 +6,13 @@ Current legal documents (terms, privacy, DPA) and the workspace's recorded accep
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/legal/documents`](#get-v1legaldocuments) | List current published legal documents | yes |
-| POST | [`/v1/legal/accept`](#post-v1legalaccept) | Accept a current legal version for the authenticated member | yes |
-| GET | [`/v1/legal/acceptances`](#get-v1legalacceptances) | List the authenticated member's acceptance history for a workspace | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/legal/documents`](#get-v1legaldocuments) | List current published legal documents |
+| POST | [`/v1/legal/accept`](#post-v1legalaccept) | Accept a current legal version for the authenticated member |
+| GET | [`/v1/legal/acceptances`](#get-v1legalacceptances) | List the authenticated member's acceptance history for a workspace |
 
-### GET /v1/legal/documents
+## GET /v1/legal/documents
 
 **List current published legal documents**
 
@@ -43,7 +43,7 @@ Response `200` fields:
 | `documents[].url` | string (uri) | yes |  |  |
 | `documents[].published_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/legal/documents" \
@@ -82,7 +82,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/legal/accept
+## POST /v1/legal/accept
 
 **Accept a current legal version for the authenticated member**
 
@@ -128,7 +128,7 @@ Response `200` fields:
 | `workspace_id` | string (uuid) | yes |  |  |
 | `accepted_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/legal/accept" \
@@ -151,7 +151,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/legal/acceptances
+## GET /v1/legal/acceptances
 
 **List the authenticated member's acceptance history for a workspace**
 
@@ -188,7 +188,7 @@ Response `200` fields:
 | `acceptances[].version` | string | yes |  |  |
 | `acceptances[].accepted_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/legal/acceptances" \

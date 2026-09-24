@@ -6,11 +6,11 @@ Inbound delivery-receipt callbacks from upstream SMS providers. These are called
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/callbacks/providers/{provider_id}/dlr`](#post-callbacksprovidersprovider_iddlr) | Store authenticated provider receipt evidence | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/callbacks/providers/{provider_id}/dlr`](#post-callbacksprovidersprovider_iddlr) | Store authenticated provider receipt evidence |
 
-### POST /callbacks/providers/{provider_id}/dlr
+## POST /callbacks/providers/{provider_id}/dlr
 
 **Store authenticated provider receipt evidence**
 
@@ -46,7 +46,7 @@ Type: map of string.
 | `413` | Receipt exceeds 64 KiB | No body |
 | `503` | Receipt persistence unavailable | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/callbacks/providers/00000000-0000-4000-8000-000000000000/dlr" \
@@ -65,5 +65,5 @@ Response `401` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Only an upstream provider holding that provider's receipt credential can post receipts; without one the endpoint answers 401.
+Only an upstream provider holding that provider's receipt credential can post receipts. Without it the endpoint answers `401`, as here.
 

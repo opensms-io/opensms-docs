@@ -2,17 +2,17 @@
 
 # Status
 
-The public service status page data and status-update email subscriptions. No authentication. For developers who want to surface opensms health in their own tooling.
+The public service status page data and status-update email subscriptions. No authentication. For developers who want to surface OpenSMS health in their own tooling.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/status`](#get-status) | Get public service status | yes |
-| POST | [`/status/subscribe`](#post-statussubscribe) | Subscribe to status updates | yes |
-| GET | [`/status/subscribe/confirm`](#get-statussubscribeconfirm) | Confirm a status subscription | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/status`](#get-status) | Get public service status |
+| POST | [`/status/subscribe`](#post-statussubscribe) | Subscribe to status updates |
+| GET | [`/status/subscribe/confirm`](#get-statussubscribeconfirm) | Confirm a status subscription |
 
-### GET /status
+## GET /status
 
 **Get public service status**
 
@@ -38,7 +38,7 @@ Response `200` fields:
 | `components` | array of object | yes |  |  |
 | `incidents` | array of object | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/status"
@@ -85,7 +85,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `components` shows 3 of 44 items.
 
-### POST /status/subscribe
+## POST /status/subscribe
 
 **Subscribe to status updates**
 
@@ -112,7 +112,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `400` | Invalid email. | No body |
 | `429` | Too many attempts. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/status/subscribe" \
@@ -130,7 +130,7 @@ Response `202` (`application/json`):
 }
 ```
 
-### GET /status/subscribe/confirm
+## GET /status/subscribe/confirm
 
 **Confirm a status subscription**
 
@@ -154,7 +154,7 @@ Operation ID: `confirmStatusSubscription`. Tag: `Status`.
 | `400` | Token required. | No body |
 | `404` | Subscription not found. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/status/subscribe/confirm?token=0c7ae8..."

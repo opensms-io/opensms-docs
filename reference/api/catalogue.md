@@ -6,13 +6,13 @@ Public reference data: supported countries, carriers and routes. No authenticati
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/countries`](#get-v1countries) | List active destination countries with workspace pricing | yes |
-| GET | [`/v1/countries/{iso2}/carriers`](#get-v1countriesiso2carriers) | List carriers for a country | yes |
-| GET | [`/v1/countries/{iso2}/routes`](#get-v1countriesiso2routes) | List public routable providers for a country | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/countries`](#get-v1countries) | List active destination countries with workspace pricing |
+| GET | [`/v1/countries/{iso2}/carriers`](#get-v1countriesiso2carriers) | List carriers for a country |
+| GET | [`/v1/countries/{iso2}/routes`](#get-v1countriesiso2routes) | List public routable providers for a country |
 
-### GET /v1/countries
+## GET /v1/countries
 
 **List active destination countries with workspace pricing**
 
@@ -46,7 +46,7 @@ Response `200` fields (per array item):
 | `sender_kinds` | array of string | yes |  | One of: `alphanumeric`, `numeric`. |
 | `providers_available` | integer | yes |  | Constraints: minimum `0`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/countries"
@@ -97,7 +97,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `(root)` shows 3 of 6 items.
 
-### GET /v1/countries/{iso2}/carriers
+## GET /v1/countries/{iso2}/carriers
 
 **List carriers for a country**
 
@@ -129,7 +129,7 @@ Response `200` fields (per array item):
 | `mcc_mnc` | array of string | yes |  |  |
 | `prefixes` | array of string | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/countries/KE/carriers"
@@ -162,7 +162,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `[0].prefixes` shows 3 of 6 items; `(root)` shows 3 of 14 items.
 
-### GET /v1/countries/{iso2}/routes
+## GET /v1/countries/{iso2}/routes
 
 **List public routable providers for a country**
 
@@ -202,7 +202,7 @@ Response `200` fields (per array item):
 | `sell_price.currency` | string | yes |  |  |
 | `p50_ms` | integer \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/countries/KE/routes"
@@ -214,5 +214,5 @@ Response `200` (`application/json`):
 []
 ```
 
-The docs stack has no customer-visible KE routes configured, so the list is empty.
+No customer-visible routes were configured for KE when this was captured, so the list is empty.
 

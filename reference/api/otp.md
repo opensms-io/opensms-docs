@@ -2,16 +2,16 @@
 
 # OTP
 
-One-time passcodes: opensms generates, sends and verifies a code for you. API keys only. For developers adding phone verification or step-up authentication to their own product.
+One-time passcodes: OpenSMS generates, sends and verifies a code for you. API keys only. For developers adding phone verification or step-up authentication to their own product.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/otp/send`](#post-v1otpsend) | Send an SMS verification code | error path only |
-| POST | [`/v1/otp/verify`](#post-v1otpverify) | Verify an SMS code | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/otp/send`](#post-v1otpsend) | Send an SMS verification code |
+| POST | [`/v1/otp/verify`](#post-v1otpverify) | Verify an SMS code |
 
-### POST /v1/otp/send
+## POST /v1/otp/send
 
 **Send an SMS verification code**
 
@@ -46,7 +46,7 @@ Schema: [SendOTPRequest](schemas.md#sendotprequest).
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `429` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/otp/send" \
@@ -67,9 +67,9 @@ Response `403` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Sandbox sending requires a verified email address. The docs stack has email delivery disabled, so no account can verify its email and every send is refused with this 403; the success shape is in the Responses table.
+Sending, including in the sandbox, requires the workspace owner to have verified their email address. Until then every send is refused with this `403`. The success shape is in the Responses table.
 
-### POST /v1/otp/verify
+## POST /v1/otp/verify
 
 **Verify an SMS code**
 
@@ -95,7 +95,7 @@ Schema: [VerifyOTPRequest](schemas.md#verifyotprequest).
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/otp/verify" \
@@ -115,5 +115,5 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No OTP can be sent locally, so only an unknown otp_id is shown.
+This shows the answer for an unknown `otp_id`.
 

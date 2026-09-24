@@ -4,26 +4,26 @@
 
 Check, quote, draft, register and manage alphanumeric and numeric sender IDs. For developers automating sender ID registration.
 
-**Supporting documents (served, but not in the contract).** `POST /v1/sender-ids` needs the IDs of three uploaded documents, one of each kind `certificate`, `signatory-id` and `authorization`. They are uploaded with `POST /v1/sender-documents`, which the running API serves but `customer.yaml` does not declare (see [COVERAGE.md](COVERAGE.md#routes-served-but-not-in-the-contract)). It takes a session token with `X-Workspace-ID` and `X-Environment` (owner or admin only; API keys are refused with 401), and a `multipart/form-data` body with one `kind` field, one `file` (PDF, PNG or JPEG, at most 10 MiB) and an optional `replaces_document_id`. It answers `201` with `id`, `kind`, `filename`, `content_type`, `size`, `scan_status`, `review_status`, `version`, `is_current` and `created_at`. A document still `pending` its malware scan is accepted for registration. `GET /v1/sender-documents` lists the workspace's documents and `GET /v1/sender-documents/{id}/download` returns one once its scan is `clean`. The registration example below was captured after uploading three documents this way.
+**Supporting documents (served, but not in the contract).** `POST /v1/sender-ids` needs the IDs of three uploaded documents, one of each kind `certificate`, `signatory-id` and `authorization`. They are uploaded with `POST /v1/sender-documents`, which is not yet in the OpenAPI contract. It takes a session token with `X-Workspace-ID` and `X-Environment` (owner or admin only; API keys are refused with 401), and a `multipart/form-data` body with one `kind` field, one `file` (PDF, PNG or JPEG, at most 10 MiB) and an optional `replaces_document_id`. It answers `201` with `id`, `kind`, `filename`, `content_type`, `size`, `scan_status`, `review_status`, `version`, `is_current` and `created_at`. A document still `pending` its malware scan is accepted for registration. `GET /v1/sender-documents` lists the workspace's documents and `GET /v1/sender-documents/{id}/download` returns one once its scan is `clean`. The registration example below was captured after uploading three documents this way.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/sender-ids/check`](#get-v1sender-idscheck) | Check sender ID format, workspace duplicate and reserved identity | yes |
-| GET | [`/v1/sender-id-drafts`](#get-v1sender-id-drafts) | List workspace sender application drafts | yes |
-| POST | [`/v1/sender-id-drafts`](#post-v1sender-id-drafts) | Save or reopen a sender application draft | yes |
-| GET | [`/v1/sender-id-drafts/{id}`](#get-v1sender-id-draftsid) |  | yes |
-| PATCH | [`/v1/sender-id-drafts/{id}`](#patch-v1sender-id-draftsid) |  | yes |
-| DELETE | [`/v1/sender-id-drafts/{id}`](#delete-v1sender-id-draftsid) |  | yes |
-| GET | [`/v1/sender-ids/quote`](#get-v1sender-idsquote) | Quote current provider registration fees for selected markets | yes |
-| GET | [`/v1/sender-ids`](#get-v1sender-ids) | List sender-ids | yes |
-| POST | [`/v1/sender-ids`](#post-v1sender-ids) | Request sender ID | yes |
-| GET | [`/v1/sender-ids/{id}`](#get-v1sender-idsid) | Read sender ID | yes |
-| PATCH | [`/v1/sender-ids/{id}`](#patch-v1sender-idsid) | Amend and resubmit a rejected sender ID | error path only |
-| DELETE | [`/v1/sender-ids/{id}`](#delete-v1sender-idsid) | Delete sender ID | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/sender-ids/check`](#get-v1sender-idscheck) | Check sender ID format, workspace duplicate and reserved identity |
+| GET | [`/v1/sender-id-drafts`](#get-v1sender-id-drafts) | List workspace sender application drafts |
+| POST | [`/v1/sender-id-drafts`](#post-v1sender-id-drafts) | Save or reopen a sender application draft |
+| GET | [`/v1/sender-id-drafts/{id}`](#get-v1sender-id-draftsid) |  |
+| PATCH | [`/v1/sender-id-drafts/{id}`](#patch-v1sender-id-draftsid) |  |
+| DELETE | [`/v1/sender-id-drafts/{id}`](#delete-v1sender-id-draftsid) |  |
+| GET | [`/v1/sender-ids/quote`](#get-v1sender-idsquote) | Quote current provider registration fees for selected markets |
+| GET | [`/v1/sender-ids`](#get-v1sender-ids) | List sender-ids |
+| POST | [`/v1/sender-ids`](#post-v1sender-ids) | Request sender ID |
+| GET | [`/v1/sender-ids/{id}`](#get-v1sender-idsid) | Read sender ID |
+| PATCH | [`/v1/sender-ids/{id}`](#patch-v1sender-idsid) | Amend and resubmit a rejected sender ID |
+| DELETE | [`/v1/sender-ids/{id}`](#delete-v1sender-idsid) | Delete sender ID |
 
-### GET /v1/sender-ids/check
+## GET /v1/sender-ids/check
 
 **Check sender ID format, workspace duplicate and reserved identity**
 
@@ -63,7 +63,7 @@ Response `200` fields:
 | `reserved` | boolean | yes |  |  |
 | `reason` | string | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/check?value=ACMECO&country=KE" \
@@ -81,7 +81,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/sender-id-drafts
+## GET /v1/sender-id-drafts
 
 **List workspace sender application drafts**
 
@@ -109,7 +109,7 @@ Operation ID: `listSenderIdDrafts`. Tag: _none in contract_.
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-id-drafts" \
@@ -141,7 +141,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/sender-id-drafts
+## POST /v1/sender-id-drafts
 
 **Save or reopen a sender application draft**
 
@@ -184,7 +184,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/sender-id-drafts" \
@@ -219,7 +219,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/sender-id-drafts/{id}
+## GET /v1/sender-id-drafts/{id}
 
 **(no summary in contract)**
 
@@ -246,7 +246,7 @@ Operation ID: `getSenderIdDraft`. Tag: _none in contract_.
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-id-drafts/4efae51b-735b-4fea-83d7-7ecc1870a58f" \
@@ -273,7 +273,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PATCH /v1/sender-id-drafts/{id}
+## PATCH /v1/sender-id-drafts/{id}
 
 **(no summary in contract)**
 
@@ -317,7 +317,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/sender-id-drafts/4efae51b-735b-4fea-83d7-7ecc1870a58f" \
@@ -346,7 +346,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/sender-id-drafts/{id}
+## DELETE /v1/sender-id-drafts/{id}
 
 **(no summary in contract)**
 
@@ -373,7 +373,7 @@ Operation ID: `deleteSenderIdDraft`. Tag: _none in contract_.
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/sender-id-drafts/4efae51b-735b-4fea-83d7-7ecc1870a58f" \
@@ -384,7 +384,7 @@ Response `204`:
 
 _Empty body._
 
-### GET /v1/sender-ids/quote
+## GET /v1/sender-ids/quote
 
 **Quote current provider registration fees for selected markets**
 
@@ -413,7 +413,7 @@ Operation ID: `quoteSenderIdRegistration`. Tag: _none in contract_.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/quote?countries=KE" \
@@ -437,7 +437,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/sender-ids
+## GET /v1/sender-ids
 
 **List sender-ids**
 
@@ -468,7 +468,7 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-ids" \
@@ -495,7 +495,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/sender-ids
+## POST /v1/sender-ids
 
 **Request sender ID**
 
@@ -559,7 +559,7 @@ Response `201` fields:
 | `created_at` | string (date-time) | no |  |  |
 | `registrations` | array of object | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/sender-ids" \
@@ -609,7 +609,7 @@ Response `201` (`application/json`):
 
 The three `documents` are IDs returned by `POST /v1/sender-documents` (see the note at the top of this page). The sender waits in `pending_admin` until an operator decides it.
 
-**Example: missing documents** (captured live from the local stack)
+**Example: missing documents**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/sender-ids" \
@@ -636,7 +636,7 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-### GET /v1/sender-ids/{id}
+## GET /v1/sender-ids/{id}
 
 **Read sender ID**
 
@@ -686,7 +686,7 @@ Response `200` fields:
 | `created_at` | string (date-time) | no |  |  |
 | `registrations` | array of object | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/222ff8e6-1629-48a9-9181-ee110d2e6ad5" \
@@ -710,7 +710,7 @@ Response `200` (`application/json`):
 }
 ```
 
-**Example: after registering** (captured live from the local stack)
+**Example: after registering**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/888d3b7a-6356-411f-a5d2-6fb29c47e517" \
@@ -749,7 +749,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PATCH /v1/sender-ids/{id}
+## PATCH /v1/sender-ids/{id}
 
 **Amend and resubmit a rejected sender ID**
 
@@ -789,7 +789,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `409` | Sender ID is not rejected or cannot be amended. | No body |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/sender-ids/888d3b7a-6356-411f-a5d2-6fb29c47e517" \
@@ -818,9 +818,9 @@ Response `409` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Only a sender whose request or a registration was rejected can be amended. Rejecting one needs an operator with a fresh admin TOTP, which the docs stack's operator account does not have, so the sender is still `pending_admin` and the amendment is refused.
+Only a sender ID whose request or registration was rejected can be amended. One that is still `pending_admin` is refused like this.
 
-**Example: unknown ID** (captured live from the local stack)
+**Example: unknown ID**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/sender-ids/00000000-0000-4000-8000-000000000000" \
@@ -840,7 +840,7 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-### DELETE /v1/sender-ids/{id}
+## DELETE /v1/sender-ids/{id}
 
 **Delete sender ID**
 
@@ -873,7 +873,7 @@ Owner/admin only.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/sender-ids/888d3b7a-6356-411f-a5d2-6fb29c47e517" \

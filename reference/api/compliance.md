@@ -6,18 +6,18 @@ Per-country compliance rules (stop keywords, quiet hours, content rules) and the
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/content-rules`](#get-v1content-rules) | List enabled content rules | yes |
-| GET | [`/v1/compliance/suppressions`](#get-v1compliancesuppressions) | List suppressions | yes |
-| POST | [`/v1/compliance/suppressions`](#post-v1compliancesuppressions) | Add suppression; owner/admin session or compliance:manage key | yes |
-| GET | [`/v1/countries/{iso2}/compliance`](#get-v1countriesiso2compliance) | Get public messaging compliance rules for a country | yes |
-| POST | [`/v1/compliance/suppressions/import`](#post-v1compliancesuppressionsimport) | Import suppressions as JSON; owner/admin session | yes |
-| DELETE | [`/v1/compliance/suppressions/{id}`](#delete-v1compliancesuppressionsid) | Remove workspace suppression; owner/admin session | yes |
-| GET | [`/v1/compliance/countries`](#get-v1compliancecountries) | Read compliance country information | yes |
-| GET | [`/v1/compliance/countries/{iso2}`](#get-v1compliancecountriesiso2) | Read compliance country information | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/content-rules`](#get-v1content-rules) | List enabled content rules |
+| GET | [`/v1/compliance/suppressions`](#get-v1compliancesuppressions) | List suppressions |
+| POST | [`/v1/compliance/suppressions`](#post-v1compliancesuppressions) | Add suppression; owner/admin session or compliance:manage key |
+| GET | [`/v1/countries/{iso2}/compliance`](#get-v1countriesiso2compliance) | Get public messaging compliance rules for a country |
+| POST | [`/v1/compliance/suppressions/import`](#post-v1compliancesuppressionsimport) | Import suppressions as JSON; owner/admin session |
+| DELETE | [`/v1/compliance/suppressions/{id}`](#delete-v1compliancesuppressionsid) | Remove workspace suppression; owner/admin session |
+| GET | [`/v1/compliance/countries`](#get-v1compliancecountries) | Read compliance country information |
+| GET | [`/v1/compliance/countries/{iso2}`](#get-v1compliancecountriesiso2) | Read compliance country information |
 
-### GET /v1/content-rules
+## GET /v1/content-rules
 
 **List enabled content rules**
 
@@ -45,7 +45,7 @@ Read-only view of the enabled platform content rules (global and per-country) so
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/content-rules" \
@@ -88,7 +88,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `(root)` shows 3 of 8 items.
 
-### GET /v1/compliance/suppressions
+## GET /v1/compliance/suppressions
 
 **List suppressions**
 
@@ -119,7 +119,7 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/compliance/suppressions" \
@@ -154,7 +154,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/compliance/suppressions
+## POST /v1/compliance/suppressions
 
 **Add suppression; owner/admin session or compliance:manage key**
 
@@ -191,7 +191,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/compliance/suppressions" \
@@ -212,7 +212,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/countries/{iso2}/compliance
+## GET /v1/countries/{iso2}/compliance
 
 **Get public messaging compliance rules for a country**
 
@@ -248,7 +248,7 @@ Response `200` fields:
 | `quiet_hours` | array of object | yes |  |  |
 | `content_rules` | array of object | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/countries/KE/compliance"
@@ -299,7 +299,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `content_rules` shows 3 of 4 items.
 
-### POST /v1/compliance/suppressions/import
+## POST /v1/compliance/suppressions/import
 
 **Import suppressions as JSON; owner/admin session**
 
@@ -337,7 +337,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/compliance/suppressions/import" \
@@ -367,7 +367,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### DELETE /v1/compliance/suppressions/{id}
+## DELETE /v1/compliance/suppressions/{id}
 
 **Remove workspace suppression; owner/admin session**
 
@@ -398,7 +398,7 @@ Operation ID: _none in contract_. Tag: _none in contract_.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/compliance/suppressions/34" \
@@ -409,7 +409,7 @@ Response `204`:
 
 _Empty body._
 
-### GET /v1/compliance/countries
+## GET /v1/compliance/countries
 
 **Read compliance country information**
 
@@ -439,7 +439,7 @@ Operation ID: _none in contract_. Tag: _none in contract_.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/compliance/countries" \
@@ -482,7 +482,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `(root)` shows 3 of 9 items.
 
-### GET /v1/compliance/countries/{iso2}
+## GET /v1/compliance/countries/{iso2}
 
 **Read compliance country information**
 
@@ -513,7 +513,7 @@ Operation ID: _none in contract_. Tag: _none in contract_.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/compliance/countries/KE" \

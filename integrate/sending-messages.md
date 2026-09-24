@@ -2,8 +2,6 @@
 
 This page covers everything about outbound SMS through the API: single sends, scheduling and cancellation, batches, sender IDs, encoding and segments, the status lifecycle and delivery attempts. It is for developers building the sending side of an integration. Authentication is covered in [authentication](authentication.md); status notifications in [delivery reports and webhooks](delivery-reports-and-webhooks.md).
 
-> **Local stack limitation.** On the local docs stack no account can verify its email (email delivery is disabled), and sandbox sending requires a verified owner email. So every successful `201` shape on this page is described from the API code and contract rather than shown as a captured response, and the captured examples are the real refusals and list calls.
-
 ## Send one message
 
 `POST /v1/messages` with a key that has `messages:write` (or an owner, admin or developer session with `X-Workspace-ID` and `X-Environment`).
@@ -16,7 +14,7 @@ curl -s -X POST $OPENSMS_API/v1/messages \
   -d '{"to":"+254700000001","text":"Your order A-1001 has shipped.","traffic_type":"transactional","metadata":{"order_id":"A-1001"}}'
 ```
 
-On the local docs stack (owner email unverified) this returns:
+Once the workspace owner has verified their email, this returns `201 Created` with the message ([response fields](#response)). Before that, every send is refused:
 
 ```http
 HTTP/1.1 403 Forbidden
@@ -41,7 +39,7 @@ Unknown fields are rejected with `400` `"invalid JSON"`. The `Idempotency-Key` h
 
 ### Response
 
-`201 Created` with the message. Fields, from the handler's response type (`api/internal/messages/http.go`):
+`201 Created` with the message. Fields:
 
 | Field | Meaning |
 | --- | --- |
@@ -98,7 +96,7 @@ Quiet hours can also schedule a message for you: if a country has quiet hours fo
 
 ## Encoding and segments
 
-The server picks the encoding from the text and counts billed parts (`api/internal/messages/encoding.go`):
+The server picks the encoding from the text and counts billed parts:
 
 | Encoding | When | One part | Each part of a long message |
 | --- | --- | --- | --- |
@@ -130,7 +128,7 @@ Requesting your own sender ID is part of [going live](../getting-started/going-l
 | `otp` | Passcodes | Per-recipient limit 3 per 10 minutes by default. Set automatically by the [OTP API](otp.md). |
 | `marketing` | Promotions | Checked against the country's do-not-disturb registry. Usually stricter quiet hours. |
 
-Content rules can apply to specific traffic types. `GET /v1/content-rules` (key scope `compliance:read`) lists the enabled rules; `GET /v1/countries/{iso2}/compliance` (no credentials) shows a country's quiet hours, stop keywords and rules. Kenya, from the local stack:
+Content rules can apply to specific traffic types. `GET /v1/content-rules` (key scope `compliance:read`) lists the enabled rules; `GET /v1/countries/{iso2}/compliance` (no credentials) shows a country's quiet hours, stop keywords and rules. For Kenya:
 
 ```sh
 curl -s $OPENSMS_API/v1/countries/KE/compliance
@@ -156,7 +154,7 @@ So a marketing message to Kenya sent at 22:00 Nairobi time is accepted as `sched
 | `expired` | No delivery report arrived in time, or held too long | yes |
 | `cancelled` | Cancelled by you, by stopping its batch, or by an operator rejecting a held message | yes |
 
-Allowed transitions (`api/internal/messages/transition.go`):
+Allowed transitions:
 
 ```text
 queued    -> sending | scheduled | held | cancelled
@@ -247,7 +245,7 @@ curl -s -X POST $OPENSMS_API/v1/messages/batch -H "authorization: Bearer $OPENSM
 
 ### 3. Start
 
-`POST /v1/batches/{id}/start` with an `Idempotency-Key`. Each valid row goes through the same admission checks as a single send. Rows that pass become messages and the batch becomes `running`. Rows refused at this point are marked invalid in the validation report with `error` and `rejection_status`; if none pass, the batch becomes `failed`. On the local docs stack every row is refused by the email gate:
+`POST /v1/batches/{id}/start` with an `Idempotency-Key`. Each valid row goes through the same admission checks as a single send. Rows that pass become messages and the batch becomes `running`. Rows refused at this point are marked invalid in the validation report with `error` and `rejection_status`; if none pass, the batch becomes `failed`. If the workspace owner has not verified their email yet, every row is refused by the email gate:
 
 ```json
 {"id":"21553ee4-fa11-42cb-b085-0b86c208deaf","status":"failed","total":4,"sent":0,"delivered":0,"failed":0,"invalid":4,"duplicates":1,"suppressed":0,"estimated_cost":0,"created_at":"2026-09-24T07:27:23.965346+03:00"}

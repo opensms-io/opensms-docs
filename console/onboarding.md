@@ -29,7 +29,7 @@ The address is `/onboarding/markets`.
 
 What this does: your choices are saved with your sender ID draft, so the sender ID application later knows which countries to register in. As the page says, picking a market **does not switch on any sending route**. Which countries you can really reach is shown in [Routes](routes.md).
 
-The list shows only countries that OpenSMS has switched on. On the docs stack those are the United Kingdom, Ghana, Kenya, Nigeria, the United States and South Africa.
+The list shows only countries that OpenSMS has switched on, for example Ghana, Kenya, Nigeria and South Africa.
 
 **Back** returns to the email code step.
 

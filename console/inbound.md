@@ -6,7 +6,7 @@ Inbound shows the text messages people send **to** your numbers (replies, keywor
 
 **Not functional yet.** In the current build of OpenSMS no part of the platform receives incoming texts from carriers into this list, and nothing carries out the rules you save here. The page, the reply form and the rule editor exist and save data, but treat Inbound as a preview until incoming messages are wired up.
 
-**Live workspaces only.** Inbound belongs to numbers you rent in [Numbers](numbers.md), and numbers only exist for live workspaces. In sandbox both tabs are always empty, and saving a rule or replying is refused. The local docs stack has no live workspace, so the screenshots below show the empty states, and the steps are described from the page itself.
+**Live workspaces only.** Inbound belongs to numbers you rent in [Numbers](numbers.md), and numbers only exist for live workspaces. In sandbox both tabs are always empty, and saving a rule or replying is refused. The screenshots below show a sandbox workspace, so both tabs are empty.
 
 ## Who can do what
 

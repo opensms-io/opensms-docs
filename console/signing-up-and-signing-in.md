@@ -2,8 +2,6 @@
 
 This guide covers getting into OpenSMS: creating an account, verifying your email, logging in with a password or an emailed code, two-factor authentication, resetting a forgotten password, choosing between workspaces, and joining a team you were invited to. It is written for anyone who uses the OpenSMS web app, whatever their role.
 
-> **Local docs stack:** these screenshots come from a test copy of OpenSMS with email switched off. Anything that needs an email to arrive (the verification code, a login code, a password reset link, an invitation link) stops with an "email delivery" message in these screenshots. On a real deployment those emails are sent normally.
-
 ## Create an account
 
 Anyone can sign up. The person who signs up becomes the **owner** of a new workspace.
@@ -50,7 +48,7 @@ Codes expire after 10 minutes. A wrong or expired code turns the boxes red and s
 
 If you skip this step (for example by closing the tab), you can finish it later from **Go live > Verify your email address**.
 
-> On the local docs stack the page shows the error "email delivery is not configured", because no email can be sent. For the same reason, none of the accounts used for these guides could be verified, so the guides show sandbox sending up to the point where the server refuses it.
+If the page shows "email delivery is not configured", no email can be sent right now; try again later or contact OpenSMS support.
 
 ## Log in
 
@@ -92,9 +90,9 @@ If you prefer not to type your password, you can ask for a one-time code instead
 
 The page never tells you whether an account exists for that email ("If an account exists for ..."). That is deliberate, so nobody can use it to find out who has an account.
 
-> On the local docs stack, clicking **or email me a code** shows "email delivery unavailable" and stays on the login page:
->
-> ![Login code request refused because email is off](../assets/screens/console/auth/login-code-unavailable.png)
+If email cannot be sent right now, clicking **or email me a code** shows "email delivery unavailable" and stays on the login page. Log in with your password instead:
+
+![Login code request refused because email cannot be sent](../assets/screens/console/auth/login-code-unavailable.png)
 
 ## Two-factor authentication
 
@@ -139,9 +137,9 @@ The new-password form checks your entry before sending it:
 
 ![A reset link that is not valid](../assets/screens/console/auth/reset-password-bad-token.png)
 
-> On the local docs stack, **Send reset link** shows "email delivery unavailable" because no email can go out, so the full reset cannot be completed here:
->
-> ![Reset link refused because email is off](../assets/screens/console/auth/forgot-password-unavailable.png)
+If email cannot be sent right now, **Send reset link** shows "email delivery unavailable". Try again later:
+
+![Reset link refused because email cannot be sent](../assets/screens/console/auth/forgot-password-unavailable.png)
 
 There is no "change password" form inside the console. To change a password you know, sign out and use **Forgot password?**.
 
@@ -188,8 +186,6 @@ Rules the server enforces:
 - An invitation can be used once. An expired, revoked or already used link shows "Could not accept this invitation. The link may have expired."
 
 If you are signed in and have been invited somewhere, the workspace chooser shows a **Pending invitations** card with the workspace name and the role you were invited as. There is no Accept button on that card: accepting only works from the link in the email, because the server never shows the invitation code again. See the screenshot in [Settings > Team](settings.md#what-the-invited-person-sees).
-
-> On the local docs stack invitation emails are not sent, and no account can verify its email, so accepting an invitation cannot be completed here.
 
 ## Sign out
 

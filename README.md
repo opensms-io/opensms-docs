@@ -1,25 +1,26 @@
-# opensms documentation
+# OpenSMS documentation
 
-opensms is a prepaid SMS platform for Africa: a workspace tops up a wallet and sends messages,
-batches and one-time passcodes through an API or a web app, and opensms routes each message to an
+OpenSMS is a prepaid SMS platform for Africa: a workspace tops up a wallet and sends messages,
+batches and one-time passcodes through an API or a web app, and OpenSMS routes each message to an
 upstream provider in the destination country. These docs cover it end to end, for everyone who
 touches it: developers integrating the API, people using the web app, operators running the
 platform, and engineers deploying it.
 
-Every example on these pages came from a real call to a running opensms API, and the flows are
-re-run by the tests in [`tests/`](tests). Where the code and older notes disagreed, the docs follow
+The examples on these pages were run against an OpenSMS API, and the flows are re-run by the tests
+in [`tests/`](tests). Where a successful response could not be produced in the sandbox (for example a send
+before the account is verified), it is described from the API contract instead. Where the code and older notes disagreed, the docs follow
 the code; the differences are collected in [known issues](known-issues.md).
 
 ## Start here
 
 | I want to | Read |
 |---|---|
-| Understand what opensms is and how it is organised | [Overview](getting-started/overview.md) |
+| Understand what OpenSMS is and how it is organised | [Overview](getting-started/overview.md) |
 | Send my first message in a few minutes | [Quickstart](getting-started/quickstart.md) |
 | Move a workspace from sandbox to live traffic | [Going live](getting-started/going-live.md) |
 | Use the web app | [Web app guide](console/README.md) |
 | Run the platform as an operator | [Operator console](admin/README.md) |
-| Deploy, configure or run opensms locally | [Operations](operations/README.md) |
+| Deploy, configure or run OpenSMS locally | [Operations](operations/README.md) |
 
 ## Integrate
 
@@ -53,14 +54,14 @@ settings. Start at the [web app guide](console/README.md).
 
 ## Operator guides
 
-For opensms staff with an operator account (superadmin, ops, finance, support): getting access,
+For OpenSMS staff with an operator account (superadmin, ops, finance, support): getting access,
 the dashboard, countries, carriers, providers, routes, numbers, workspaces, users, sender IDs,
 compliance review, pricing, payments, settlement, incidents, alerts, legal documents, the audit log
 and operator management. Start at the [operator console guide](admin/README.md).
 
 ## Operations
 
-For engineers who run opensms: [architecture](operations/architecture.md),
+For engineers who run OpenSMS: [architecture](operations/architecture.md),
 [local development](operations/local-development.md) (with a from-zero
 [`local-stack.sh`](operations/local-stack.sh)), [configuration](operations/configuration.md),
 [database](operations/database.md), [deployment](operations/deployment.md),
@@ -70,7 +71,7 @@ For engineers who run opensms: [architecture](operations/architecture.md),
 
 ## Running the docs tests
 
-The tests call a running opensms API and fail when an example on a page no longer matches the
+The tests call a running OpenSMS API and fail when an example on a page no longer matches the
 server. Start a local stack as described in [local development](operations/local-development.md),
 create an operator with `opensms-admin`, then:
 

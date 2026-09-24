@@ -4,8 +4,6 @@ A webhook is an address on your own system (a URL) that OpenSMS calls automatica
 
 Open **Webhooks** in the left-hand menu, under **Developer** (`/app/webhooks`).
 
-> **Local docs stack:** webhook delivery is switched off on the stack used for these screenshots, so nothing is actually sent to the endpoint and test deliveries stay **PENDING**.
-
 ## Who can do what
 
 | Action | Owner | Admin | Developer | Finance | Viewer |
@@ -68,7 +66,7 @@ From the row menu of a delivery you can choose **Replay delivery** to send it ag
 1. Open the endpoint's details.
 2. Click **Send test event**. A `webhook.test` delivery appears in **Recent deliveries**.
 
-The toast says "Test event delivered." as soon as the test is queued, even before your server has answered. Check the delivery row: on the docs stack it stays **PENDING** with Response "Not yet", because delivery is switched off.
+The toast says "Test event delivered." as soon as the test is queued, even before your server has answered. Check the delivery row: it shows **PENDING** with Response "Not yet" until your server answers.
 
 ## Edit an endpoint
 

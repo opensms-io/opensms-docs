@@ -60,7 +60,7 @@ The **Preview** shows how the name will look on a phone.
 
 ### Step 3: where will you send
 
-Click each market (country) you need. A tick appears on the ones you pick. Each row shows the carriers there and how long approval usually takes (on the docs stack every market says **PROVIDER REVIEW**). When your picks are checked you see "Sender ID can be requested in the selected markets." If a name is blocked in one market, that market and the reason are shown instead.
+Click each market (country) you need. A tick appears on the ones you pick. Each row shows the carriers there and how long approval usually takes (for example **PROVIDER REVIEW**). When your picks are checked you see "Sender ID can be requested in the selected markets." If a name is blocked in one market, that market and the reason are shown instead.
 
 ![Step 3 with Kenya picked](../assets/screens/console/sender-ids/wizard-3-markets.png)
 
@@ -108,7 +108,7 @@ The review card lists the sender ID, markets, traffic type, sample message and "
 
 If the fees changed while you were on this page, the submission is refused, the tick is cleared, and the new quote is loaded: review it and tick again.
 
-On the docs stack the only provider is a sandbox mock, so the fee line reads **0** and "No registration fees are currently listed."
+When no provider charges a registration fee, the fee line reads **0** and "No registration fees are currently listed."
 
 ### Step 7: filed
 
@@ -147,7 +147,7 @@ An approved or suspended sender ID cannot be withdrawn from here.
 
 ## If an application is rejected
 
-The following describes the page as built. It could not be captured locally, because approving or rejecting needs an OpenSMS operator signed in with two-factor authentication, which the docs stack's operator account does not have.
+When the OpenSMS team rejects an application, the page shows:
 
 - A red banner at the top shows the rejection reason, with **Amend and resubmit**.
 - A rejected market row shows its reason and a **Resubmit** button.

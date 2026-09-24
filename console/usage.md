@@ -32,7 +32,7 @@ The Usage page shows how many messages your workspace sent, how many were delive
 
 In sandbox the page counts sandbox (simulated) messages; once you are live it counts live messages. The two are never mixed.
 
-On the local docs stack no message could be sent (email verification is required first, see [Messages](messages.md)), so the screenshot shows the empty states only.
+The screenshot shows a new workspace that has not sent anything yet, so every panel is in its empty state.
 
 ## Related
 

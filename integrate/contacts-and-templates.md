@@ -1,6 +1,6 @@
 # Contacts and templates
 
-opensms can store your recipients as contacts, group them, keep reusable message templates with `{{variables}}`, and send a template to a whole group in one call. This page is for developers who want opensms to hold audience data instead of passing every number and text on each request. If you already keep recipients in your own database, you can ignore this and use [single sends or batches](sending-messages.md).
+OpenSMS can store your recipients as contacts, group them, keep reusable message templates with `{{variables}}`, and send a template to a whole group in one call. This page is for developers who want OpenSMS to hold audience data instead of passing every number and text on each request. If you already keep recipients in your own database, you can ignore this and use [single sends or batches](sending-messages.md).
 
 Contacts, groups and templates belong to one workspace **and one environment**: sandbox records are invisible to live keys and the other way round.
 
@@ -131,7 +131,7 @@ For each variable in the body, the value comes from `variables` if given, otherw
 
 The call snapshots the group and runs it as a [batch](sending-messages.md#batches): it creates the batch and starts it at once. The `200` response is the batch. A retry with the same key reuses the original snapshot even if the contacts or template changed since.
 
-On the local docs stack every recipient is refused by the email-verification gate, so the real response is a `failed` batch with both rows invalid:
+If the workspace owner has not verified their email yet, every recipient is refused by the email-verification gate and the response is a `failed` batch with both rows invalid:
 
 ```json
 {"id":"c9a71ef7-0d1c-465b-857c-5f036741a166","status":"failed","total":2,"sent":0,"delivered":0,"failed":0,"invalid":2,"duplicates":0,"suppressed":0,"estimated_cost":0,"created_at":"2026-09-24T07:27:22.833971+03:00"}

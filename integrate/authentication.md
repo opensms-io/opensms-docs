@@ -1,6 +1,6 @@
 # Authentication
 
-opensms has two kinds of bearer credential: **session tokens** for people (the console, account setup, key management) and **API keys** for your servers. This page explains when to use each, how workspace and environment are selected, what each key scope unlocks, and how to rotate and revoke keys. It is for developers wiring opensms into a backend.
+OpenSMS has two kinds of bearer credential: **session tokens** for people (the console, account setup, key management) and **API keys** for your servers. This page explains when to use each, how workspace and environment are selected, what each key scope unlocks, and how to rotate and revoke keys. It is for developers wiring OpenSMS into a backend.
 
 Both credentials go in the same header:
 
@@ -50,7 +50,7 @@ X-Environment: sandbox
 
 `X-Workspace-ID` must be a workspace where you are an active member. `X-Environment` is `sandbox` or `live`. Some workspace-wide settings (keys, legal, onboarding, spend cap) need only `X-Workspace-ID`.
 
-What you get without them depends on the endpoint. Real responses from the local stack:
+What you get without them depends on the endpoint. Real responses:
 
 ```sh
 curl -s $OPENSMS_API/v1/messages -H "authorization: Bearer $SESSION"

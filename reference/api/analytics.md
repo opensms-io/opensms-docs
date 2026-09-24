@@ -6,15 +6,15 @@ Aggregated sending analytics: overview totals, breakdowns by country, carrier an
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/analytics/overview`](#get-v1analyticsoverview) | Get aggregate analytics | yes |
-| GET | [`/v1/analytics/by-country`](#get-v1analyticsby-country) | Get analytics by country | yes |
-| GET | [`/v1/analytics/by-carrier`](#get-v1analyticsby-carrier) | Get analytics by carrier | yes |
-| GET | [`/v1/analytics/by-sender-id`](#get-v1analyticsby-sender-id) | Get analytics by sender ID | yes |
-| GET | [`/v1/analytics/timeseries`](#get-v1analyticstimeseries) | Get analytics over time | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/analytics/overview`](#get-v1analyticsoverview) | Get aggregate analytics |
+| GET | [`/v1/analytics/by-country`](#get-v1analyticsby-country) | Get analytics by country |
+| GET | [`/v1/analytics/by-carrier`](#get-v1analyticsby-carrier) | Get analytics by carrier |
+| GET | [`/v1/analytics/by-sender-id`](#get-v1analyticsby-sender-id) | Get analytics by sender ID |
+| GET | [`/v1/analytics/timeseries`](#get-v1analyticstimeseries) | Get analytics over time |
 
-### GET /v1/analytics/overview
+## GET /v1/analytics/overview
 
 **Get aggregate analytics**
 
@@ -48,7 +48,7 @@ All active member roles may read with browser session and both selection headers
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `405` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/analytics/overview" \
@@ -72,7 +72,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/analytics/by-country
+## GET /v1/analytics/by-country
 
 **Get analytics by country**
 
@@ -106,7 +106,7 @@ All active member roles may read with browser session and both selection headers
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `405` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/analytics/by-country" \
@@ -119,7 +119,7 @@ Response `200` (`application/json`):
 []
 ```
 
-### GET /v1/analytics/by-carrier
+## GET /v1/analytics/by-carrier
 
 **Get analytics by carrier**
 
@@ -153,7 +153,7 @@ All active member roles may read with browser session and both selection headers
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `405` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/analytics/by-carrier" \
@@ -166,7 +166,7 @@ Response `200` (`application/json`):
 []
 ```
 
-### GET /v1/analytics/by-sender-id
+## GET /v1/analytics/by-sender-id
 
 **Get analytics by sender ID**
 
@@ -200,7 +200,7 @@ All active member roles may read with browser session and both selection headers
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `405` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/analytics/by-sender-id" \
@@ -213,7 +213,7 @@ Response `200` (`application/json`):
 []
 ```
 
-### GET /v1/analytics/timeseries
+## GET /v1/analytics/timeseries
 
 **Get analytics over time**
 
@@ -247,7 +247,7 @@ All active member roles may read with browser session and both selection headers
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `405` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/analytics/timeseries?bucket=day" \

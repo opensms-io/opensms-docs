@@ -5,7 +5,7 @@ The realtime endpoint pushes workspace events (message status changes, lookups, 
 ## Connect
 
 ```text
-GET /v1/realtime   (WebSocket upgrade; wss:// in production, ws:// on the local stack)
+GET /v1/realtime   (WebSocket upgrade over wss://)
 ```
 
 A connection is bound to one workspace and one environment for its whole life. There are three ways to authenticate.
@@ -43,7 +43,7 @@ recv {"channels":["message"],"type":"unsubscribed"}
 
 ## Events
 
-Each event is a JSON text frame. This one was captured on the local stack by subscribing to `"*"` with a sandbox key and then creating another key in the same workspace:
+Each event is a JSON text frame. This one was captured by subscribing to `"*"` with a sandbox key and then creating another key in the same workspace:
 
 ```json
 {"id":"6bfc8b80-243b-4088-8dc2-893240ea4265","type":"api_key.created","aggregate_id":"edfb5888-87a3-44f4-86ae-9deaa654b8bf","workspace_id":"f98e3f20-d354-493d-b003-c39d945e29db","environment":"sandbox","data":{"label":"realtime demo","key_id":"edfb5888-87a3-44f4-86ae-9deaa654b8bf"},"created_at":"2026-09-24T07:17:07.026692+03:00"}
@@ -64,12 +64,12 @@ The server pings every 54 seconds and expects a pong within 60; standard WebSock
 
 ## Example: Node
 
-This script was run against the local stack with a key that has `realtime:read`. It subscribes to everything, creates a key through the API to cause an event, and prints what arrives.
+This script needs a key that has `realtime:read`. It subscribes to everything, creates a key through the API to cause an event, and prints what arrives.
 
 <!-- test:realtime-node -->
 ```js
 // realtime.mjs (Node 22 or newer: global WebSocket)
-const API = process.env.OPENSMS_API ?? 'http://127.0.0.1:18180';
+const API = process.env.OPENSMS_API; // the API origin from your sandbox invitation
 const ws = new WebSocket(API.replace(/^http/, 'ws') + '/v1/realtime', {
   headers: { authorization: `Bearer ${process.env.OPENSMS_API_KEY}` },
 });
@@ -100,15 +100,15 @@ Browsers cannot put an `Authorization` header on a WebSocket, and putting a sess
 
 Tickets need the API to be served over TLS and the browser origin to be listed in `OPENSMS_CUSTOMER_COOKIE_ORIGINS`, which is only read when customer cookie mode is enabled (`OPENSMS_CUSTOMER_COOKIES_ENABLED=true`, which in turn requires TLS).
 
-## Why you get 403 locally
+## When you get 403
 
-On the local docs stack you will see two different `403` responses. Both are expected from the code and neither is a bug in your client.
+Two different `403` responses come from how the endpoint protects browsers. Neither is a bug in your client.
 
-**1. Ticket requests.** The API runs on plain HTTP and cookie mode is off, so there is no allowed ticket origin and every ticket request is refused (`api/internal/realtime/tickets.go`, `ticketOrigin` requires `r.TLS` and a configured origin):
+**1. Ticket requests.** Tickets are issued only over HTTPS, and only to a browser origin the deployment allows. A ticket request over plain HTTP, or from another origin, is refused:
 
 ```sh
 curl -s -X POST $OPENSMS_API/v1/realtime/tickets \
-  -H "authorization: Bearer $SESSION" -H 'origin: http://127.0.0.1:5190' \
+  -H "authorization: Bearer $SESSION" -H 'origin: https://app.example.com' \
   -H 'content-type: application/json' -d '{"workspace_id":"f98e3f20-d354-493d-b003-c39d945e29db","environment":"sandbox"}'
 ```
 
@@ -116,12 +116,12 @@ curl -s -X POST $OPENSMS_API/v1/realtime/tickets \
 {"type":"about:blank","title":"Forbidden","status":403,"detail":"ticket requires HTTPS and an allowed Origin"}
 ```
 
-**2. Browser connections from another origin.** The handler does not set its own origin check for token connections, so the WebSocket library's default applies: the `Origin` header's host must equal the API's `Host`. The local console runs on `127.0.0.1:5190` and connects to the API on `127.0.0.1:18180` with `?access_token=`, so the upgrade is refused with a plain-text `403 Forbidden` after authentication succeeds. The same session connects when the origin matches, and server clients that send no `Origin` (like the Node example) connect normally:
+**2. Browser connections from another origin.** For session connections the `Origin` header's host must equal the API's host. A page on another origin that connects with `?access_token=` is refused with a plain-text `403 Forbidden` after authentication succeeds. The same session connects when the origin matches, and server clients that send no `Origin` (like the Node example) connect normally:
 
 | Upgrade request with a valid session | Result |
 | --- | --- |
-| `Origin: http://127.0.0.1:5190` (the local console) | `HTTP/1.1 403 Forbidden` |
-| `Origin: http://127.0.0.1:18180` (same origin as the API) | `HTTP/1.1 101 Switching Protocols` |
+| `Origin` on a different host from the API | `HTTP/1.1 403 Forbidden` |
+| `Origin` equal to the API's own origin | `HTTP/1.1 101 Switching Protocols` |
 | No `Origin` header (Node, server clients) | Connected |
 
-In a deployment where the console and the API share an origin, or where browsers use tickets over HTTPS, neither 403 occurs. On the local stack the console's realtime connection (`frontend/src/lib/realtime.ts`, which uses `?access_token=`) is refused for the second reason.
+From a browser, use a ticket over HTTPS, or serve the page from the API's origin.

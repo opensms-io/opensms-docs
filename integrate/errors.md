@@ -1,6 +1,6 @@
 # Errors
 
-Every opensms error response uses the same JSON shape, `application/problem+json` (RFC 9457 problem details). This page describes that shape, what each HTTP status means, every machine-readable `code` the API emits, and which errors are safe to retry. It is for developers writing error handling around the API. All examples are real responses from the local stack.
+Every OpenSMS error response uses the same JSON shape, `application/problem+json` (RFC 9457 problem details). This page describes that shape, what each HTTP status means, every machine-readable `code` the API emits, and which errors are safe to retry. It is for developers writing error handling around the API. All examples are real API responses.
 
 ## The problem shape
 
@@ -35,7 +35,7 @@ Handle errors in this order: check `status`; if `code` is present, branch on it;
 
 ## Status codes
 
-| Status | Meaning in opensms | Retry? |
+| Status | Meaning in OpenSMS | Retry? |
 | --- | --- | --- |
 | `400` | Malformed request: bad JSON, unknown field, missing `Idempotency-Key`, invalid value, missing `X-Workspace-ID` for sessions. | No. Fix the request. |
 | `401` | No credential, an invalid, revoked or expired key or session, or (on message, OTP and some session endpoints) a missing scope or header. | No. Fix the credential. |

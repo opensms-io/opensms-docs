@@ -6,15 +6,15 @@ Mint, list, rotate and revoke workspace API keys (`sk_test_` for sandbox, `sk_li
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/keys/scopes`](#get-v1keysscopes) | List scopes and environments permitted for the current key issuer | yes |
-| GET | [`/v1/keys`](#get-v1keys) | List keys | yes |
-| POST | [`/v1/keys`](#post-v1keys) | Create API key | yes |
-| POST | [`/v1/keys/{id}/rotate`](#post-v1keysidrotate) | Rotate API key | yes |
-| DELETE | [`/v1/keys/{id}`](#delete-v1keysid) | Revoke API key | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/keys/scopes`](#get-v1keysscopes) | List scopes and environments permitted for the current key issuer |
+| GET | [`/v1/keys`](#get-v1keys) | List keys |
+| POST | [`/v1/keys`](#post-v1keys) | Create API key |
+| POST | [`/v1/keys/{id}/rotate`](#post-v1keysidrotate) | Rotate API key |
+| DELETE | [`/v1/keys/{id}`](#delete-v1keysid) | Revoke API key |
 
-### GET /v1/keys/scopes
+## GET /v1/keys/scopes
 
 **List scopes and environments permitted for the current key issuer**
 
@@ -47,7 +47,7 @@ Response `200` fields:
 | `scopes` | array of [KeyScope](schemas.md#keyscope) | yes |  |  |
 | `environments` | array of string | yes |  | One of: `sandbox`, `live`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/keys/scopes" \
@@ -67,7 +67,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `scopes` shows 3 of 23 items.
 
-### GET /v1/keys
+## GET /v1/keys
 
 **List keys**
 
@@ -96,7 +96,7 @@ Owner/admin see all keys; developers see sandbox keys only. Explicit workspace s
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/keys" \
@@ -125,7 +125,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `items[0].scopes` shows 3 of 23 items.
 
-### POST /v1/keys
+## POST /v1/keys
 
 **Create API key**
 
@@ -173,7 +173,7 @@ Response `201` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/keys" \
@@ -230,7 +230,7 @@ Response `201` (`application/json`):
 
 Truncated for length: `key_info.scopes` shows 3 of 23 items.
 
-### POST /v1/keys/{id}/rotate
+## POST /v1/keys/{id}/rotate
 
 **Rotate API key**
 
@@ -271,7 +271,7 @@ Response `201` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/keys/a05c79e5-4c78-4a94-aa30-fc1f82ee4df1/rotate" \
@@ -297,7 +297,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### DELETE /v1/keys/{id}
+## DELETE /v1/keys/{id}
 
 **Revoke API key**
 
@@ -329,7 +329,7 @@ Owner/admin only.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/keys/2fb4d366-6800-49a8-bc3b-c882bc303c5c" \

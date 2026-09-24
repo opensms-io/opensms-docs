@@ -4,8 +4,6 @@ OpenSMS is prepaid: you put money in a wallet and each message is paid for from 
 
 Open **Billing** in the left-hand menu, under **Workspace** (`/app/billing`). The page title is **Credits**.
 
-> **Local docs stack:** payments are switched off on the test copy used for these guides (there is no Paystack account and no email). Adding **sandbox** credits works and is shown for real below. Funding the **live** wallet by card, mobile money or bank transfer stops with an error, and the live-only tabs (Payments, Invoices, Payment methods, Auto top-up) could not be opened because no workspace can be made live locally. Those parts are described from the app's code and marked as such.
-
 ## Two wallets: sandbox and live
 
 Every workspace has two separate wallets in its currency (the currency comes from the country you chose at signup, for example KES for Kenya):
@@ -95,13 +93,11 @@ Requirements the server checks:
 - The payment must be started by a workspace member with a **verified email**. Otherwise you see "payer email must belong to a verified workspace member".
 - A bank-transfer proof needs **two-factor authentication** turned on for your login. Otherwise you see "Authorized membership and enabled two-factor authentication required."
 
-![The card checkout refused on the docs stack](../assets/screens/console/billing/fund-live-card-error.png)
-
-**Could not complete locally:** on the docs stack, **Continue to checkout** returned "payer email must belong to a verified workspace member" (email cannot be verified without email delivery), and **Submit for review** returned "Authorized membership and enabled two-factor authentication required." Even with both fixed, card and mobile money checkout needs a Paystack account, which the test copy does not have, so no live payment could be made.
+![Card checkout refused because the payer's email is not verified](../assets/screens/console/billing/fund-live-card-error.png)
 
 ## Live-only tabs
 
-These appear only once the workspace is live. They are described from the app's code; they could not be opened locally.
+These appear only once the workspace is live.
 
 ### Payments
 
@@ -126,7 +122,7 @@ The **Auto top-up** button (live only) opens a form to add credits automatically
 | Amount to add | How much to charge each time. |
 | Saved card | One of your saved cards. Mobile money cannot be used. If you have none: "Add credits with a card first to save a payment method." |
 
-Click **Save settings**. You see "Auto top-up settings saved." Automatic top-ups are also switched off on the docs stack.
+Click **Save settings**. You see "Auto top-up settings saved."
 
 ## Statements
 

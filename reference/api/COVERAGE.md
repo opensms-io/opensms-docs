@@ -6,6 +6,8 @@ Which customer operations were exercised against a live local stack while writin
 
 Exercised live: **172 of 173** operations. **130** returned a success status; **42** could only be exercised up to a refusal (`error path only`), and the "Notes" column says why. **1** not called.
 
+**Regenerating.** From the docs repo: `node scripts/gen-reference.mjs` re-renders from the spec and the saved examples; `node scripts/gen-reference.mjs --capture` re-runs every example against a live API first (it needs `OPENSMS_API`, `OPENSMS_ADMIN_EMAIL` and `OPENSMS_ADMIN_PASSWORD`). `tests/reference.test.mjs` replays the examples and fails if a status code or key field changes. The published pages reword the notes below for customers (`PUBLIC_NOTES` in the generator) and swap loopback hosts for documentation values.
+
 Stack: API built from this repo, development mode, with email delivery, live SMS dispatch, webhook delivery, payments and top-ups disabled, so flows that depend on those can only be shown up to the point where they stop.
 
 ## Why some operations only show a refusal

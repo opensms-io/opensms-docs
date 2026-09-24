@@ -6,14 +6,14 @@ The signed-in user's in-app notification inbox and personal notification prefere
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/notifications`](#get-v1notifications) | List the signed-in user's notification inbox | yes |
-| POST | [`/v1/notifications/{id}/read`](#post-v1notificationsidread) | Mark an owned notification read | yes |
-| GET | [`/v1/me/notifications`](#get-v1menotifications) | List the signed-in user's notification preferences | yes |
-| PUT | [`/v1/me/notifications`](#put-v1menotifications) | Set one signed-in user's notification preference | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/notifications`](#get-v1notifications) | List the signed-in user's notification inbox |
+| POST | [`/v1/notifications/{id}/read`](#post-v1notificationsidread) | Mark an owned notification read |
+| GET | [`/v1/me/notifications`](#get-v1menotifications) | List the signed-in user's notification preferences |
+| PUT | [`/v1/me/notifications`](#put-v1menotifications) | Set one signed-in user's notification preference |
 
-### GET /v1/notifications
+## GET /v1/notifications
 
 **List the signed-in user's notification inbox**
 
@@ -51,7 +51,7 @@ Response `200` fields:
 | `items` | array of [InAppNotification](schemas.md#inappnotification) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/notifications" \
@@ -105,7 +105,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `items` shows 3 of 5 items.
 
-### POST /v1/notifications/{id}/read
+## POST /v1/notifications/{id}/read
 
 **Mark an owned notification read**
 
@@ -135,7 +135,7 @@ Read timestamp is stable on repeat requests. Other users, workspaces, environmen
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/notifications/398/read" \
@@ -160,7 +160,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/me/notifications
+## GET /v1/me/notifications
 
 **List the signed-in user's notification preferences**
 
@@ -180,7 +180,7 @@ Returns preferences across all non-deleted workspaces the signed-in user belongs
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/me/notifications" \
@@ -195,7 +195,7 @@ Response `200` (`application/json`):
 []
 ```
 
-### PUT /v1/me/notifications
+## PUT /v1/me/notifications
 
 **Set one signed-in user's notification preference**
 
@@ -228,7 +228,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/me/notifications" \

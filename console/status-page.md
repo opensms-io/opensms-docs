@@ -16,7 +16,7 @@ If the page cannot reach OpenSMS at all it shows "Could not load status right no
 
 ## Checking status from software
 
-The page reads the public, unversioned `GET /status` endpoint (no key needed). On the local docs stack it returned `"status":"operational"`, 56 provider components across GB, GH, KE, NG, US and ZA, and an empty `incidents` list. See the [API reference for /status](../reference/api/status.md).
+The page reads the public, unversioned `GET /status` endpoint (no key needed). It returns the overall `status` (for example `"operational"`), one component per provider and country, and the list of open `incidents`. See the [API reference for /status](../reference/api/status.md).
 
 ## Related
 

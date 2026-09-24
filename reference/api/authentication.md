@@ -6,33 +6,33 @@ Sign-up, password and email-code login, two-factor authentication, email verific
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/auth/login/code`](#post-v1authlogincode) | Request an email login code | error path only |
-| POST | [`/v1/auth/login/code/verify`](#post-v1authlogincodeverify) | Complete email login or continue to required two-factor authentication | error path only |
-| POST | [`/v1/auth/email/send`](#post-v1authemailsend) | Send a verification code for the authenticated session user | error path only |
-| POST | [`/v1/auth/verify-email`](#post-v1authverify-email) | Consume the authenticated user's email verification code | error path only |
-| POST | [`/v1/auth/signup`](#post-v1authsignup) | Create an account and session | yes |
-| POST | [`/v1/auth/login`](#post-v1authlogin) | Authenticate with a password | yes |
-| POST | [`/v1/auth/login/2fa`](#post-v1authlogin2fa) | Complete a two-factor login challenge | yes |
-| POST | [`/v1/auth/logout`](#post-v1authlogout) | Revoke the current session | yes |
-| GET | [`/v1/auth/sessions`](#get-v1authsessions) | List account sessions | yes |
-| DELETE | [`/v1/auth/sessions/{id}`](#delete-v1authsessionsid) | Revoke one account session | yes |
-| POST | [`/v1/auth/2fa/setup`](#post-v1auth2fasetup) | Start two-factor setup | yes |
-| POST | [`/v1/auth/2fa/enable`](#post-v1auth2faenable) | Enable two-factor authentication | yes |
-| POST | [`/v1/auth/2fa/disable`](#post-v1auth2fadisable) | Disable two-factor authentication | yes |
-| POST | [`/v1/auth/2fa/verify`](#post-v1auth2faverify) | Verify a two-factor code | yes |
-| POST | [`/v1/auth/password/forgot`](#post-v1authpasswordforgot) | Request password reset link | error path only |
-| POST | [`/v1/auth/forgot-password`](#post-v1authforgot-password) | Request password reset link | error path only |
-| POST | [`/v1/auth/password/reset`](#post-v1authpasswordreset) | Consume password reset token | error path only |
-| POST | [`/v1/auth/reset-password`](#post-v1authreset-password) | Consume password reset token | error path only |
-| POST | [`/v1/auth/2fa/recovery-codes`](#post-v1auth2farecovery-codes) | Replace the account recovery-code set | yes |
-| POST | [`/v1/auth/2fa/recovery-enrollment`](#post-v1auth2farecovery-enrollment) | Stage a replacement authenticator | yes |
-| POST | [`/v1/auth/2fa/recovery-enrollment/confirm`](#post-v1auth2farecovery-enrollmentconfirm) | Verify and activate the replacement authenticator | yes |
-| GET | [`/v1/me`](#get-v1me) | Read the authenticated session user and selected workspace | yes |
-| POST | [`/v1/auth/cookie/exchange`](#post-v1authcookieexchange) | Exchange an explicit customer bearer session for an opt-in secure cookie | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/auth/login/code`](#post-v1authlogincode) | Request an email login code |
+| POST | [`/v1/auth/login/code/verify`](#post-v1authlogincodeverify) | Complete email login or continue to required two-factor authentication |
+| POST | [`/v1/auth/email/send`](#post-v1authemailsend) | Send a verification code for the authenticated session user |
+| POST | [`/v1/auth/verify-email`](#post-v1authverify-email) | Consume the authenticated user's email verification code |
+| POST | [`/v1/auth/signup`](#post-v1authsignup) | Create an account and session |
+| POST | [`/v1/auth/login`](#post-v1authlogin) | Authenticate with a password |
+| POST | [`/v1/auth/login/2fa`](#post-v1authlogin2fa) | Complete a two-factor login challenge |
+| POST | [`/v1/auth/logout`](#post-v1authlogout) | Revoke the current session |
+| GET | [`/v1/auth/sessions`](#get-v1authsessions) | List account sessions |
+| DELETE | [`/v1/auth/sessions/{id}`](#delete-v1authsessionsid) | Revoke one account session |
+| POST | [`/v1/auth/2fa/setup`](#post-v1auth2fasetup) | Start two-factor setup |
+| POST | [`/v1/auth/2fa/enable`](#post-v1auth2faenable) | Enable two-factor authentication |
+| POST | [`/v1/auth/2fa/disable`](#post-v1auth2fadisable) | Disable two-factor authentication |
+| POST | [`/v1/auth/2fa/verify`](#post-v1auth2faverify) | Verify a two-factor code |
+| POST | [`/v1/auth/password/forgot`](#post-v1authpasswordforgot) | Request password reset link |
+| POST | [`/v1/auth/forgot-password`](#post-v1authforgot-password) | Request password reset link |
+| POST | [`/v1/auth/password/reset`](#post-v1authpasswordreset) | Consume password reset token |
+| POST | [`/v1/auth/reset-password`](#post-v1authreset-password) | Consume password reset token |
+| POST | [`/v1/auth/2fa/recovery-codes`](#post-v1auth2farecovery-codes) | Replace the account recovery-code set |
+| POST | [`/v1/auth/2fa/recovery-enrollment`](#post-v1auth2farecovery-enrollment) | Stage a replacement authenticator |
+| POST | [`/v1/auth/2fa/recovery-enrollment/confirm`](#post-v1auth2farecovery-enrollmentconfirm) | Verify and activate the replacement authenticator |
+| GET | [`/v1/me`](#get-v1me) | Read the authenticated session user and selected workspace |
+| POST | [`/v1/auth/cookie/exchange`](#post-v1authcookieexchange) | Exchange an explicit customer bearer session for an opt-in secure cookie |
 
-### POST /v1/auth/login/code
+## POST /v1/auth/login/code
 
 **Request an email login code**
 
@@ -57,7 +57,7 @@ Returns the same accepted response for unknown or inactive accounts. Codes expir
 | `429` | Request limit exceeded, respect Retry-After | No body |
 | `503` | Email transport not configured | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/login/code" \
@@ -76,9 +76,9 @@ Response `503` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Email login codes are delivered by email, which is disabled on the docs stack, so the request is refused with 503 instead of 202.
+This is the `503` returned when email delivery is unavailable. Normally the request answers `202` and the code is emailed.
 
-### POST /v1/auth/login/code/verify
+## POST /v1/auth/login/code/verify
 
 **Complete email login or continue to required two-factor authentication**
 
@@ -105,7 +105,7 @@ Codes are single-use and permit at most five guesses. A successful email code do
 | `401` | Invalid, expired or exhausted code | No body |
 | `429` | Authenticator challenge issuance limit exceeded | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/login/code/verify" \
@@ -124,9 +124,9 @@ Response `401` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No code can be received without email delivery, so only a rejected code is shown.
+This shows the answer to a wrong or expired code.
 
-### POST /v1/auth/email/send
+## POST /v1/auth/email/send
 
 **Send a verification code for the authenticated session user**
 
@@ -148,7 +148,7 @@ Requires a bearer session. Codes expire in ten minutes. Requests have a sixty-se
 | `429` | Resend cooldown active | No body |
 | `503` | Mail delivery unavailable | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/email/send" \
@@ -166,9 +166,9 @@ Response `503` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Email delivery is disabled on the docs stack, so the handler refuses with 503 instead of 202.
+This is the `503` returned when email delivery is unavailable. Normally the request answers `202` and the verification email is sent.
 
-### POST /v1/auth/verify-email
+## POST /v1/auth/verify-email
 
 **Consume the authenticated user's email verification code**
 
@@ -192,7 +192,7 @@ Requires a bearer session. A code permits five failed attempts and may be consum
 | `400` | Invalid, expired, exhausted, or consumed code | No body |
 | `401` | Invalid session | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/verify-email" \
@@ -212,9 +212,9 @@ Response `400` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No verification code can be received without email delivery, so only a rejected code is shown.
+This shows the answer to a wrong or expired verification code.
 
-### POST /v1/auth/signup
+## POST /v1/auth/signup
 
 **Create an account and session**
 
@@ -240,7 +240,7 @@ Schema: [SignupRequest](schemas.md#signuprequest).
 | `201` | Session created. | `application/json`: [Session](schemas.md#session) |
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/signup" \
@@ -277,7 +277,7 @@ Response `201` (`application/json`):
 }
 ```
 
-**Example: validation errors** (captured live from the local stack)
+**Example: validation errors**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/signup" \
@@ -302,7 +302,7 @@ Response `400` (`application/problem+json`):
 }
 ```
 
-### POST /v1/auth/login
+## POST /v1/auth/login
 
 **Authenticate with a password**
 
@@ -330,7 +330,7 @@ Schema: [Credentials](schemas.md#credentials).
 | `400` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/login" \
@@ -362,7 +362,7 @@ Response `201` (`application/json`):
 }
 ```
 
-**Example: account with two-factor enabled** (captured live from the local stack)
+**Example: account with two-factor enabled**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/login" \
@@ -380,7 +380,7 @@ Response `202` (`application/json`):
 }
 ```
 
-### POST /v1/auth/login/2fa
+## POST /v1/auth/login/2fa
 
 **Complete a two-factor login challenge**
 
@@ -412,7 +412,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/login/2fa" \
@@ -444,7 +444,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### POST /v1/auth/logout
+## POST /v1/auth/logout
 
 **Revoke the current session**
 
@@ -460,7 +460,7 @@ Operation ID: `logout`. Tag: `Authentication`.
 | --- | --- | --- |
 | `204` | Session revoked. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/logout" \
@@ -471,7 +471,7 @@ Response `204`:
 
 _Empty body._
 
-### GET /v1/auth/sessions
+## GET /v1/auth/sessions
 
 **List account sessions**
 
@@ -493,7 +493,7 @@ Response `200` fields:
 | --- | --- | --- | --- | --- |
 | `sessions` | array of [SessionSummary](schemas.md#sessionsummary) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/auth/sessions" \
@@ -509,7 +509,7 @@ Response `200` (`application/json`):
   "sessions": [
     {
       "id": "caad687b-48ef-4d1c-b5d7-b46c96cd5921",
-      "ip": "127.0.0.1/32",
+      "ip": "203.0.113.24/32",
       "user_agent": "node",
       "created_at": "2026-09-24T07:40:18.58184+03:00",
       "expires_at": "2026-10-24T07:40:18.58184+03:00",
@@ -517,7 +517,7 @@ Response `200` (`application/json`):
     },
     {
       "id": "d8a68a31-b9e1-4905-89f4-e1052e207aff",
-      "ip": "127.0.0.1/32",
+      "ip": "203.0.113.24/32",
       "user_agent": "node",
       "created_at": "2026-09-24T07:40:18.219379+03:00",
       "expires_at": "2026-10-24T07:40:18.219379+03:00",
@@ -527,7 +527,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/auth/sessions/{id}
+## DELETE /v1/auth/sessions/{id}
 
 **Revoke one account session**
 
@@ -555,7 +555,7 @@ Revokes an owned session. Repeating the request after revocation returns 204 whi
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/auth/sessions/caad687b-48ef-4d1c-b5d7-b46c96cd5921" \
@@ -568,7 +568,7 @@ Response `204`:
 
 _Empty body._
 
-### POST /v1/auth/2fa/setup
+## POST /v1/auth/2fa/setup
 
 **Start two-factor setup**
 
@@ -584,7 +584,7 @@ Operation ID: `setupTwoFactor`. Tag: `Authentication`.
 | --- | --- | --- |
 | `200` | Setup secret and provisioning URI. | `application/json`: [TwoFactorSetup](schemas.md#twofactorsetup) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/setup" \
@@ -600,7 +600,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/auth/2fa/enable
+## POST /v1/auth/2fa/enable
 
 **Enable two-factor authentication**
 
@@ -622,7 +622,7 @@ Schema: [Code](schemas.md#code).
 | --- | --- | --- |
 | `200` | Two-factor enabled. | `application/json`: [TwoFactorEnabled](schemas.md#twofactorenabled) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/enable" \
@@ -639,7 +639,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/auth/2fa/disable
+## POST /v1/auth/2fa/disable
 
 **Disable two-factor authentication**
 
@@ -664,7 +664,7 @@ Schema: [Code](schemas.md#code).
 | `200` | Two-factor disabled. | `application/json`: [TwoFactorEnabled](schemas.md#twofactorenabled) |
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/disable" \
@@ -681,7 +681,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/auth/2fa/verify
+## POST /v1/auth/2fa/verify
 
 **Verify a two-factor code**
 
@@ -703,7 +703,7 @@ Schema: [Code](schemas.md#code).
 | --- | --- | --- |
 | `200` | Code accepted. | `application/json`: [TwoFactorValid](schemas.md#twofactorvalid) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/verify" \
@@ -720,7 +720,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/auth/password/forgot
+## POST /v1/auth/password/forgot
 
 **Request password reset link**
 
@@ -756,7 +756,7 @@ Response `202` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/password/forgot" \
@@ -775,9 +775,9 @@ Response `503` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Reset links are emailed, and email delivery is disabled on the docs stack, so the handler answers 503 instead of 202.
+This is the `503` returned when email delivery is unavailable. Normally the request answers `202` and the reset link is emailed.
 
-### POST /v1/auth/forgot-password
+## POST /v1/auth/forgot-password
 
 **Request password reset link**
 
@@ -813,7 +813,7 @@ Response `202` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/forgot-password" \
@@ -832,9 +832,9 @@ Response `503` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Alias of /v1/auth/password/forgot; same email-delivery limitation.
+Alias of `/v1/auth/password/forgot`, with the same behaviour.
 
-### POST /v1/auth/password/reset
+## POST /v1/auth/password/reset
 
 **Consume password reset token**
 
@@ -869,7 +869,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/password/reset" \
@@ -888,9 +888,9 @@ Response `400` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: A valid reset token only arrives by email (disabled here), so only a rejected token is shown.
+This shows the answer to an invalid or expired reset token. A valid token arrives in the reset email.
 
-### POST /v1/auth/reset-password
+## POST /v1/auth/reset-password
 
 **Consume password reset token**
 
@@ -925,7 +925,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/reset-password" \
@@ -944,9 +944,9 @@ Response `400` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Alias of /v1/auth/password/reset; same limitation.
+Alias of `/v1/auth/password/reset`, with the same behaviour.
 
-### POST /v1/auth/2fa/recovery-codes
+## POST /v1/auth/2fa/recovery-codes
 
 **Replace the account recovery-code set**
 
@@ -981,7 +981,7 @@ Response `200` fields:
 | --- | --- | --- | --- | --- |
 | `codes` | array of string | yes |  | Constraints: minItems `10`, maxItems `10`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/recovery-codes" \
@@ -1000,7 +1000,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `codes` shows 3 of 10 items.
 
-### POST /v1/auth/2fa/recovery-enrollment
+## POST /v1/auth/2fa/recovery-enrollment
 
 **Stage a replacement authenticator**
 
@@ -1038,7 +1038,7 @@ Response `200` fields:
 | `otpauth_uri` | string | yes |  |  |
 | `expires_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/recovery-enrollment" \
@@ -1058,7 +1058,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/auth/2fa/recovery-enrollment/confirm
+## POST /v1/auth/2fa/recovery-enrollment/confirm
 
 **Verify and activate the replacement authenticator**
 
@@ -1094,7 +1094,7 @@ Response `200` fields:
 | `totp_enabled` | boolean | yes |  |  |
 | `recovery_codes_invalidated` | boolean | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/2fa/recovery-enrollment/confirm" \
@@ -1112,7 +1112,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/me
+## GET /v1/me
 
 **Read the authenticated session user and selected workspace**
 
@@ -1147,7 +1147,7 @@ Response `200` fields:
 | `role` | string \| null | yes |  |  |
 | `admin_role` | [AdminRoleHint](schemas.md#adminrolehint) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/me" \
@@ -1177,7 +1177,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/auth/cookie/exchange
+## POST /v1/auth/cookie/exchange
 
 **Exchange an explicit customer bearer session for an opt-in secure cookie**
 
@@ -1215,12 +1215,12 @@ Response `200` fields:
 | `csrf_token` | string | yes |  |  |
 | `expires_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/auth/cookie/exchange" \
   -H 'Authorization: Bearer sess__9lZ...' \
-  -H 'Origin: http://localhost:5190' \
+  -H 'Origin: https://app.example.com' \
   -H 'X-CSRF-Token: exchange'
 ```
 
@@ -1236,5 +1236,5 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Cookie mode is off on the docs stack (it also requires HTTPS and an allowed Origin), and when it is off the route is not mounted, so it answers 404.
+Cookie mode is optional and needs HTTPS and an allowed `Origin`. Where a deployment does not enable it the route is not mounted and answers `404`.
 

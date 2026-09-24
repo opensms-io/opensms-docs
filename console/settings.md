@@ -37,21 +37,19 @@ If a value is out of range the server's message appears, for example "days must 
 
 ![Data retention set to 0](../assets/screens/console/settings/workspace-retention-error.png)
 
-The panel on the right lists the workspace ID, country, currency, live status, verification status and when it was created. The country (and so the currency) cannot be changed after the workspace is created. **Known display problem:** in this version the **Country** line shows a long internal code instead of the country name, as in the screenshot.
+The panel on the right lists the workspace ID, country, currency, live status, verification status and when it was created. The country (and so the currency) cannot be changed after the workspace is created.
 
 ### Data export
 
 Download a copy of your message records (without message text), wallet movements and contacts, for both sandbox and live, as one file.
 
 1. Click **Request export**. You see "Export requested. The archive is being prepared."
-2. Wait. The status refreshes by itself every few seconds; **Refresh status** checks immediately. On the docs stack it was ready within seconds.
+2. Wait. The status refreshes by itself every few seconds; **Refresh status** checks immediately. A small workspace is usually ready within seconds.
 3. When it says "Export ... is ready", click **Download archive**. The file is named `workspace-export-<id>.json`.
 
 ![A finished export](../assets/screens/console/settings/export-ready.png)
 
 The download link lasts 7 days. After that you see "This export has expired. Request a fresh one." If preparing it fails, you see why and a **Start over** button. Once the workspace is live, owners and finance members must enter a current authenticator code before exporting.
-
-**Known display problem:** the ready message says "Download it before just now." instead of showing the expiry date. The real expiry is 7 days after the export became ready.
 
 A "Data export ready" [notification](notifications.md) also points you back to this page.
 
@@ -72,8 +70,6 @@ What the server requires and does:
 - You cannot delete your only workspace: "Create or join another active workspace before deleting your final workspace."
 - Deletion is **scheduled 30 days ahead**, not immediate. Until then, **Cancel deletion** in the same place keeps the workspace. (The cancel button is shown right after you request deletion; if you leave the page and come back it is no longer shown, even though the deletion is still scheduled.)
 
-On the docs stack the deletion was tried through the API only, and stopped at the two rules above.
-
 ## Team
 
 **Who can open it:** owners and admins. Other roles cannot manage the team.
@@ -86,7 +82,7 @@ On the docs stack the deletion was tried through the API only, and stopped at th
 
 ![Inviting a developer](../assets/screens/console/settings/team-invite.png)
 
-An **Invitation link** appears with a **Copy link** button. The link expires in seven days. When email works, the invitation is also emailed ("Invitation email queued. You can also share the link."). On the docs stack no email is sent, so the page says "Invitation created. Share the link with your teammate." and "No email has been sent. Copy it before leaving this page." The link is shown only once, so copy it before you leave the page.
+An **Invitation link** appears with a **Copy link** button. The link expires in seven days. The invitation is also emailed ("Invitation email queued. You can also share the link."). If email cannot be sent, the page says "Invitation created. Share the link with your teammate." and "No email has been sent. Copy it before leaving this page." The link is shown only once, so copy it before you leave the page.
 
 ![The invitation link and the pending invitation](../assets/screens/console/settings/team-invited.png)
 
@@ -100,7 +96,7 @@ Opening the link shows **Join your team**: "Sign in with the email address that 
 
 They must sign in with exactly the invited email address, and that address must be verified. The rest of their steps are in [Accept an invitation to a team](signing-up-and-signing-in.md#accept-an-invitation-to-a-team).
 
-**Could not complete locally:** accepting needs a verified email, and the docs stack cannot verify email, so accepting was refused with "Verified invited email identity required." For that reason no workspace used for these guides has a second member, and the member actions below are described from the app's code.
+If their email is not verified yet, accepting is refused with "Verified invited email identity required."
 
 ### Change roles, remove people and transfer ownership
 

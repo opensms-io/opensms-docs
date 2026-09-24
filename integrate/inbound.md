@@ -14,7 +14,7 @@ This page describes the API surface for receiving SMS: renting a virtual number,
 | **Executing inbound rules** (`webhook`, `auto_reply`, `forward_email`) | **Not implemented.** Rules are stored and listed, but no code evaluates them. |
 | `message.received` event | Not emitted by any code path. |
 
-So on the current build, `GET /v1/inbound` returns an empty list unless an operator inserts records by other means, and inbound rules have no effect. Plan two-way features with that in mind, and check with your opensms contact before relying on them.
+So on the current build, `GET /v1/inbound` returns an empty list unless an operator inserts records by other means, and inbound rules have no effect. Plan two-way features with that in mind, and check with your OpenSMS contact before relying on them.
 
 ## Numbers
 

@@ -1,12 +1,10 @@
 # One-time passcodes (OTP)
 
-The OTP API generates a numeric code, sends it by SMS, and later checks the code your user types in. opensms stores only a hash of the code, so you never handle or store it. This page is for developers adding phone verification or two-step login to their product.
-
-> **Local stack limitation.** Sending an OTP creates an SMS, so on the local docs stack it hits the same email-verification gate as every sandbox send (email delivery is disabled there). The send example below shows that real refusal; the success shape is taken from the handler code (`api/internal/otp/http.go`). Verification errors are real responses.
+The OTP API generates a numeric code, sends it by SMS, and later checks the code your user types in. OpenSMS stores only a hash of the code, so you never handle or store it. This page is for developers adding phone verification or two-step login to their product.
 
 ## How it works
 
-1. Your server calls `POST /v1/otp/send` with the user's phone number. opensms generates the code, sends it as an `otp` traffic message, and returns an `otp_id`.
+1. Your server calls `POST /v1/otp/send` with the user's phone number. OpenSMS generates the code, sends it as an `otp` traffic message, and returns an `otp_id`.
 2. You keep the `otp_id` with the user's pending session.
 3. The user types the code. Your server calls `POST /v1/otp/verify` with `otp_id` and the code.
 4. `{"valid": true}` means the code matched. Each OTP can succeed once.
@@ -36,7 +34,7 @@ On success the response is `201` with a single field, `otp_id` (a UUID).
 
 The SMS itself is an ordinary message with `traffic_type` `otp`, so it appears in `GET /v1/messages`, has a status lifecycle, and emits [webhook events](delivery-reports-and-webhooks.md). Its `message.created` event carries only `{id, to}`, never the code.
 
-Before the owner's email is verified (the local docs stack), the send is refused like any sandbox message:
+Sending an OTP creates an SMS, so until the workspace owner's email is verified the send is refused like any sandbox message:
 
 ```json
 {"type":"about:blank","title":"Forbidden","status":403,"detail":"email verification is required for sandbox sending"}

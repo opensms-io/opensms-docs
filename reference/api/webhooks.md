@@ -6,20 +6,20 @@ Register HTTPS endpoints that receive signed event callbacks (delivery receipts,
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/webhooks`](#get-v1webhooks) | List webhook endpoints | yes |
-| POST | [`/v1/webhooks`](#post-v1webhooks) | Create a webhook endpoint | yes |
-| GET | [`/v1/webhooks/{id}`](#get-v1webhooksid) | Get a webhook endpoint | yes |
-| PUT | [`/v1/webhooks/{id}`](#put-v1webhooksid) | Update a webhook endpoint | yes |
-| PATCH | [`/v1/webhooks/{id}`](#patch-v1webhooksid) | Update a webhook endpoint using PATCH | yes |
-| DELETE | [`/v1/webhooks/{id}`](#delete-v1webhooksid) | Delete a webhook endpoint | yes |
-| GET | [`/v1/webhooks/{id}/deliveries`](#get-v1webhooksiddeliveries) | List webhook deliveries | yes |
-| POST | [`/v1/webhooks/{id}/test`](#post-v1webhooksidtest) | Queue a webhook test delivery | yes |
-| POST | [`/v1/webhooks/{id}/deliveries/{delivery_id}`](#post-v1webhooksiddeliveriesdelivery_id) | Replay a webhook delivery | error path only |
-| POST | [`/v1/webhooks/{id}/deliveries/{delivery_id}/replay`](#post-v1webhooksiddeliveriesdelivery_idreplay) | Replay a webhook delivery | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/webhooks`](#get-v1webhooks) | List webhook endpoints |
+| POST | [`/v1/webhooks`](#post-v1webhooks) | Create a webhook endpoint |
+| GET | [`/v1/webhooks/{id}`](#get-v1webhooksid) | Get a webhook endpoint |
+| PUT | [`/v1/webhooks/{id}`](#put-v1webhooksid) | Update a webhook endpoint |
+| PATCH | [`/v1/webhooks/{id}`](#patch-v1webhooksid) | Update a webhook endpoint using PATCH |
+| DELETE | [`/v1/webhooks/{id}`](#delete-v1webhooksid) | Delete a webhook endpoint |
+| GET | [`/v1/webhooks/{id}/deliveries`](#get-v1webhooksiddeliveries) | List webhook deliveries |
+| POST | [`/v1/webhooks/{id}/test`](#post-v1webhooksidtest) | Queue a webhook test delivery |
+| POST | [`/v1/webhooks/{id}/deliveries/{delivery_id}`](#post-v1webhooksiddeliveriesdelivery_id) | Replay a webhook delivery |
+| POST | [`/v1/webhooks/{id}/deliveries/{delivery_id}/replay`](#post-v1webhooksiddeliveriesdelivery_idreplay) | Replay a webhook delivery |
 
-### GET /v1/webhooks
+## GET /v1/webhooks
 
 **List webhook endpoints**
 
@@ -50,7 +50,7 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/webhooks" \
@@ -75,7 +75,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/webhooks
+## POST /v1/webhooks
 
 **Create a webhook endpoint**
 
@@ -115,7 +115,7 @@ Schema: [WebhookRequest](schemas.md#webhookrequest).
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `410` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/webhooks" \
@@ -142,7 +142,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/webhooks/{id}
+## GET /v1/webhooks/{id}
 
 **Get a webhook endpoint**
 
@@ -172,7 +172,7 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
@@ -192,7 +192,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/webhooks/{id}
+## PUT /v1/webhooks/{id}
 
 **Update a webhook endpoint**
 
@@ -233,7 +233,7 @@ Schema: [WebhookRequest](schemas.md#webhookrequest).
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `410` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
@@ -259,7 +259,7 @@ Response `200` (`application/json`):
 }
 ```
 
-**Example: enabled omitted** (captured live from the local stack)
+**Example: enabled omitted**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
@@ -281,7 +281,7 @@ Response `400` (`application/problem+json`):
 
 The contract gives `enabled` a default of `true`, but the handler requires it on PUT.
 
-### PATCH /v1/webhooks/{id}
+## PATCH /v1/webhooks/{id}
 
 **Update a webhook endpoint using PATCH**
 
@@ -322,7 +322,7 @@ Schema: [WebhookRequest](schemas.md#webhookrequest).
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `410` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
@@ -348,7 +348,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/webhooks/{id}
+## DELETE /v1/webhooks/{id}
 
 **Delete a webhook endpoint**
 
@@ -381,7 +381,7 @@ Optional idempotency keys replay the original response; changed input returns 40
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `410` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
@@ -392,7 +392,7 @@ Response `204` (`application/json`):
 
 _Empty body._
 
-### GET /v1/webhooks/{id}/deliveries
+## GET /v1/webhooks/{id}/deliveries
 
 **List webhook deliveries**
 
@@ -431,7 +431,7 @@ Response `200` fields:
 | `items` | array of [WebhookDelivery](schemas.md#webhookdelivery) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/deliveries" \
@@ -459,7 +459,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/webhooks/{id}/test
+## POST /v1/webhooks/{id}/test
 
 **Queue a webhook test delivery**
 
@@ -498,7 +498,7 @@ Response `202` fields:
 | --- | --- | --- | --- | --- |
 | `status` | string | yes |  | Constraints: const `pending`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/test" \
@@ -514,7 +514,7 @@ Response `202` (`application/json`):
 }
 ```
 
-### POST /v1/webhooks/{id}/deliveries/{delivery_id}
+## POST /v1/webhooks/{id}/deliveries/{delivery_id}
 
 **Replay a webhook delivery**
 
@@ -561,7 +561,7 @@ Response `202` fields:
 | --- | --- | --- | --- | --- |
 | `status` | string | yes |  | Constraints: const `pending`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/deliveries/21" \
@@ -582,9 +582,9 @@ Response `409` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Alias of the /replay route; same limitation.
+Alias of the `/replay` route, with the same behaviour.
 
-### POST /v1/webhooks/{id}/deliveries/{delivery_id}/replay
+## POST /v1/webhooks/{id}/deliveries/{delivery_id}/replay
 
 **Replay a webhook delivery**
 
@@ -631,7 +631,7 @@ Response `202` fields:
 | --- | --- | --- | --- | --- |
 | `status` | string | yes |  | Constraints: const `pending`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/deliveries/21/replay" \
@@ -652,5 +652,5 @@ Response `409` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Only terminal deliveries can be replayed. Webhook delivery is disabled on the docs stack, so the test delivery stays `pending` and the replay is refused with 409.
+Only terminal deliveries can be replayed. A delivery that is still `pending` is refused with `409`, as here.
 

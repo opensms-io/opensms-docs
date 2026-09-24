@@ -6,26 +6,26 @@ Read and update the current workspace, list and create workspaces, and manage wo
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/workspace`](#get-v1workspace) | Read the selected workspace settings | yes |
-| PUT | [`/v1/workspace`](#put-v1workspace) | Update the workspace name | yes |
-| GET | [`/v1/settings/retention`](#get-v1settingsretention) | Read owner-controlled retention policy | yes |
-| PUT | [`/v1/settings/retention`](#put-v1settingsretention) | Update owner-controlled retention policy | yes |
-| GET | [`/v1/workspace/retention`](#get-v1workspaceretention) | Read owner-controlled retention policy | yes |
-| PUT | [`/v1/workspace/retention`](#put-v1workspaceretention) | Update owner-controlled retention policy | yes |
-| GET | [`/v1/settings/spend-cap`](#get-v1settingsspend-cap) | Read owner-controlled spend-cap policy | yes |
-| PUT | [`/v1/settings/spend-cap`](#put-v1settingsspend-cap) | Update owner-controlled spend-cap policy | yes |
-| GET | [`/v1/workspace/spend-cap`](#get-v1workspacespend-cap) | Read owner-controlled spend-cap policy | yes |
-| PUT | [`/v1/workspace/spend-cap`](#put-v1workspacespend-cap) | Update owner-controlled spend-cap policy | yes |
-| GET | [`/v1/settings/routing`](#get-v1settingsrouting) | Read workspace routing fallback consent | yes |
-| PUT | [`/v1/settings/routing`](#put-v1settingsrouting) | Explicitly enable or disable workspace route fallback | yes |
-| GET | [`/v1/workspaces`](#get-v1workspaces) | List the current user's workspace memberships | yes |
-| POST | [`/v1/workspaces`](#post-v1workspaces) | Create a sandbox workspace and owner membership | yes |
-| GET | [`/v1/settings/notifications`](#get-v1settingsnotifications) | Read owner-controlled notification defaults | yes |
-| PUT | [`/v1/settings/notifications`](#put-v1settingsnotifications) | Set one owner-controlled notification default | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/workspace`](#get-v1workspace) | Read the selected workspace settings |
+| PUT | [`/v1/workspace`](#put-v1workspace) | Update the workspace name |
+| GET | [`/v1/settings/retention`](#get-v1settingsretention) | Read owner-controlled retention policy |
+| PUT | [`/v1/settings/retention`](#put-v1settingsretention) | Update owner-controlled retention policy |
+| GET | [`/v1/workspace/retention`](#get-v1workspaceretention) | Read owner-controlled retention policy |
+| PUT | [`/v1/workspace/retention`](#put-v1workspaceretention) | Update owner-controlled retention policy |
+| GET | [`/v1/settings/spend-cap`](#get-v1settingsspend-cap) | Read owner-controlled spend-cap policy |
+| PUT | [`/v1/settings/spend-cap`](#put-v1settingsspend-cap) | Update owner-controlled spend-cap policy |
+| GET | [`/v1/workspace/spend-cap`](#get-v1workspacespend-cap) | Read owner-controlled spend-cap policy |
+| PUT | [`/v1/workspace/spend-cap`](#put-v1workspacespend-cap) | Update owner-controlled spend-cap policy |
+| GET | [`/v1/settings/routing`](#get-v1settingsrouting) | Read workspace routing fallback consent |
+| PUT | [`/v1/settings/routing`](#put-v1settingsrouting) | Explicitly enable or disable workspace route fallback |
+| GET | [`/v1/workspaces`](#get-v1workspaces) | List the current user's workspace memberships |
+| POST | [`/v1/workspaces`](#post-v1workspaces) | Create a sandbox workspace and owner membership |
+| GET | [`/v1/settings/notifications`](#get-v1settingsnotifications) | Read owner-controlled notification defaults |
+| PUT | [`/v1/settings/notifications`](#put-v1settingsnotifications) | Set one owner-controlled notification default |
 
-### GET /v1/workspace
+## GET /v1/workspace
 
 **Read the selected workspace settings**
 
@@ -53,7 +53,7 @@ Active browser session and workspace membership required. Settings are workspace
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/workspace" \
@@ -88,7 +88,7 @@ Response `200` (`application/json`):
 }
 ```
 
-**Example: API key on a session-only operation** (captured live from the local stack)
+**Example: API key on a session-only operation**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/workspace" \
@@ -106,7 +106,7 @@ Response `401` (`application/problem+json`):
 }
 ```
 
-### PUT /v1/workspace
+## PUT /v1/workspace
 
 **Update the workspace name**
 
@@ -141,7 +141,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/workspace" \
@@ -178,7 +178,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/settings/retention
+## GET /v1/settings/retention
 
 **Read owner-controlled retention policy**
 
@@ -214,7 +214,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/settings/retention" \
@@ -231,7 +231,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/settings/retention
+## PUT /v1/settings/retention
 
 **Update owner-controlled retention policy**
 
@@ -273,7 +273,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/settings/retention" \
@@ -292,7 +292,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/workspace/retention
+## GET /v1/workspace/retention
 
 **Read owner-controlled retention policy**
 
@@ -328,7 +328,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/workspace/retention" \
@@ -345,7 +345,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/workspace/retention
+## PUT /v1/workspace/retention
 
 **Update owner-controlled retention policy**
 
@@ -387,7 +387,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/workspace/retention" \
@@ -406,7 +406,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/settings/spend-cap
+## GET /v1/settings/spend-cap
 
 **Read owner-controlled spend-cap policy**
 
@@ -442,7 +442,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/settings/spend-cap" \
@@ -459,7 +459,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/settings/spend-cap
+## PUT /v1/settings/spend-cap
 
 **Update owner-controlled spend-cap policy**
 
@@ -501,7 +501,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/settings/spend-cap" \
@@ -520,7 +520,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/workspace/spend-cap
+## GET /v1/workspace/spend-cap
 
 **Read owner-controlled spend-cap policy**
 
@@ -556,7 +556,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/workspace/spend-cap" \
@@ -573,7 +573,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/workspace/spend-cap
+## PUT /v1/workspace/spend-cap
 
 **Update owner-controlled spend-cap policy**
 
@@ -615,7 +615,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/workspace/spend-cap" \
@@ -634,7 +634,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/settings/routing
+## GET /v1/settings/routing
 
 **Read workspace routing fallback consent**
 
@@ -667,7 +667,7 @@ Response `200` fields:
 | `allow_fallback` | boolean | yes |  |  |
 | `pinned_provider_id` | string (uuid) \| null | yes |  | Workspace pinned provider for route selection; null clears the pin. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/settings/routing" \
@@ -685,7 +685,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/settings/routing
+## PUT /v1/settings/routing
 
 **Explicitly enable or disable workspace route fallback**
 
@@ -729,7 +729,7 @@ Response `200` fields:
 | `allow_fallback` | boolean | yes |  |  |
 | `pinned_provider_id` | string (uuid) \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/settings/routing" \
@@ -749,7 +749,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/workspaces
+## GET /v1/workspaces
 
 **List the current user's workspace memberships**
 
@@ -786,7 +786,7 @@ Response `200` fields:
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/workspaces" \
@@ -813,7 +813,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/workspaces
+## POST /v1/workspaces
 
 **Create a sandbox workspace and owner membership**
 
@@ -850,7 +850,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/workspaces" \
@@ -875,7 +875,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/settings/notifications
+## GET /v1/settings/notifications
 
 **Read owner-controlled notification defaults**
 
@@ -912,7 +912,7 @@ Response `200` fields:
 | `items[].channel` | string | yes |  | One of: `email`, `sms`, `slack`, `in_app`. |
 | `items[].enabled` | boolean | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/settings/notifications" \
@@ -929,7 +929,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/settings/notifications
+## PUT /v1/settings/notifications
 
 **Set one owner-controlled notification default**
 
@@ -975,7 +975,7 @@ Response `200` fields:
 | `items[].channel` | string | yes |  | One of: `email`, `sms`, `slack`, `in_app`. |
 | `items[].enabled` | boolean | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/settings/notifications" \

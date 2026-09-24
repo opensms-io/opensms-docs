@@ -2,19 +2,19 @@
 
 # Schemas
 
-Every named schema in the customer contract (`components.schemas` in `api/openapi/customer.yaml`), for developers who need the exact shape of a request or response body. Operation pages link here whenever a body is a named schema. Nested objects are flattened with dotted names, and `[]` marks the fields of array items.
+Every named schema in the customer contract (`components.schemas` in the OpenAPI document), for developers who need the exact shape of a request or response body. Operation pages link here whenever a body is a named schema. Nested objects are flattened with dotted names, and `[]` marks the fields of array items.
 
 Back to the [API reference index](README.md).
 
 [AdminRoleHint](#adminrolehint), [AnalyticsOverview](#analyticsoverview), [AssignNumberRequest](#assignnumberrequest), [AutoTopupSettings](#autotopupsettings), [Batch](#batch), [BatchInput](#batchinput), [BatchItem](#batchitem), [BatchStop](#batchstop), [Code](#code), [CompanyDetails](#companydetails), [CompanyDetailsSubmission](#companydetailssubmission), [CompleteLoginChallenge](#completeloginchallenge), [ComplianceContentRule](#compliancecontentrule), [ComplianceCountry](#compliancecountry), [ComplianceQuietHours](#compliancequiethours), [ContentRule](#contentrule), [CreateMessageRequest](#createmessagerequest), [Credentials](#credentials), [CustomerWorkspace](#customerworkspace), [DeletionCancelled](#deletioncancelled), [DimensionRow](#dimensionrow), [DimensionRows](#dimensionrows), [EmailVerified](#emailverified), [ExportStatus](#exportstatus), [InAppNotification](#inappnotification), [InboundListItem](#inboundlistitem), [InboundListItemPage](#inboundlistitempage), [InboundNumberRule](#inboundnumberrule), [InboundNumberRulePage](#inboundnumberrulepage), [InboundNumberRuleRequest](#inboundnumberrulerequest), [KeyListItem](#keylistitem), [KeyListItemPage](#keylistitempage), [KeyScope](#keyscope), [LoginChallenge](#loginchallenge), [LookupOperation](#lookupoperation), [ManualTopupSubmission](#manualtopupsubmission), [Message](#message), [MessageAttempt](#messageattempt), [MessageBilling](#messagebilling), [NotificationPreference](#notificationpreference), [Number](#number), [NumberPage](#numberpage), [OnboardingDocumentSubmission](#onboardingdocumentsubmission), [OTPResponse](#otpresponse), [OTPVerification](#otpverification), [PricingBook](#pricingbook), [PricingEntry](#pricingentry), [Problem](#problem), [ReceivedInvitation](#receivedinvitation), [SandboxMessage](#sandboxmessage), [SandboxWalletCredit](#sandboxwalletcredit), [SenderIdCreateRequest](#senderidcreaterequest), [SenderIdDraft](#senderiddraft), [SenderIdDraftInput](#senderiddraftinput), [SenderIdDraftPage](#senderiddraftpage), [SenderIdDraftPatch](#senderiddraftpatch), [SenderIdFeeQuote](#senderidfeequote), [SenderIdListItem](#senderidlistitem), [SenderIdListItemPage](#senderidlistitempage), [SendOTPRequest](#sendotprequest), [Session](#session), [SessionSummary](#sessionsummary), [SignupRequest](#signuprequest), [SMSTemplate](#smstemplate), [SMSTemplateInput](#smstemplateinput), [SuppressionImportResult](#suppressionimportresult), [SuppressionListItem](#suppressionlistitem), [SuppressionListItemPage](#suppressionlistitempage), [TimeSeriesRow](#timeseriesrow), [TimeSeriesRows](#timeseriesrows), [TwoFactorEnabled](#twofactorenabled), [TwoFactorSetup](#twofactorsetup), [TwoFactorValid](#twofactorvalid), [ValidationReport](#validationreport), [ValidationRow](#validationrow), [VerificationEmailAccepted](#verificationemailaccepted), [VerifyOTPRequest](#verifyotprequest), [WalletBalance](#walletbalance), [WalletBalanceCollection](#walletbalancecollection), [WalletLedgerCollection](#walletledgercollection), [WalletLedgerEntry](#walletledgerentry), [WalletTopupInitialization](#wallettopupinitialization), [Webhook](#webhook), [WebhookDelivery](#webhookdelivery), [WebhookPage](#webhookpage), [WebhookRequest](#webhookrequest), [WorkspaceMembership](#workspacemembership)
 
-### AdminRoleHint
+## AdminRoleHint
 
 Current active admin role for this authenticated user only. Navigation hint, never authorization or an admin elevation substitute. Null for non-admins.
 
 Type: string | null. Current active admin role for this authenticated user only. Navigation hint, never authorization or an admin elevation substitute. Null for non-admins. One of: `superadmin`, `ops`, `finance`, `support`, `null`.
 
-### AnalyticsOverview
+## AnalyticsOverview
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -31,7 +31,7 @@ Type: string | null. Current active admin role for this authenticated user only.
 | `currency` | string | no |  |  |
 | `environment` | string | no |  | One of: `sandbox`, `live`. |
 
-### AssignNumberRequest
+## AssignNumberRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -40,7 +40,7 @@ Type: string | null. Current active admin role for this authenticated user only.
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### AutoTopupSettings
+## AutoTopupSettings
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -52,7 +52,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `channel` | string \| null | yes |  |  |
 | `payment_method_id` | string \| null | yes |  |  |
 
-### Batch
+## Batch
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -69,14 +69,14 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `created_at` | string (date-time) | no |  |  |
 | `completed_at` | string (date-time) \| null | no |  |  |
 
-### BatchInput
+## BatchInput
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [BatchItem](#batchitem) | yes |  |  |
 | `dedupe` | boolean | no | `true` |  |
 
-### BatchItem
+## BatchItem
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -87,7 +87,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `callback_url` | string (uri) | no |  |  |
 | `metadata` | object | no |  |  |
 
-### BatchStop
+## BatchStop
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -95,13 +95,13 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `status` | string | no |  | One of: `stopped`. |
 | `cancelled` | integer | no |  |  |
 
-### Code
+## Code
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `code` | string | yes |  | Constraints: pattern `^[0-9]{6}$`. |
 
-### CompanyDetails
+## CompanyDetails
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -111,7 +111,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### CompanyDetailsSubmission
+## CompanyDetailsSubmission
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -120,7 +120,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `status` | string | yes |  | One of: `submitted`. |
 | `payload` | [CompanyDetails](#companydetails) | yes |  |  |
 
-### CompleteLoginChallenge
+## CompleteLoginChallenge
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -132,7 +132,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Object constraints: oneOf `[{"required":["code"]},{"required":["recovery_code"]}]`.
 
-### ComplianceContentRule
+## ComplianceContentRule
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -142,7 +142,7 @@ Object constraints: oneOf `[{"required":["code"]},{"required":["recovery_code"]}
 | `traffic_types` | array of string | yes |  |  |
 | `enabled` | boolean | yes |  |  |
 
-### ComplianceCountry
+## ComplianceCountry
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -154,7 +154,7 @@ Object constraints: oneOf `[{"required":["code"]},{"required":["recovery_code"]}
 | `quiet_hours` | array of [ComplianceQuietHours](#compliancequiethours) | yes |  |  |
 | `content_rules` | array of [ComplianceContentRule](#compliancecontentrule) | yes |  |  |
 
-### ComplianceQuietHours
+## ComplianceQuietHours
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -163,7 +163,7 @@ Object constraints: oneOf `[{"required":["code"]},{"required":["recovery_code"]}
 | `end_local` | string | yes |  |  |
 | `enforce` | string | yes |  |  |
 
-### ContentRule
+## ContentRule
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -175,7 +175,7 @@ Object constraints: oneOf `[{"required":["code"]},{"required":["recovery_code"]}
 | `traffic_types` | array of string | yes |  |  |
 | `enabled` | boolean | yes |  |  |
 
-### CreateMessageRequest
+## CreateMessageRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -189,14 +189,14 @@ Object constraints: oneOf `[{"required":["code"]},{"required":["recovery_code"]}
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### Credentials
+## Credentials
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `email` | string (email) | yes |  | Constraints: maxLength `320`. |
 | `password` | string | yes |  | Constraints: minLength `8`, maxLength `1024`. |
 
-### CustomerWorkspace
+## CustomerWorkspace
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -220,13 +220,13 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `deleted_at` | string (date-time) \| null | yes |  |  |
 | `created_at` | string (date-time) | yes |  |  |
 
-### DeletionCancelled
+## DeletionCancelled
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `status` | string | yes |  | Constraints: const `cancelled`. |
 
-### DimensionRow
+## DimensionRow
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -241,17 +241,17 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `key` | string | yes |  |  |
 | `name` | string | yes |  | Current country or carrier catalog name, or sender ID text. Missing dimensions use Unknown country, Unknown carrier, or Unknown sender ID. The key remains the stable grouping identifier. |
 
-### DimensionRows
+## DimensionRows
 
 Type: array of [DimensionRow](#dimensionrow).
 
-### EmailVerified
+## EmailVerified
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `verified` | boolean | yes |  | Constraints: const `true`. |
 
-### ExportStatus
+## ExportStatus
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -260,7 +260,7 @@ Type: array of [DimensionRow](#dimensionrow).
 | `expires_at` | string (date-time) | yes |  |  |
 | `error_code` | string \| null | yes |  | One of: `null`, `export_generation_failed`, `export_size_limit`, `export_retry_exhausted`. |
 
-### InAppNotification
+## InAppNotification
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -274,7 +274,7 @@ Type: array of [DimensionRow](#dimensionrow).
 | `read_at` | string (date-time) \| null | yes |  |  |
 | `created_at` | string (date-time) | yes |  |  |
 
-### InboundListItem
+## InboundListItem
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -285,14 +285,14 @@ Type: array of [DimensionRow](#dimensionrow).
 | `received_at` | string (date-time) | no |  |  |
 | `virtual_number_id` | string (uuid) \| null | no |  |  |
 
-### InboundListItemPage
+## InboundListItemPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [InboundListItem](#inboundlistitem) | yes |  |  |
 | `next_cursor` | string \| null | yes |  | Opaque continuation cursor. Null means no further page. |
 
-### InboundNumberRule
+## InboundNumberRule
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -305,7 +305,7 @@ Type: array of [DimensionRow](#dimensionrow).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### InboundNumberRulePage
+## InboundNumberRulePage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -314,7 +314,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### InboundNumberRuleRequest
+## InboundNumberRuleRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -326,7 +326,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### KeyListItem
+## KeyListItem
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -339,20 +339,20 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `revoked_at` | string (date-time) | no |  |  |
 | `expires_at` | string (date-time) | no |  |  |
 
-### KeyListItemPage
+## KeyListItemPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [KeyListItem](#keylistitem) | yes |  |  |
 | `next_cursor` | string \| null | yes |  | Opaque continuation cursor. Null means no further page. |
 
-### KeyScope
+## KeyScope
 
 Exact supported API key scope. Owner/admin issuers may use every value for sandbox or live keys. Developers may use only x-role-scopes.developer for sandbox keys. Finance/support cannot issue keys. Granular sender-ids:read and sender-ids:write are supported; senders:manage is the legacy mutation scope. webhooks:read and webhooks:write are supported alongside legacy webhooks:manage. Read scopes never authorize writes. Fetch GET /v1/keys/scopes for the current issuer instead of hardcoding this enum as selectable permissions.
 
 Type: string. Exact supported API key scope. Owner/admin issuers may use every value for sandbox or live keys. Developers may use only x-role-scopes.developer for sandbox keys. Finance/support cannot issue keys. Granular sender-ids:read and sender-ids:write are supported; senders:manage is the legacy mutation scope. webhooks:read and webhooks:write are supported alongside legacy webhooks:manage. Read scopes never authorize writes. Fetch GET /v1/keys/scopes for the current issuer instead of hardcoding this enum as selectable permissions. One of: `analytics:read`, `compliance:manage`, `compliance:read`, `contacts:manage`, `keys:admin`, `lookup:read`, `lookup:request`, `messages:read`, `messages:write`, `numbers:manage`, `numbers:read`, `pricing:read`, `realtime:read`, `sender-ids:read`, `sender-ids:write`, `senders:manage`, `templates:manage`, `wallet:read`, `wallet:topup`, `wallet:write`, `webhooks:manage`, `webhooks:read`, `webhooks:write`.
 
-### LoginChallenge
+## LoginChallenge
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -360,7 +360,7 @@ Type: string. Exact supported API key scope. Owner/admin issuers may use every v
 | `challenge_token` | string | yes |  | Opaque single-use challenge credential. This is not a session token. |
 | `expires_at` | string (date-time) | yes |  |  |
 
-### LookupOperation
+## LookupOperation
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -375,14 +375,14 @@ Type: string. Exact supported API key scope. Owner/admin issuers may use every v
 | `currency` | string | yes |  | Constraints: pattern `^[A-Z]{3}$`. |
 | `checked_at` | string (date-time) \| null | yes |  |  |
 
-### ManualTopupSubmission
+## ManualTopupSubmission
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `id` | string (uuid) | yes |  |  |
 | `status` | string | yes |  | One of: `awaiting_approval`. |
 
-### Message
+## Message
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -412,7 +412,7 @@ Type: string. Exact supported API key scope. Owner/admin issuers may use every v
 | `scheduled_at` | string (date-time) | no |  |  |
 | `metadata` | object | yes |  |  |
 
-### MessageAttempt
+## MessageAttempt
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -433,7 +433,7 @@ Type: string. Exact supported API key scope. Owner/admin issuers may use every v
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### MessageBilling
+## MessageBilling
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -444,7 +444,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### NotificationPreference
+## NotificationPreference
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -455,7 +455,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### Number
+## Number
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -473,14 +473,14 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### NumberPage
+## NumberPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [Number](#number) | yes |  |  |
 | `next_cursor` | string \| null | yes |  | Opaque continuation cursor. Null means no further page. |
 
-### OnboardingDocumentSubmission
+## OnboardingDocumentSubmission
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -497,20 +497,20 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `size` | integer | yes |  |  |
 | `scan_status` | string | yes |  | One of: `pending`. |
 
-### OTPResponse
+## OTPResponse
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `otp_id` | string (uuid) | yes |  |  |
 
-### OTPVerification
+## OTPVerification
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `valid` | boolean | yes |  |  |
 | `attempts_left` | integer | yes |  |  |
 
-### PricingBook
+## PricingBook
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -519,7 +519,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `product` | string | yes |  |  |
 | `entries` | array of [PricingEntry](#pricingentry) | yes |  |  |
 
-### PricingEntry
+## PricingEntry
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -539,7 +539,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `effective_from` | string (date-time) | yes |  |  |
 | `fx_rate` | string \| null | no |  |  |
 
-### Problem
+## Problem
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -551,7 +551,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `status` | integer | yes |  |  |
 | `detail` | string | yes |  |  |
 
-### ReceivedInvitation
+## ReceivedInvitation
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -565,7 +565,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### SandboxMessage
+## SandboxMessage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -579,7 +579,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `created_at` | string (date-time) | yes |  |  |
 | `sent_at` | string (date-time) \| null | no |  |  |
 
-### SandboxWalletCredit
+## SandboxWalletCredit
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -594,7 +594,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### SenderIdCreateRequest
+## SenderIdCreateRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -608,7 +608,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `sample_message` | string | no |  |  |
 | `documents` | array of string (uuid) | yes |  | Constraints: minItems `3`. |
 
-### SenderIdDraft
+## SenderIdDraft
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -626,7 +626,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `created_at` | string (date-time) | yes |  |  |
 | `updated_at` | string (date-time) | yes |  |  |
 
-### SenderIdDraftInput
+## SenderIdDraftInput
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -640,14 +640,14 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### SenderIdDraftPage
+## SenderIdDraftPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [SenderIdDraft](#senderiddraft) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-### SenderIdDraftPatch
+## SenderIdDraftPatch
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -661,7 +661,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### SenderIdFeeQuote
+## SenderIdFeeQuote
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -675,7 +675,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `totals[].currency` | string | yes |  |  |
 | `totals[].amount` | string | yes |  |  |
 
-### SenderIdListItem
+## SenderIdListItem
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -691,14 +691,14 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `restriction_reason` | string | no |  |  |
 | `created_at` | string (date-time) | no |  |  |
 
-### SenderIdListItemPage
+## SenderIdListItemPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [SenderIdListItem](#senderidlistitem) | yes |  |  |
 | `next_cursor` | string \| null | yes |  | Opaque continuation cursor. Null means no further page. |
 
-### SendOTPRequest
+## SendOTPRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -708,7 +708,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `length` | integer | no | `6` | Constraints: minimum `4`, maximum `10`. |
 | `ttl_seconds` | integer | no | `600` | Constraints: minimum `30`, maximum `86400`. |
 
-### Session
+## Session
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -728,7 +728,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `token` | string | yes |  | Bearer session token. |
 | `expires_at` | string (date-time) | yes |  |  |
 
-### SessionSummary
+## SessionSummary
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -740,7 +740,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `revoked_at` | string (date-time) | no |  |  |
 | `current` | boolean | yes |  |  |
 
-### SignupRequest
+## SignupRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -749,7 +749,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `country_iso2` | string | yes |  | Constraints: minLength `2`, maxLength `2`. |
 | `workspace_name` | string | no | `"My workspace"` | Constraints: maxLength `120`. |
 
-### SMSTemplate
+## SMSTemplate
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -762,7 +762,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `updated_at` | string (date-time) | yes |  |  |
 | `variables` | array of string | yes |  |  |
 
-### SMSTemplateInput
+## SMSTemplateInput
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -772,14 +772,14 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 Unknown fields are rejected (`additionalProperties: false`).
 
-### SuppressionImportResult
+## SuppressionImportResult
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `created` | integer | yes |  | Constraints: minimum `0`. |
 | `received` | integer | yes |  | Constraints: minimum `0`. |
 
-### SuppressionListItem
+## SuppressionListItem
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -788,14 +788,14 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `reason` | string | no |  |  |
 | `created_at` | string (date-time) | no |  |  |
 
-### SuppressionListItemPage
+## SuppressionListItemPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [SuppressionListItem](#suppressionlistitem) | yes |  |  |
 | `next_cursor` | string \| null | yes |  | Opaque continuation cursor. Null means no further page. |
 
-### TimeSeriesRow
+## TimeSeriesRow
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -809,30 +809,30 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `p95_ms` | integer | no |  |  |
 | `bucket` | string (date-time) | no |  |  |
 
-### TimeSeriesRows
+## TimeSeriesRows
 
 Type: array of [TimeSeriesRow](#timeseriesrow).
 
-### TwoFactorEnabled
+## TwoFactorEnabled
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `enabled` | boolean | yes |  |  |
 
-### TwoFactorSetup
+## TwoFactorSetup
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `secret` | string | yes |  |  |
 | `otpauth_uri` | string | yes |  |  |
 
-### TwoFactorValid
+## TwoFactorValid
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `valid` | boolean | yes |  | Constraints: const `true`. |
 
-### ValidationReport
+## ValidationReport
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -843,7 +843,7 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `duplicates` | integer | no |  |  |
 | `suppressed` | integer | no |  |  |
 
-### ValidationRow
+## ValidationRow
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -854,20 +854,20 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `suppressed` | boolean | no |  |  |
 | `error` | string | no |  |  |
 
-### VerificationEmailAccepted
+## VerificationEmailAccepted
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `sent` | boolean | yes |  | Constraints: const `true`. |
 
-### VerifyOTPRequest
+## VerifyOTPRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `otp_id` | string (uuid) | yes |  |  |
 | `code` | string | yes |  |  |
 
-### WalletBalance
+## WalletBalance
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -877,19 +877,19 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `reserved` | string | yes |  |  |
 | `environment` | string | yes |  |  |
 
-### WalletBalanceCollection
+## WalletBalanceCollection
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `data` | array of [WalletBalance](#walletbalance) | yes |  |  |
 
-### WalletLedgerCollection
+## WalletLedgerCollection
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `data` | array of [WalletLedgerEntry](#walletledgerentry) | yes |  |  |
 
-### WalletLedgerEntry
+## WalletLedgerEntry
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -905,7 +905,7 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `id` | integer (int64) | yes |  |  |
 | `created_at` | string (date-time) | yes |  |  |
 
-### WalletTopupInitialization
+## WalletTopupInitialization
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -917,7 +917,7 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `currency` | string | yes |  |  |
 | `status` | string | yes |  |  |
 
-### Webhook
+## Webhook
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -930,7 +930,7 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `created_at` | string (date-time) | no |  |  |
 | `secret` | string | no |  | Returned once when the endpoint is created. |
 
-### WebhookDelivery
+## WebhookDelivery
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -946,14 +946,14 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `created_at` | string (date-time) | no |  |  |
 | `delivered_at` | string (date-time) | no |  |  |
 
-### WebhookPage
+## WebhookPage
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `items` | array of [Webhook](#webhook) | yes |  |  |
 | `next_cursor` | string \| null | yes |  | Opaque continuation cursor. Null means no further page. |
 
-### WebhookRequest
+## WebhookRequest
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
@@ -961,7 +961,7 @@ Type: array of [TimeSeriesRow](#timeseriesrow).
 | `events` | array of string | yes |  |  |
 | `enabled` | boolean | no | `true` |  |
 
-### WorkspaceMembership
+## WorkspaceMembership
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |

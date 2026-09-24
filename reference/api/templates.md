@@ -2,19 +2,19 @@
 
 # Templates
 
-Reusable message templates with variables. For developers who keep message copy in opensms rather than in their own code.
+Reusable message templates with variables. For developers who keep message copy in OpenSMS rather than in their own code.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/templates`](#get-v1templates) | List SMS templates in the selected workspace and environment | yes |
-| POST | [`/v1/templates`](#post-v1templates) | Create an SMS template | yes |
-| GET | [`/v1/templates/{id}`](#get-v1templatesid) |  | yes |
-| PATCH | [`/v1/templates/{id}`](#patch-v1templatesid) |  | yes |
-| DELETE | [`/v1/templates/{id}`](#delete-v1templatesid) |  | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/templates`](#get-v1templates) | List SMS templates in the selected workspace and environment |
+| POST | [`/v1/templates`](#post-v1templates) | Create an SMS template |
+| GET | [`/v1/templates/{id}`](#get-v1templatesid) |  |
+| PATCH | [`/v1/templates/{id}`](#patch-v1templatesid) |  |
+| DELETE | [`/v1/templates/{id}`](#delete-v1templatesid) |  |
 
-### GET /v1/templates
+## GET /v1/templates
 
 **List SMS templates in the selected workspace and environment**
 
@@ -51,7 +51,7 @@ Response `200` fields:
 | `items` | array of [SMSTemplate](schemas.md#smstemplate) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/templates" \
@@ -78,7 +78,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/templates
+## POST /v1/templates
 
 **Create an SMS template**
 
@@ -115,7 +115,7 @@ Owner, admin or developer session, or templates:manage API key. Idempotency repl
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/templates" \
@@ -140,7 +140,7 @@ Response `201` (`application/json`):
 }
 ```
 
-**Example: same Idempotency-Key and body: the original is replayed** (captured live from the local stack)
+**Example: same Idempotency-Key and body: the original is replayed**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/templates" \
@@ -165,7 +165,7 @@ Response `201` (`application/json`):
 }
 ```
 
-**Example: same Idempotency-Key, different body** (captured live from the local stack)
+**Example: same Idempotency-Key, different body**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/templates" \
@@ -186,7 +186,7 @@ Response `409` (`application/problem+json`):
 }
 ```
 
-### GET /v1/templates/{id}
+## GET /v1/templates/{id}
 
 **(no summary in contract)**
 
@@ -213,7 +213,7 @@ Operation ID: `getTemplate`. Tag: _none in contract_.
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/templates/8a5ec16b-30a7-48c8-ab2d-15037a667874" \
@@ -235,7 +235,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PATCH /v1/templates/{id}
+## PATCH /v1/templates/{id}
 
 **(no summary in contract)**
 
@@ -276,7 +276,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/templates/8a5ec16b-30a7-48c8-ab2d-15037a667874" \
@@ -300,7 +300,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/templates/{id}
+## DELETE /v1/templates/{id}
 
 **(no summary in contract)**
 
@@ -329,7 +329,7 @@ Soft delete preserves historical message references. Owner, admin or developer s
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/templates/8a5ec16b-30a7-48c8-ab2d-15037a667874" \

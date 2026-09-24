@@ -6,17 +6,17 @@ The live-sending onboarding flow: onboarding state, phone verification, company 
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/onboarding/phone/send`](#post-v1onboardingphonesend) | Owner requests phone verification using the configured service SMS account | error path only |
-| POST | [`/v1/onboarding/phone/verify`](#post-v1onboardingphoneverify) | Owner verifies a single-use phone challenge | error path only |
-| PUT | [`/v1/onboarding/company`](#put-v1onboardingcompany) | Submit company details | yes |
-| POST | [`/v1/onboarding/documents`](#post-v1onboardingdocuments) | Upload an onboarding document | yes |
-| GET | [`/v1/onboarding`](#get-v1onboarding) | Read workspace onboarding steps | yes |
-| POST | [`/v1/onboarding/request-live`](#post-v1onboardingrequest-live) | Submit a sandbox workspace for live review | error path only |
-| GET | [`/v1/onboarding/documents/{id}/download`](#get-v1onboardingdocumentsiddownload) | Download an owned current or historical onboarding document | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/onboarding/phone/send`](#post-v1onboardingphonesend) | Owner requests phone verification using the configured service SMS account |
+| POST | [`/v1/onboarding/phone/verify`](#post-v1onboardingphoneverify) | Owner verifies a single-use phone challenge |
+| PUT | [`/v1/onboarding/company`](#put-v1onboardingcompany) | Submit company details |
+| POST | [`/v1/onboarding/documents`](#post-v1onboardingdocuments) | Upload an onboarding document |
+| GET | [`/v1/onboarding`](#get-v1onboarding) | Read workspace onboarding steps |
+| POST | [`/v1/onboarding/request-live`](#post-v1onboardingrequest-live) | Submit a sandbox workspace for live review |
+| GET | [`/v1/onboarding/documents/{id}/download`](#get-v1onboardingdocumentsiddownload) | Download an owned current or historical onboarding document |
 
-### POST /v1/onboarding/phone/send
+## POST /v1/onboarding/phone/send
 
 **Owner requests phone verification using the configured service SMS account**
 
@@ -59,7 +59,7 @@ Response `202` fields:
 | `challenge_id` | string (uuid) | yes |  |  |
 | `expires_in` | integer | yes |  | Constraints: const `600`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/onboarding/phone/send" \
@@ -81,9 +81,9 @@ Response `503` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Phone codes are sent by SMS through the verification provider, which is unavailable on the docs stack, so the handler answers 503.
+This is the `503` returned when the SMS verification provider is unavailable. Normally the code is sent by SMS.
 
-### POST /v1/onboarding/phone/verify
+## POST /v1/onboarding/phone/verify
 
 **Owner verifies a single-use phone challenge**
 
@@ -125,7 +125,7 @@ Response `200` fields:
 | `workspace_id` | string (uuid) | no |  |  |
 | `status` | string | no |  | Constraints: const `approved`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/onboarding/phone/verify" \
@@ -147,9 +147,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No challenge can be issued locally (see phone/send), so only an unknown challenge is shown.
+This shows the answer for an unknown challenge ID.
 
-### PUT /v1/onboarding/company
+## PUT /v1/onboarding/company
 
 **Submit company details**
 
@@ -189,7 +189,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/onboarding/company" \
@@ -215,7 +215,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/onboarding/documents
+## POST /v1/onboarding/documents
 
 **Upload an onboarding document**
 
@@ -250,7 +250,7 @@ Requires workspace owner membership and X-Workspace-ID. Approved submissions can
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/onboarding/documents" \
@@ -279,7 +279,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/onboarding
+## GET /v1/onboarding
 
 **Read workspace onboarding steps**
 
@@ -329,7 +329,7 @@ Response `200` fields:
 | `documents[].scan_status` | string | yes |  | One of: `pending`, `clean`, `infected`, `error`. |
 | `documents[].updated_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/onboarding" \
@@ -369,7 +369,7 @@ Response `200` (`application/json`):
 
 Truncated for length: `steps` shows 3 of 8 items.
 
-### POST /v1/onboarding/request-live
+## POST /v1/onboarding/request-live
 
 **Submit a sandbox workspace for live review**
 
@@ -406,7 +406,7 @@ Response `202` fields:
 | `workspace_id` | string (uuid) | yes |  |  |
 | `live_status` | string | yes |  | One of: `pending_review`. |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/onboarding/request-live" \
@@ -426,9 +426,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Going live needs every onboarding step, including a verified email, which cannot be completed without email delivery.
+Going live needs every onboarding step to be complete, including a verified email address. Until then the request is refused like this.
 
-### GET /v1/onboarding/documents/{id}/download
+## GET /v1/onboarding/documents/{id}/download
 
 **Download an owned current or historical onboarding document**
 
@@ -454,7 +454,7 @@ Owner/admin browser session with X-Workspace-ID. Clean files only; every success
 | `403` | Owner or admin access required | No body |
 | `404` | Document absent, outside workspace, or not clean | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/onboarding/documents/889e235f-479d-48b1-8db8-5d4f6231d96f/download" \
@@ -474,5 +474,5 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Only documents whose malware scan is `clean` can be downloaded. File scanning is disabled on the docs stack, so uploads stay `pending` and the download answers 404.
+Only documents whose malware scan is `clean` can be downloaded. While a document is still `pending` its scan, the download answers `404`.
 

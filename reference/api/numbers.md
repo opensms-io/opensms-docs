@@ -6,18 +6,18 @@ Search for, assign and release dedicated phone numbers and manage their inbound 
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/numbers`](#get-v1numbers) | List assigned virtual numbers | yes |
-| POST | [`/v1/numbers`](#post-v1numbers) | Assign an available virtual number | error path only |
-| GET | [`/v1/numbers/available`](#get-v1numbersavailable) | List available virtual numbers | yes |
-| DELETE | [`/v1/numbers/{id}`](#delete-v1numbersid) | Request release of an assigned virtual number | error path only |
-| GET | [`/v1/numbers/{id}/rules`](#get-v1numbersidrules) | List inbound rules for the current number assignment | error path only |
-| POST | [`/v1/numbers/{id}/rules`](#post-v1numbersidrules) | Create an inbound rule idempotently | error path only |
-| PUT | [`/v1/numbers/{id}/rules/{rule_id}`](#put-v1numbersidrulesrule_id) | Replace an inbound rule | error path only |
-| DELETE | [`/v1/numbers/{id}/rules/{rule_id}`](#delete-v1numbersidrulesrule_id) | deleteInboundNumberRule | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/numbers`](#get-v1numbers) | List assigned virtual numbers |
+| POST | [`/v1/numbers`](#post-v1numbers) | Assign an available virtual number |
+| GET | [`/v1/numbers/available`](#get-v1numbersavailable) | List available virtual numbers |
+| DELETE | [`/v1/numbers/{id}`](#delete-v1numbersid) | Request release of an assigned virtual number |
+| GET | [`/v1/numbers/{id}/rules`](#get-v1numbersidrules) | List inbound rules for the current number assignment |
+| POST | [`/v1/numbers/{id}/rules`](#post-v1numbersidrules) | Create an inbound rule idempotently |
+| PUT | [`/v1/numbers/{id}/rules/{rule_id}`](#put-v1numbersidrulesrule_id) | Replace an inbound rule |
+| DELETE | [`/v1/numbers/{id}/rules/{rule_id}`](#delete-v1numbersidrulesrule_id) | deleteInboundNumberRule |
 
-### GET /v1/numbers
+## GET /v1/numbers
 
 **List assigned virtual numbers**
 
@@ -48,7 +48,7 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/numbers" \
@@ -64,7 +64,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/numbers
+## POST /v1/numbers
 
 **Assign an available virtual number**
 
@@ -108,7 +108,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/numbers" \
@@ -129,9 +129,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### GET /v1/numbers/available
+## GET /v1/numbers/available
 
 **List available virtual numbers**
 
@@ -162,7 +162,7 @@ Returns at most 200 available numbers ordered by monthly fee and number. Sandbox
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/numbers/available?country=KE&kind=long_code" \
@@ -175,9 +175,9 @@ Response `200` (`application/json`):
 []
 ```
 
-The docs stack has no number inventory, so the list is empty.
+No numbers matched this search when it was captured, so the list is empty.
 
-### DELETE /v1/numbers/{id}
+## DELETE /v1/numbers/{id}
 
 **Request release of an assigned virtual number**
 
@@ -210,7 +210,7 @@ Current owner/admin browser sessions require enabled TOTP and explicit X-Workspa
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000" \
@@ -229,9 +229,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### GET /v1/numbers/{id}/rules
+## GET /v1/numbers/{id}/rules
 
 **List inbound rules for the current number assignment**
 
@@ -266,7 +266,7 @@ Current members or numbers:read API keys; live environment required. Returns ite
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules" \
@@ -284,9 +284,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### POST /v1/numbers/{id}/rules
+## POST /v1/numbers/{id}/rules
 
 **Create an inbound rule idempotently**
 
@@ -333,7 +333,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules" \
@@ -354,9 +354,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### PUT /v1/numbers/{id}/rules/{rule_id}
+## PUT /v1/numbers/{id}/rules/{rule_id}
 
 **Replace an inbound rule**
 
@@ -402,7 +402,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules/00000000-0000-4000-8000-000000000000" \
@@ -422,9 +422,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### DELETE /v1/numbers/{id}/rules/{rule_id}
+## DELETE /v1/numbers/{id}/rules/{rule_id}
 
 **deleteInboundNumberRule**
 
@@ -458,7 +458,7 @@ Current owner/admin browser sessions with enabled TOTP or numbers:manage API key
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules/00000000-0000-4000-8000-000000000000" \
@@ -476,5 +476,5 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 

@@ -6,12 +6,12 @@ Request and read carrier lookups (HLR-style) for a phone number. For developers 
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/lookup`](#post-v1lookup) | Request an asynchronous scoped number lookup | yes |
-| GET | [`/v1/lookup/{id}`](#get-v1lookupid) | Read current lookup state and nullable result | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/lookup`](#post-v1lookup) | Request an asynchronous scoped number lookup |
+| GET | [`/v1/lookup/{id}`](#get-v1lookupid) | Read current lookup state and nullable result |
 
-### POST /v1/lookup
+## POST /v1/lookup
 
 **Request an asynchronous scoped number lookup**
 
@@ -52,7 +52,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `429` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/lookup" \
@@ -81,7 +81,7 @@ Response `200` (`application/json`):
 
 In the sandbox the lookup is answered by the mock source at zero cost.
 
-### GET /v1/lookup/{id}
+## GET /v1/lookup/{id}
 
 **Read current lookup state and nullable result**
 
@@ -113,7 +113,7 @@ Requires lookup:read API key scope or current workspace membership session. Work
 | `429` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/lookup/f8842eae-4d54-4433-b91c-7a19c741ac60" \

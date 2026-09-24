@@ -6,12 +6,12 @@ Read inbound (mobile-originated) SMS received on the workspace's numbers and rep
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/inbound`](#get-v1inbound) | List inbound | yes |
-| POST | [`/v1/inbound/{id}/reply`](#post-v1inboundidreply) | Reply to inbound message; owner/admin/developer session | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/inbound`](#get-v1inbound) | List inbound |
+| POST | [`/v1/inbound/{id}/reply`](#post-v1inboundidreply) | Reply to inbound message; owner/admin/developer session |
 
-### GET /v1/inbound
+## GET /v1/inbound
 
 **List inbound**
 
@@ -42,7 +42,7 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/inbound" \
@@ -58,7 +58,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/inbound/{id}/reply
+## POST /v1/inbound/{id}/reply
 
 **Reply to inbound message; owner/admin/developer session**
 
@@ -96,7 +96,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/inbound/00000000-0000-4000-8000-000000000000/reply" \
@@ -117,5 +117,5 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 

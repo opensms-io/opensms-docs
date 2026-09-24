@@ -2,15 +2,15 @@
 
 # Realtime
 
-Short-lived tickets for the realtime (websocket) event stream the customer app uses. For developers building a live UI on top of opensms.
+Short-lived tickets for the realtime (websocket) event stream the customer app uses. For developers building a live UI on top of OpenSMS.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/realtime/tickets`](#post-v1realtimetickets) | Issue single-use workspace-scoped WebSocket ticket | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/realtime/tickets`](#post-v1realtimetickets) | Issue single-use workspace-scoped WebSocket ticket |
 
-### POST /v1/realtime/tickets
+## POST /v1/realtime/tickets
 
 **Issue single-use workspace-scoped WebSocket ticket**
 
@@ -53,14 +53,14 @@ Response `200` fields:
 | `ticket` | string | yes |  |  |
 | `expires_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/realtime/tickets" \
   -H 'Authorization: Bearer sess__9lZ...' \
   -H 'X-Workspace-ID: 45d5c55a-085e-4cce-83aa-e35ef7bb31c4' \
   -H 'X-Environment: sandbox' \
-  -H 'Origin: http://localhost:5190'
+  -H 'Origin: https://app.example.com'
 ```
 
 Response `403` (`application/problem+json`):
@@ -74,5 +74,5 @@ Response `403` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Tickets are issued only over HTTPS from an allowed Origin; the docs stack serves plain HTTP, so the request is refused.
+Tickets are issued only over HTTPS and only to an allowed `Origin`. A request over plain HTTP, or from an origin that is not allowed, is refused like this.
 

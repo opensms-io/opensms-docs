@@ -4,7 +4,7 @@ A route is the path a message takes to a phone: through a messaging provider to 
 
 Open **Routes** in the left-hand menu, under **Messaging** (`/app/routes`).
 
-![The Routes page on the docs stack, where no provider is connected yet](../assets/screens/console/routes/routes.png)
+![The Routes page before any provider is connected](../assets/screens/console/routes/routes.png)
 
 ## Check which countries you can reach
 
@@ -25,12 +25,10 @@ The list shows active markets only. Picking a market during [onboarding](onboard
 
 | You see | Meaning |
 | --- | --- |
-| No routes configured. "None of the 6 live markets has a provider route set up yet. Routes appear here once a provider is connected to a carrier." | Countries are switched on, but no provider is connected. This is what the docs stack shows. |
+| No routes configured. "None of the 6 live markets has a provider route set up yet. Routes appear here once a provider is connected to a carrier." | Countries are switched on, but no provider is connected yet. |
 | No routes in *country* | That one country has no connected provider yet. |
 | No active markets yet | No country is switched on for sending. |
 | Couldn't load routes | The list could not be fetched. Click **Retry**. |
-
-On the docs stack six markets are active (Ghana, Kenya, Nigeria, South Africa, United Kingdom and United States) and none has a provider route, so the per-country table could not be shown with real rows. The columns above are described from the app's code.
 
 When a route changes health you get a "Route health changed" [notification](notifications.md), unless you turned it off in [Settings > Notifications](settings.md#notifications).
 

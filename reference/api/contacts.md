@@ -2,25 +2,25 @@
 
 # Contacts and groups
 
-Store contacts and contact groups, and send a message to a whole group. API keys need the `contacts:manage` scope. For developers syncing an address book into opensms.
+Store contacts and contact groups, and send a message to a whole group. API keys need the `contacts:manage` scope. For developers syncing an address book into OpenSMS.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/contacts`](#get-v1contacts) | GET contacts | yes |
-| POST | [`/v1/contacts`](#post-v1contacts) | POST contacts | yes |
-| GET | [`/v1/contacts/{id}`](#get-v1contactsid) | GET contacts | yes |
-| PATCH | [`/v1/contacts/{id}`](#patch-v1contactsid) | PATCH contacts | yes |
-| DELETE | [`/v1/contacts/{id}`](#delete-v1contactsid) | DELETE contacts | yes |
-| GET | [`/v1/contact-groups`](#get-v1contact-groups) | GET contact-groups | yes |
-| POST | [`/v1/contact-groups`](#post-v1contact-groups) | POST contact-groups | yes |
-| GET | [`/v1/contact-groups/{id}`](#get-v1contact-groupsid) | GET contact-groups | yes |
-| PATCH | [`/v1/contact-groups/{id}`](#patch-v1contact-groupsid) | PATCH contact-groups | yes |
-| DELETE | [`/v1/contact-groups/{id}`](#delete-v1contact-groupsid) | DELETE contact-groups | yes |
-| POST | [`/v1/contact-groups/{id}/send`](#post-v1contact-groupsidsend) | Snapshot a contact group and admit its messages as a batch | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/contacts`](#get-v1contacts) | GET contacts |
+| POST | [`/v1/contacts`](#post-v1contacts) | POST contacts |
+| GET | [`/v1/contacts/{id}`](#get-v1contactsid) | GET contacts |
+| PATCH | [`/v1/contacts/{id}`](#patch-v1contactsid) | PATCH contacts |
+| DELETE | [`/v1/contacts/{id}`](#delete-v1contactsid) | DELETE contacts |
+| GET | [`/v1/contact-groups`](#get-v1contact-groups) | GET contact-groups |
+| POST | [`/v1/contact-groups`](#post-v1contact-groups) | POST contact-groups |
+| GET | [`/v1/contact-groups/{id}`](#get-v1contact-groupsid) | GET contact-groups |
+| PATCH | [`/v1/contact-groups/{id}`](#patch-v1contact-groupsid) | PATCH contact-groups |
+| DELETE | [`/v1/contact-groups/{id}`](#delete-v1contact-groupsid) | DELETE contact-groups |
+| POST | [`/v1/contact-groups/{id}/send`](#post-v1contact-groupsidsend) | Snapshot a contact group and admit its messages as a batch |
 
-### GET /v1/contacts
+## GET /v1/contacts
 
 **GET contacts**
 
@@ -67,7 +67,7 @@ Response `200` fields:
 | `items[].created_at` | string (date-time) | no |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/contacts" \
@@ -94,7 +94,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/contacts
+## POST /v1/contacts
 
 **POST contacts**
 
@@ -146,7 +146,7 @@ Response `201` fields:
 | `attributes` | object | no |  |  |
 | `created_at` | string (date-time) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/contacts" \
@@ -171,7 +171,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/contacts/{id}
+## GET /v1/contacts/{id}
 
 **GET contacts**
 
@@ -215,7 +215,7 @@ Response `200` fields:
 | `attributes` | object | no |  |  |
 | `created_at` | string (date-time) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/contacts/8127baa8-45fb-4f8e-ac46-9aa9555ed1ee" \
@@ -237,7 +237,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PATCH /v1/contacts/{id}
+## PATCH /v1/contacts/{id}
 
 **PATCH contacts**
 
@@ -289,7 +289,7 @@ Response `200` fields:
 | `attributes` | object | no |  |  |
 | `created_at` | string (date-time) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/contacts/8127baa8-45fb-4f8e-ac46-9aa9555ed1ee" \
@@ -313,7 +313,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/contacts/{id}
+## DELETE /v1/contacts/{id}
 
 **DELETE contacts**
 
@@ -346,7 +346,7 @@ See docs/contacts-api.md. Session requires X-Workspace-ID and X-Environment; API
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/contacts/8127baa8-45fb-4f8e-ac46-9aa9555ed1ee" \
@@ -357,7 +357,7 @@ Response `204`:
 
 _Empty body._
 
-### GET /v1/contact-groups
+## GET /v1/contact-groups
 
 **GET contact-groups**
 
@@ -403,7 +403,7 @@ Response `200` fields:
 | `items[].created_at` | string (date-time) | no |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/contact-groups" \
@@ -427,7 +427,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/contact-groups
+## POST /v1/contact-groups
 
 **POST contact-groups**
 
@@ -477,7 +477,7 @@ Response `201` fields:
 | `contact_ids` | array of string (uuid) | no |  | Constraints: maxItems `1000`, uniqueItems `true`. |
 | `created_at` | string (date-time) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/contact-groups" \
@@ -499,7 +499,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### GET /v1/contact-groups/{id}
+## GET /v1/contact-groups/{id}
 
 **GET contact-groups**
 
@@ -542,7 +542,7 @@ Response `200` fields:
 | `contact_ids` | array of string (uuid) | no |  | Constraints: maxItems `1000`, uniqueItems `true`. |
 | `created_at` | string (date-time) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162" \
@@ -561,7 +561,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PATCH /v1/contact-groups/{id}
+## PATCH /v1/contact-groups/{id}
 
 **PATCH contact-groups**
 
@@ -611,7 +611,7 @@ Response `200` fields:
 | `contact_ids` | array of string (uuid) | no |  | Constraints: maxItems `1000`, uniqueItems `true`. |
 | `created_at` | string (date-time) | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PATCH "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162" \
@@ -632,7 +632,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/contact-groups/{id}
+## DELETE /v1/contact-groups/{id}
 
 **DELETE contact-groups**
 
@@ -665,7 +665,7 @@ See docs/contacts-api.md. Session requires X-Workspace-ID and X-Environment; API
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162" \
@@ -676,7 +676,7 @@ Response `204`:
 
 _Empty body._
 
-### POST /v1/contact-groups/{id}/send
+## POST /v1/contact-groups/{id}/send
 
 **Snapshot a contact group and admit its messages as a batch**
 
@@ -716,7 +716,7 @@ Alternative 2: Type: any. Constraints: not `{"required":["text"]}`.
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162/send" \
@@ -744,5 +744,5 @@ Response `200` (`application/json`):
 }
 ```
 
-Why this is not the success path: The group send is accepted as a batch, but every recipient is refused at admission because sandbox sending needs a verified email (email delivery is disabled on the docs stack), so the batch is `failed` with all rows invalid.
+The group send is accepted as a batch. Here the workspace owner had not verified their email yet, so every recipient was refused at admission and the batch is `failed` with all rows invalid.
 

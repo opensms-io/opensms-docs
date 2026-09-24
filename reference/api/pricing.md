@@ -6,11 +6,11 @@ The workspace price book: per-country (and per-carrier) sell prices in the works
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/pricing`](#get-v1pricing) | Get workspace effective price book | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/pricing`](#get-v1pricing) | Get workspace effective price book |
 
-### GET /v1/pricing
+## GET /v1/pricing
 
 **Get workspace effective price book**
 
@@ -40,7 +40,7 @@ Effective sell prices per country, carrier and volume tier for the calling works
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/pricing?country=KE" \

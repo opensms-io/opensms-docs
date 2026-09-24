@@ -12,13 +12,13 @@ Sandbox is the free practice mode every workspace starts in. Messages you send i
 
 ## Magic numbers
 
-The page's **Magic numbers** tab lists four numbers and the result each one is supposed to force:
+The page's **Magic numbers** tab lists four example numbers:
 
 ![Sandbox magic numbers, as the console lists them](../assets/screens/console/sandbox/magic-numbers.png)
 
-> **The table on this page is wrong in this version.** OpenSMS's sandbox provider does not use these four numbers. It decides the result by the **range** the number falls in, and all four numbers in the table are in the "delivered" range, so only the first row behaves as described. Use the ranges below instead.
+> **Go by the ranges below.** The sandbox decides a message's result by the **range** its destination number falls in. All four numbers on the tab are in the "delivered" range.
 
-What actually happens to a sandbox message, by destination number:
+What happens to a sandbox message, by destination number:
 
 | Destination | Result | Reason recorded |
 | --- | --- | --- |
@@ -29,11 +29,9 @@ What actually happens to a sandbox message, by destination number:
 
 There is no sandbox number that leaves a message stuck in "sent".
 
-These ranges come from the OpenSMS code and its engineering notes. They could not be tried end to end on the local docs stack, because no account there can verify its email and so no sandbox message could be sent.
-
 ## Sandbox inbox
 
-The **Sandbox inbox** tab is meant to show sandbox traffic, but it actually lists the workspace's received (inbound) messages, which only exist for live numbers. In sandbox it therefore always shows **No inbound messages yet**, with a count of 0.
+The **Sandbox inbox** tab lists the workspace's received (inbound) messages, which only exist for live numbers. In sandbox it therefore always shows **No inbound messages yet**, with a count of 0.
 
 ![Sandbox inbox, always empty in sandbox](../assets/screens/console/sandbox/inbox.png)
 

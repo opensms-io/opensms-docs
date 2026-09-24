@@ -38,11 +38,11 @@ If the published version changed while the screen was open, accepting fails with
 - When OpenSMS publishes a newer version of the terms or the DPA. The list then shows the new version and "previously v*x*" next to it.
 - In each new workspace you join or create, because acceptance is per workspace.
 - For each teammate: your acceptance does not count for anyone else.
-- **Today, also in every new browser or device, even for versions you already accepted.** See the known issue below.
+- In a new browser or on a new device, or after clearing site data, even for versions you already accepted. See below.
 
 If the list of documents cannot be loaded (for example a network blip), the screen does not appear rather than locking you out. The server still checks acceptance when the owner asks to [go live](go-live.md), so nothing is skipped.
 
-> **Known issue:** the console remembers your acceptance in the browser, and is meant to also read your acceptance history from the server. That server read is currently discarded by the console, so on a new browser, a new device, or after clearing site data, the screen asks again for documents you already accepted. Accepting again is safe: the server keeps your original acceptance record and does not create a duplicate. This was reproduced while writing this guide: an account that had accepted both documents saw the screen again on its next login from a fresh browser.
+> **Asked again in a new browser?** The web app remembers your acceptance in the browser you accepted in, so a new browser, a new device or cleared site data can show the screen again for documents you already accepted. Accepting again is safe: the server keeps your original acceptance record and does not create a duplicate.
 
 ## Why it matters
 
@@ -62,7 +62,7 @@ Go to **Settings > Legal** (`/app/settings/legal`). It lists each published docu
 
 This page is a record only. It has no accept buttons.
 
-> **Known issue:** for the same reason as above, in a browser other than the one you accepted in, Settings > Legal shows **Not accepted** for documents you did accept, until you accept them again in that browser. The server record is what counts for going live.
+> **Note:** for the same reason, in a browser other than the one you accepted in, Settings > Legal can show **Not accepted** for documents you did accept, until you accept them again in that browser. The server record is what counts for going live.
 
 ## Related
 

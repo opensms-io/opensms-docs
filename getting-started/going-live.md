@@ -1,6 +1,6 @@
 # Going live
 
-This page walks through everything between a working sandbox integration and real messages reaching handsets: identity checks, legal acceptance, funding, a sender ID and live keys. It is for the developer or workspace owner preparing a production launch. Several steps are done by opensms operators, not by you; each step says who acts.
+This page walks through everything between a working sandbox integration and real messages reaching handsets: identity checks, legal acceptance, funding, a sender ID and live keys. It is for the developer or workspace owner preparing a production launch. Several steps are done by OpenSMS operators, not by you; each step says who acts.
 
 The server enforces every requirement again when the workspace is activated, so the order below is the order that works.
 
@@ -48,8 +48,6 @@ Only five steps gate going live: `email_verified`, `company_details`, `documents
 
 `live_status` moves `sandbox` to `pending_review` (after step 8) to `live` (after step 9). An operator can later move a live workspace to `suspended` and back.
 
-> **Local stack limitation.** The local docs stack has email delivery, file scanning and card payments disabled. Steps 1, 4 and the approval half of 5 cannot complete there, so the walkthrough below stops at the real `422` from step 8.
-
 ## 1. Verify the owner's email
 
 Covered in the [quickstart](quickstart.md#2-verify-your-email-address). It also unlocks sandbox sending.
@@ -93,7 +91,7 @@ When all three kinds exist, `documents_uploaded` becomes `submitted`. A file who
 
 Each document is malware scanned (`scan_status` goes from `pending` to `clean`) and then reviewed by an operator. When every current document is clean and approved, the operator approves KYC, which marks `company_details`, `documents_uploaded` and `admin_approved` as `approved`. Approval does not make the workspace live. If a document is rejected, `GET /v1/onboarding` shows the reason on the step or document; upload a corrected file and it is reviewed again.
 
-On the local docs stack the scanner is off, so the operator's approval call is refused:
+Until every current document has passed its scan and human review, the operator's approval call is refused:
 
 ```json
 {"type":"about:blank","title":"Conflict","status":409,"detail":"each current required document must pass scanning and human review before KYC approval"}
@@ -103,7 +101,7 @@ On the local docs stack the scanner is off, so the operator's approval call is r
 
 Live traffic is prepaid. Either method sets `wallet_funded` to `approved` once money is confirmed; starting a payment does not.
 
-**Card or mobile money.** Owner, admin or finance session (or an API key with `wallet:topup`) calls `POST /v1/wallet/topups` with `X-Environment: live`, `amount`, `currency`, `channel` (`card`, `mobile_money` or `bank_transfer`) and the payer `email`, which must belong to a verified workspace member. The response contains an `authorization_url` to send the payer to. The wallet is credited only when the payment provider confirms it. The local docs stack has no payment provider configured and the test account's email is unverified, so this call returns `403` `"payer email must belong to a verified workspace member"` there.
+**Card or mobile money.** Owner, admin or finance session (or an API key with `wallet:topup`) calls `POST /v1/wallet/topups` with `X-Environment: live`, `amount`, `currency`, `channel` (`card`, `mobile_money` or `bank_transfer`) and the payer `email`, which must belong to a verified workspace member. The response contains an `authorization_url` to send the payer to. The wallet is credited only when the payment provider confirms it. A payer email that does not belong to a verified workspace member gets `403` `"payer email must belong to a verified workspace member"`.
 
 **Bank transfer.** Upload the proof of transfer. This needs a browser session of an owner, admin or finance member with two-factor authentication on, `X-Environment: live`, and an `Idempotency-Key`:
 
@@ -118,7 +116,7 @@ curl -s -X POST $OPENSMS_API/v1/wallet/topups/manual \
 {"id":"0e91734d-ff9d-43e5-90cd-2d4cdc5659a8","status":"awaiting_approval"}
 ```
 
-A finance operator then approves the payment, which credits the wallet. That approval also requires a clean malware scan, so on the local docs stack it is refused with `422` `"A clean malware scan of the payment proof is required."`
+A finance operator then approves the payment, which credits the wallet. That approval also requires a clean malware scan of the proof; until the scan is clean it is refused with `422` `"A clean malware scan of the payment proof is required."`
 
 ## 6. Accept the terms of service and the DPA
 
@@ -161,7 +159,7 @@ curl -s -X POST $OPENSMS_API/v1/onboarding/request-live \
 
 When every prerequisite is met this returns `202` with `{"workspace_id":"...","live_status":"pending_review"}`. It does not enable live sending. Owner only; a workspace that is not in `sandbox` gets `409`.
 
-With anything missing (the real response on the local docs stack):
+With anything missing:
 
 ```json
 {"type":"about:blank","title":"Unprocessable Entity","status":422,"detail":"live sending prerequisites are incomplete"}

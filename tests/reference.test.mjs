@@ -24,10 +24,10 @@ test('every contract operation has a section on its page and a coverage row', ()
   for (const g of GROUPS) assert.ok(index.includes(`](${g.slug}.md)`), `README links ${g.slug}.md`);
   for (const o of all) {
     const text = page(o.group);
-    assert.ok(text.includes(`\n### ${o.method} ${o.path}\n`), `${o.key} missing from ${o.group}.md`);
+    assert.ok(text.includes(`\n## ${o.method} ${o.path}\n`), `${o.key} missing from ${o.group}.md`);
     assert.ok(coverage.includes(`(${o.group}.md#${anchor(`${o.method} ${o.path}`)})`), `${o.key} missing from COVERAGE.md`);
     const statuses = Object.keys(o.op.responses ?? {});
-    const section = text.split(`\n### ${o.method} ${o.path}\n`)[1].split('\n### ')[0];
+    const section = text.split(`\n## ${o.method} ${o.path}\n`)[1].split('\n## ')[0];
     for (const s of statuses) assert.ok(section.includes(`| \`${s}\` |`), `${o.key} response ${s} not documented`);
   }
 });

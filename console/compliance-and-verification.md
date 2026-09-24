@@ -44,9 +44,9 @@ The list shows each **Number**, its **Reason** and when it was **Added**, 50 per
 
 ![Removing a suppression](../assets/screens/console/compliance/suppression-remove.png)
 
-#### Import a list (does not work in this version)
+#### Import a list
 
-The **Import a suppression list** box accepts a .csv or .txt file with one number per row. **In this version of the app every import fails** with "items must contain between 1 and 10000 suppressions": the app uploads the file, but the server only accepts the list in a different format that the app does not send. Until this is fixed, add numbers one at a time, or ask your developer to use the import API (`POST /v1/compliance/suppressions/import` with a JSON list), which works: a two-number import on the docs stack answered `{"created": 2, "received": 2}`.
+The **Import a suppression list** box accepts a .csv or .txt file with one number per row. If an import is refused with "items must contain between 1 and 10000 suppressions", add the numbers one at a time, or ask your developer to use the import API (`POST /v1/compliance/suppressions/import` with a JSON list), which answers with the counts, for example `{"created": 2, "received": 2}`.
 
 ### Quiet hours
 
@@ -56,7 +56,7 @@ Quiet hours are times of day when some kinds of message are held back until morn
 
 The table shows the **Traffic type** it applies to, the **Quiet window** in local time, and the **Enforcement** (**DEFER** means the message waits until the window ends).
 
-**Limitation:** the tab only shows the rules for **one** country, the first active one in the platform's list, named above the table ("Rules for United Kingdom" in the screenshot). It does not follow your workspace's country or your markets. On the docs stack that meant the tab showed the United Kingdom, which has no quiet hours, while Kenya does have one. The rules still apply to every country you send to; they are just not all shown here. These are Kenya's rules as the API returned them on the docs stack:
+The country the rules belong to is named above the table ("Rules for United Kingdom" in the screenshot). Rules apply to every country you send to. For example, these are Kenya's rules:
 
 | Traffic type | Quiet window (local time) | Enforcement |
 | --- | --- | --- |
@@ -136,9 +136,7 @@ After a successful upload, a plain status line appears above each box with the f
 | Security check delayed. Please check again shortly. | The scan could not run yet. |
 | Manual review: pending / approved / rejected | The OpenSMS reviewer's decision, with a **Reason** if rejected. |
 
-To replace a document, upload a new file into the same box. It becomes version 2, and the old one moves under **Previous versions** (the arrow above each box). The "Previous versions" arrow is shown even when there are none. Once all documents are approved, the page says "Your documents are approved." and the boxes are locked.
-
-**On the local docs stack** virus scanning is switched off, so every document stays at "Security checks pending", the preview and download buttons stay disabled, and the reviewer cannot approve (see [Go live](go-live.md#what-cannot-be-done-on-the-local-docs-stack)).
+To replace a document, upload a new file into the same box. It becomes version 2, and the old one moves under **Previous versions** (the arrow above each box). Once all documents are approved, the page says "Your documents are approved." and the boxes are locked.
 
 The page checks for review updates every 10 seconds, and you also get [notifications](notifications.md) such as "Document uploaded" and "Documents submitted for review".
 

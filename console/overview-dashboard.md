@@ -21,8 +21,6 @@ A sandbox workspace shows: "This workspace is in sandbox mode. Messages are simu
 
 Click the **X** to hide the banner. It comes back the next time you open the page.
 
-Only the sandbox banner was seen on the local docs stack; the others are quoted from the app's code, because a workspace cannot be taken live locally (see [Go live](go-live.md#what-cannot-be-done-on-the-local-docs-stack)).
-
 ### Greeting and status chip
 
 Under the title you see a greeting and today's date. On the right, a chip shows the workspace status (**SANDBOX** in the screenshot) and a **Status** link that opens the public [system status page](status-page.md) in a new tab.

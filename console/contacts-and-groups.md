@@ -74,7 +74,7 @@ The **Send to this group** panel sends the same text to every member at once.
 
 After sending, a result box appears under the button: "Admitted as batch *id*", with the batch **Status**, **Total**, **Sent**, the **Estimated cost** when known, and a validation line such as "Validation: 2 valid, 0 invalid of 2."
 
-**Always read that result box.** A green "Sent to 2 contacts." message appears whenever the request was accepted, even if no message actually went out. On the local docs stack the batch came back with **Status: failed** and "Validation: 0 valid, 2 invalid of 2.", because the account's email is not verified (the server rejected both rows with "email verification is required for sandbox sending"):
+**Always read that result box.** A green "Sent to 2 contacts." message appears whenever the request was accepted, even if no message actually went out. In the example below the batch came back with **Status: failed** and "Validation: 0 valid, 2 invalid of 2.", because the account's email was not verified yet (the server rejected both rows with "email verification is required for sandbox sending"):
 
 ![Group send accepted but every row rejected](../assets/screens/console/contacts/group-send-blocked.png)
 

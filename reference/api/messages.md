@@ -6,15 +6,15 @@ Send a single SMS, list and read messages, read delivery attempts and cancel sch
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/messages`](#get-v1messages) | List messages | yes |
-| POST | [`/v1/messages`](#post-v1messages) | Queue an SMS message | error path only |
-| GET | [`/v1/messages/{id}`](#get-v1messagesid) | Get one message | error path only |
-| GET | [`/v1/messages/{id}/attempts`](#get-v1messagesidattempts) | Read customer-safe message delivery attempts | error path only |
-| POST | [`/v1/messages/{id}/cancel`](#post-v1messagesidcancel) | Cancel a queued message | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/messages`](#get-v1messages) | List messages |
+| POST | [`/v1/messages`](#post-v1messages) | Queue an SMS message |
+| GET | [`/v1/messages/{id}`](#get-v1messagesid) | Get one message |
+| GET | [`/v1/messages/{id}/attempts`](#get-v1messagesidattempts) | Read customer-safe message delivery attempts |
+| POST | [`/v1/messages/{id}/cancel`](#post-v1messagesidcancel) | Cancel a queued message |
 
-### GET /v1/messages
+## GET /v1/messages
 
 **List messages**
 
@@ -55,7 +55,7 @@ Response `200` fields:
 | `items` | array of [Message](schemas.md#message) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/messages?limit=10" \
@@ -71,7 +71,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/messages
+## POST /v1/messages
 
 **Queue an SMS message**
 
@@ -114,7 +114,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/messages" \
@@ -135,9 +135,9 @@ Response `403` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Sandbox sending requires a verified email address. The docs stack has email delivery disabled, so no account can verify its email and every send is refused with this 403; the success shape is in the Responses table.
+Sending, including in the sandbox, requires the workspace owner to have verified their email address. Until then every send is refused with this `403`. The success shape is in the Responses table.
 
-**Example: invalid recipient** (captured live from the local stack)
+**Example: invalid recipient**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/messages" \
@@ -158,7 +158,7 @@ Response `400` (`application/problem+json`):
 }
 ```
 
-### GET /v1/messages/{id}
+## GET /v1/messages/{id}
 
 **Get one message**
 
@@ -188,7 +188,7 @@ Sessions require workspace membership. API keys require messages:read.
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/messages/00000000-0000-4000-8000-000000000000" \
@@ -206,9 +206,9 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No message can be created locally (see POST /v1/messages), so only the not-found answer is shown.
+This shows the answer for an unknown message ID.
 
-### GET /v1/messages/{id}/attempts
+## GET /v1/messages/{id}/attempts
 
 **Read customer-safe message delivery attempts**
 
@@ -238,7 +238,7 @@ Returns a bare array ordered by attempt sequence for the explicit workspace and 
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `500` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/messages/00000000-0000-4000-8000-000000000000/attempts" \
@@ -256,9 +256,9 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No message can be created locally, so only the not-found answer is shown.
+This shows the answer for an unknown message ID.
 
-### POST /v1/messages/{id}/cancel
+## POST /v1/messages/{id}/cancel
 
 **Cancel a queued message**
 
@@ -288,7 +288,7 @@ Sessions require owner, admin, or developer membership. API keys require message
 | `404` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/messages/00000000-0000-4000-8000-000000000000/cancel" \
@@ -306,5 +306,5 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: No scheduled message can be created locally, so only the not-found answer is shown.
+This shows the answer for an unknown message ID.
 

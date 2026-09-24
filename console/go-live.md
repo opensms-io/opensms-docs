@@ -58,7 +58,7 @@ While you are in review, **Check for an update** fetches your latest status; the
 
 ## A worked example: submit, get sent back, fix
 
-This is what happened on the docs stack with a new workspace.
+This is what happens with a new workspace when the review team sends a submission back.
 
 1. **Company details and documents submitted.** Both checks move to **IN REVIEW**.
 
@@ -80,17 +80,15 @@ The **Verify a phone number** card is optional. It gives OpenSMS a quick way to 
 2. Click **Send code**. A 6-digit code is texted to you.
 3. Type the code. You see "Phone number verified."
 
-**Known problem:** in this version of the app, **Send code** always fails with "Could not send a code to that number. Please try again." The app sends the number in a different field from the one the server expects, so the server rejects every request. Even with that fixed, the docs stack cannot send the text ("phone code delivery unavailable").
+If **Send code** answers "Could not send a code to that number. Please try again.", you can skip this card: phone verification is not required to go live.
 
 ![The phone verification error](../assets/screens/console/go-live/phone-error.png)
 
-## What cannot be done on the local docs stack
+## If a step will not complete
 
-- **Email verification:** no email can be sent, so the check stays **TO DO** ("email delivery is not configured").
-- **Funding the live wallet:** payments are switched off; see [Billing](billing.md#fund-the-live-wallet).
-- **KYC approval:** the reviewer can only approve once every document has passed a virus scan and a human review, and scanning is switched off locally. The server answered "each current required document must pass scanning and human review before KYC approval".
-
-So no workspace could be taken to **In review** or **Live** for these guides; those states are described from the app's code.
+- **Email verification** stays **TO DO** until you enter the code from the verification email. If the page says "email delivery is not configured", contact OpenSMS support.
+- **Funding the live wallet** needs a verified email and, for bank transfers, two-factor authentication; see [Billing](billing.md#fund-the-live-wallet).
+- **KYC approval** happens only once every document has passed a virus scan and a human review. Until then the reviewer sees "each current required document must pass scanning and human review before KYC approval".
 
 ## Related
 

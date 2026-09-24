@@ -6,21 +6,21 @@ Prepaid wallet balances and ledger, sandbox credits, top-ups (card, manual bank 
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| POST | [`/v1/wallet/topups/manual`](#post-v1wallettopupsmanual) | Submit a private manual bank-transfer proof | error path only |
-| GET | [`/v1/wallet/auto-topup`](#get-v1walletauto-topup) | Read workspace auto-topup settings | yes |
-| PUT | [`/v1/wallet/auto-topup`](#put-v1walletauto-topup) | Configure saved-card auto-topup | error path only |
-| GET | [`/v1/payment-methods`](#get-v1payment-methods) | List saved cards for owner, admin or finance | yes |
-| DELETE | [`/v1/payment-methods/{id}`](#delete-v1payment-methodsid) | Remove a saved card and disable dependent automatic top-ups | error path only |
-| GET | [`/v1/wallet`](#get-v1wallet) | Read balances in the selected environment | yes |
-| GET | [`/v1/wallet/ledger`](#get-v1walletledger) | Read the scoped wallet ledger | yes |
-| POST | [`/v1/wallet/sandbox-credits`](#post-v1walletsandbox-credits) | Add simulated sandbox practice credits | yes |
-| POST | [`/v1/wallet/topups`](#post-v1wallettopups) | Initialize a live wallet payment | error path only |
-| GET | [`/v1/invoices`](#get-v1invoices) | List existing invoices for a financial workspace member | yes |
-| GET | [`/v1/invoices/{id}`](#get-v1invoicesid) | Read an existing invoice | error path only |
+| Method | Path | Summary |
+| --- | --- | --- |
+| POST | [`/v1/wallet/topups/manual`](#post-v1wallettopupsmanual) | Submit a private manual bank-transfer proof |
+| GET | [`/v1/wallet/auto-topup`](#get-v1walletauto-topup) | Read workspace auto-topup settings |
+| PUT | [`/v1/wallet/auto-topup`](#put-v1walletauto-topup) | Configure saved-card auto-topup |
+| GET | [`/v1/payment-methods`](#get-v1payment-methods) | List saved cards for owner, admin or finance |
+| DELETE | [`/v1/payment-methods/{id}`](#delete-v1payment-methodsid) | Remove a saved card and disable dependent automatic top-ups |
+| GET | [`/v1/wallet`](#get-v1wallet) | Read balances in the selected environment |
+| GET | [`/v1/wallet/ledger`](#get-v1walletledger) | Read the scoped wallet ledger |
+| POST | [`/v1/wallet/sandbox-credits`](#post-v1walletsandbox-credits) | Add simulated sandbox practice credits |
+| POST | [`/v1/wallet/topups`](#post-v1wallettopups) | Initialize a live wallet payment |
+| GET | [`/v1/invoices`](#get-v1invoices) | List existing invoices for a financial workspace member |
+| GET | [`/v1/invoices/{id}`](#get-v1invoicesid) | Read an existing invoice |
 
-### POST /v1/wallet/topups/manual
+## POST /v1/wallet/topups/manual
 
 **Submit a private manual bank-transfer proof**
 
@@ -60,7 +60,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `413` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/wallet/topups/manual" \
@@ -84,9 +84,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### GET /v1/wallet/auto-topup
+## GET /v1/wallet/auto-topup
 
 **Read workspace auto-topup settings**
 
@@ -106,7 +106,7 @@ Browser session and explicit X-Workspace-ID/X-Environment required. Sandbox retu
 | `401` | Session required | No body |
 | `403` | Workspace membership required | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/wallet/auto-topup" \
@@ -129,7 +129,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### PUT /v1/wallet/auto-topup
+## PUT /v1/wallet/auto-topup
 
 **Configure saved-card auto-topup**
 
@@ -163,7 +163,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | Sandbox mutation, currency mismatch or no usable selected authorization | No body |
 | `503` | Settings unavailable | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X PUT "$OPENSMS_API/v1/wallet/auto-topup" \
@@ -185,9 +185,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Live environment only. The docs stack has no live workspace (going live needs a verified email, which needs email delivery, disabled here), so only the sandbox refusal is shown.
+Live environment only. A sandbox key, or a session in the sandbox environment, gets this `422`.
 
-### GET /v1/payment-methods
+## GET /v1/payment-methods
 
 **List saved cards for owner, admin or finance**
 
@@ -233,7 +233,7 @@ Response `200` fields:
 | `items[].created_at` | string | no |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/payment-methods" \
@@ -251,7 +251,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### DELETE /v1/payment-methods/{id}
+## DELETE /v1/payment-methods/{id}
 
 **Remove a saved card and disable dependent automatic top-ups**
 
@@ -284,7 +284,7 @@ Owner, admin or finance session required. Live environment only. Removing the la
 | `429` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X DELETE "$OPENSMS_API/v1/payment-methods/00000000-0000-4000-8000-000000000000" \
@@ -304,9 +304,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Saved cards exist only in the live environment after a Paystack payment, which the docs stack cannot make, so only the sandbox refusal is shown.
+Saved cards exist only in the live environment, after a card payment, so a sandbox request is refused like this.
 
-### GET /v1/wallet
+## GET /v1/wallet
 
 **Read balances in the selected environment**
 
@@ -334,7 +334,7 @@ All workspace member roles may read. API keys require wallet:read and remain bou
 | `401` | Invalid or expired credential. | No body |
 | `403` | Workspace membership or required scope missing. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/wallet" \
@@ -357,7 +357,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/wallet/ledger
+## GET /v1/wallet/ledger
 
 **Read the scoped wallet ledger**
 
@@ -387,7 +387,7 @@ All workspace member roles may read. API keys require wallet:read. Workspace and
 | `401` | Invalid or expired credential. | No body |
 | `403` | Workspace membership or required scope missing. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/wallet/ledger" \
@@ -423,7 +423,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### POST /v1/wallet/sandbox-credits
+## POST /v1/wallet/sandbox-credits
 
 **Add simulated sandbox practice credits**
 
@@ -463,7 +463,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `422` | Live environment selected or sandbox credit limit exceeded. | No body |
 | `503` | Sandbox credit temporarily unavailable. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/wallet/sandbox-credits" \
@@ -490,7 +490,7 @@ Response `201` (`application/json`):
 }
 ```
 
-### POST /v1/wallet/topups
+## POST /v1/wallet/topups
 
 **Initialize a live wallet payment**
 
@@ -530,7 +530,7 @@ Owner, admin and finance sessions may initialize payments. API keys require wall
 | `502` | Provider initialization failed. | No body |
 | `503` | Payment provider not configured. | No body |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X POST "$OPENSMS_API/v1/wallet/topups" \
@@ -553,9 +553,9 @@ Response `422` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Top-ups go through Paystack in the live environment. Payments are disabled on the docs stack and the workspace is sandbox-only, so only the refusal is shown.
+Top-ups go through Paystack in the live environment, so a sandbox request is refused like this.
 
-### GET /v1/invoices
+## GET /v1/invoices
 
 **List existing invoices for a financial workspace member**
 
@@ -606,7 +606,7 @@ Response `200` fields:
 | `items[].issued_at` | string (date-time) | yes |  |  |
 | `next_cursor` | string \| null | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/invoices" \
@@ -624,7 +624,7 @@ Response `200` (`application/json`):
 }
 ```
 
-### GET /v1/invoices/{id}
+## GET /v1/invoices/{id}
 
 **Read an existing invoice**
 
@@ -673,7 +673,7 @@ Response `200` fields:
 | `pdf_url` | string \| null | yes |  |  |
 | `issued_at` | string (date-time) | yes |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/invoices/00000000-0000-4000-8000-000000000000" \
@@ -693,5 +693,5 @@ Response `404` (`application/problem+json`):
 }
 ```
 
-Why this is not the success path: Invoices are issued for live spend only, so none exist locally and an unknown ID is used.
+Invoices are issued for live spend only. This shows the answer for an unknown invoice ID.
 

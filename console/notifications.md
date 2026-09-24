@@ -31,7 +31,7 @@ With nothing left you see "Nothing unread" and "You are all caught up." A brand-
 
 ## What you can be notified about
 
-These are the notifications seen on the docs stack, and the link each one carries:
+Common notifications, and the link each one carries:
 
 | Title | When | Link |
 | --- | --- | --- |
@@ -41,7 +41,7 @@ These are the notifications seen on the docs stack, and the link each one carrie
 | Documents submitted for review | All three verification documents are in. | View verification |
 | Verification needs attention | The OpenSMS team sent your verification back. | Review verification |
 
-The app also has links ready for these events, which could not be produced on the docs stack: verification approved (Continue onboarding), document approved or rejected, live access requested, sending status changed, sender evidence uploaded or rejected, sender ID rejected, sender registration rejected, low wallet balance (Add funds), spend cap warning or reached (Review spending), number renewal failed or release pending, webhook disabled (Review webhooks), route health changed or degraded or down (Review routes), and data export ready (Download export).
+You are also notified, with a link to act on it, about: verification approved (Continue onboarding), document approved or rejected, live access requested, sending status changed, sender evidence uploaded or rejected, sender ID rejected, sender registration rejected, low wallet balance (Add funds), spend cap warning or reached (Review spending), number renewal failed or release pending, webhook disabled (Review webhooks), route health changed or degraded or down (Review routes), and data export ready (Download export).
 
 ## Choose which alerts reach you
 
@@ -67,9 +67,7 @@ Open **Settings > Notifications** (`/app/settings/notifications`), or click **Ch
 
 Your choices apply to you in this workspace only; other members keep their own. Events that are not in this list (such as "Document uploaded") cannot be switched off here.
 
-The line under the title, "Live connection: ...", is a technical indicator of the app's live update connection. On the docs stack it read "closed (0 events)" because live updates do not connect there; the page still works, it just does not refresh by itself.
-
-**Email on the docs stack:** email delivery is switched off, so no notification emails were sent while writing these guides.
+The line under the title, "Live connection: ...", is a technical indicator of the app's live update connection. If it reads "closed", the page still works; it just does not refresh by itself.
 
 ## Related
 

@@ -18,8 +18,6 @@ Once a workspace is live, owners (and finance members) must have [two-factor aut
 
 Rotating and revoking are owner and admin actions on the server, even in sandbox: the console shows **Rotate key** and **Revoke key** to developers too, but the server refuses them ("Key rotation requires owner or admin access." / "Key revocation requires owner or admin access."). Finance and viewer members get "key administration is restricted" from the server if they open the page.
 
-These role rules come from the product's code: the local docs stack cannot add a second member to a workspace (see [Settings > Team](settings.md#team)), so they were not tried with other roles.
-
 ## Sandbox keys and live keys
 
 A key belongs to the environment your workspace is in when you create it:
@@ -117,7 +115,7 @@ Revoking switches a key off immediately and permanently.
 
 ## For your developer
 
-The same actions exist in the API (`POST /v1/keys`, `POST /v1/keys/{id}/rotate`, `DELETE /v1/keys/{id}`, all with a signed-in session). This is a real response from creating a sandbox key on the docs stack, with the secret shortened:
+The same actions exist in the API (`POST /v1/keys`, `POST /v1/keys/{id}/rotate`, `DELETE /v1/keys/{id}`, all with a signed-in session). This is a real response from creating a sandbox key, with the secret shortened:
 
 ```json
 {

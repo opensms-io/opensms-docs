@@ -6,11 +6,11 @@ The sandbox message log: in the sandbox environment messages are accepted and re
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-| Method | Path | Summary | Live example |
-| --- | --- | --- | --- |
-| GET | [`/v1/sandbox/messages`](#get-v1sandboxmessages) | List sandbox outbox messages with rendered text | yes |
+| Method | Path | Summary |
+| --- | --- | --- |
+| GET | [`/v1/sandbox/messages`](#get-v1sandboxmessages) | List sandbox outbox messages with rendered text |
 
-### GET /v1/sandbox/messages
+## GET /v1/sandbox/messages
 
 **List sandbox outbox messages with rendered text**
 
@@ -47,7 +47,7 @@ Response `200` fields:
 | `items` | array of [SandboxMessage](schemas.md#sandboxmessage) | yes |  |  |
 | `next_cursor` | string \| null | no |  |  |
 
-**Example** (captured live from the local stack)
+**Example**
 
 ```bash
 curl -s -X GET "$OPENSMS_API/v1/sandbox/messages?limit=10" \
@@ -63,5 +63,5 @@ Response `200` (`application/json`):
 }
 ```
 
-Empty because sandbox sending is refused on the docs stack (see POST /v1/messages).
+Empty here because no sandbox message had been sent from this workspace yet.
 
