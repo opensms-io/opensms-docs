@@ -2,7 +2,7 @@
 // dialog, plus the article, docs home and 404 pages. Everything is static HTML; the
 // only script is one small deferred file (theme, drawer, search, copy, scrollspy).
 import { SITE, SECTIONS } from './config.mjs';
-import { escapeHtml as esc, wbrPath } from './markdown.mjs';
+import { escapeHtml as esc, wbrPath, langMark } from './markdown.mjs';
 
 const MARK = (h = 26, cls = '') => `<svg class="mark${cls ? ` ${cls}` : ''}" viewBox="0 0 286 368" height="${h}" aria-hidden="true" focusable="false"><g fill="var(--mark)"><rect width="120" height="275" rx="60"/><rect x="145" y="92" width="120" height="275" rx="60"/><path d="M264 292 285 351 250 346Z"/></g></svg>`;
 
@@ -121,48 +121,63 @@ function sidebar({ icons, pagesByPath, current, drawerOnly = false }) {
 ${groups}
   </nav>
   <div class="sidebar-foot">
+    <a class="back-link" href="/">${icons.icon('arrow-left4', 16)}<span>Back to opensms.io</span></a>
     <a class="cta-btn" href="/#docs">Join the waitlist</a>
   </div>
 </aside>
 <div class="scrim" data-drawer-close hidden></div>`;
 }
 
+// Popular destinations shown before anything is typed: [path, section id, label, line].
+const POPULAR = [
+  ['getting-started/quickstart/', 'get-started', 'Quickstart', 'Your first sandbox message in five minutes'],
+  ['integrate/sending-messages/', 'integrate', 'Sending messages', 'Single sends, batches, scheduling and statuses'],
+  ['integrate/delivery-reports-and-webhooks/', 'integrate', 'Delivery reports and webhooks', 'Events, payloads and signature checks'],
+  ['integrate/sdk/', 'sdks', 'SDKs', 'Official clients for nine languages'],
+  ['reference/api/messages/', 'api-reference', 'Messages API', 'POST /v1/messages and friends'],
+];
+
 function searchDialog({ icons }) {
+  const sectionOf = (id) => SECTIONS.find((s) => s.id === id);
+  const popular = POPULAR.map(([path, sid, label, line]) => {
+    const sec = sectionOf(sid);
+    return `<li><a class="sp-item" href="${SITE.base}${path}"><span class="sr-icon">${icons.icon(sec.icon, 18)}</span><span class="sr-main"><span class="sr-title">${esc(label)}</span><span class="sr-crumb">${esc(sec.title)}<span class="sr-crumb-sep" aria-hidden="true">${icons.icon('arrow-right4', 11)}</span>${esc(line)}</span></span><span class="sr-go">${icons.icon('arrow-right4', 16)}</span></a></li>`;
+  }).join('');
+  const sections = SECTIONS.map((s) => `<li><a href="${SITE.base}${s.pages[0].path.replace(/(^|\/)README\.md$/, '$1').replace(/\.md$/, '/')}">${icons.icon(s.icon, 16)}<span>${esc(s.title)}</span></a></li>`).join('');
   return `<div class="search" id="search" role="dialog" aria-modal="true" aria-label="Search the docs" hidden>
   <div class="search-scrim" data-search-close></div>
   <div class="search-panel">
     <div class="search-bar">
-      ${icons.icon('search', 20)}
-      <input id="search-input" type="search" placeholder="Search guides, endpoints and screens" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list">
+      <span class="search-bar-icon">${icons.icon('search', 20)}</span>
+      <input id="search-input" type="search" placeholder="Search guides, endpoints and screens" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-describedby="search-status">
       <button type="button" class="search-esc" data-search-close aria-label="Close search">Esc</button>
     </div>
     <div class="search-body">
       <ul id="search-results" role="listbox" aria-label="Results"></ul>
       <div class="search-empty" data-search-empty>
-        <p class="search-hint-title">Popular</p>
-        <ul class="search-popular">
-          <li><a href="${SITE.base}getting-started/quickstart/">Quickstart</a></li>
-          <li><a href="${SITE.base}integrate/sending-messages/">Sending messages</a></li>
-          <li><a href="${SITE.base}integrate/delivery-reports-and-webhooks/">Delivery reports and webhooks</a></li>
-          <li><a href="${SITE.base}integrate/errors/">Errors</a></li>
-          <li><a href="${SITE.base}reference/api/messages/">Messages API</a></li>
-        </ul>
+        <p class="sr-group"><span>Popular</span></p>
+        <ul class="search-popular">${popular}</ul>
+        <p class="sr-group"><span>Browse by section</span></p>
+        <ul class="search-sections">${sections}</ul>
       </div>
     </div>
-    <div class="search-foot" aria-hidden="true">
-      <span><kbd>${icons.icon('arrow-up3', 12)}</kbd><kbd>${icons.icon('arrow-down4', 12)}</kbd> move</span>
-      <span><kbd>Enter</kbd> open</span>
-      <span><kbd>Esc</kbd> close</span>
+    <div class="search-foot">
+      <span class="search-keys" aria-hidden="true">
+        <span><kbd>${icons.icon('arrow-up3', 12)}</kbd><kbd>${icons.icon('arrow-down4', 12)}</kbd> to move</span>
+        <span><kbd>Enter</kbd> to open</span>
+        <span><kbd>Esc</kbd> to close</span>
+      </span>
+      <span class="search-status" id="search-status" role="status" aria-live="polite"></span>
     </div>
   </div>
 </div>`;
 }
 
-function footer() {
+function footer({ icons }) {
   const year = 2026;
   return `<footer class="site-footer">
   <span class="footer-brand">${MARK(16)}${year} OpenSMS. All rights reserved.</span>
-  <span class="footer-links"><a href="${SITE.base}">Docs</a><span class="dot-sep" aria-hidden="true">/</span><a href="${SITE.base}llms.txt">llms.txt</a><span class="dot-sep" aria-hidden="true">/</span><a href="/brand/">Brand</a><span class="dot-sep" aria-hidden="true">/</span><a href="/privacy/">Privacy</a><span class="dot-sep" aria-hidden="true">/</span><a href="/terms/">Terms</a><span class="dot-sep" aria-hidden="true">/</span><a href="https://github.com/opensms-io" rel="me noopener">github</a></span>
+  <span class="footer-links"><a class="back-link" href="/">${icons.icon('arrow-left4', 14)}<span>Back to opensms.io</span></a><span class="dot-sep" aria-hidden="true">/</span><a href="${SITE.base}">Docs</a><span class="dot-sep" aria-hidden="true">/</span><a href="${SITE.base}llms.txt">llms.txt</a><span class="dot-sep" aria-hidden="true">/</span><a href="/brand/">Brand</a><span class="dot-sep" aria-hidden="true">/</span><a href="/privacy/">Privacy</a><span class="dot-sep" aria-hidden="true">/</span><a href="/terms/">Terms</a><span class="dot-sep" aria-hidden="true">/</span><a href="https://github.com/opensms-io" rel="me noopener">GitHub</a></span>
 </footer>`;
 }
 
@@ -181,7 +196,7 @@ ${body}
 `;
 }
 
-const SDK_LANGS = [['TypeScript', 'typescript'], ['Python', 'python'], ['Go', 'go'], ['.NET', 'dotnet'], ['Java', 'java'], ['Rust', 'rust'], ['Ruby', 'ruby'], ['PHP', 'php'], ['Swift', 'swift']];
+const SDK_LANGS = [['TypeScript', 'typescript', 'typescript'], ['Python', 'python', 'python'], ['Go', 'go', 'golang'], ['.NET', 'dotnet', 'dotnet'], ['Java', 'java', 'java'], ['Rust', 'rust', 'rust'], ['Ruby', 'ruby', 'ruby'], ['PHP', 'php', 'php'], ['Swift', 'swift', 'swift']];
 
 const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
@@ -242,7 +257,7 @@ ${page.html}
   ${toc ? `<aside class="toc" aria-label="On this page"><p class="toc-title">On this page</p><nav>${toc}</nav><a class="toc-top" href="#content">${icons.icon('arrow-up3', 14)}Back to top</a></aside>` : '<aside class="toc toc-empty" aria-hidden="true"></aside>'}
 </main>
 </div>
-${footer()}
+${footer({ icons })}
 ${searchDialog({ icons })}`;
   return shell({ headHtml, body, icons, bodyClass: 'is-doc' });
 }
@@ -260,7 +275,7 @@ export function homePage({ icons, pagesByPath, sections, headHtml, stats }) {
   </div>
   <h2 class="card-title">${esc(s.title)}</h2>
   <p class="card-blurb">${esc(s.blurb)}</p>
-  ${s.id === 'sdks' ? `<ul class="card-langs">${SDK_LANGS.map(([l, id]) => `<li><a href="${first.url}#sdk-${id}">${l}</a></li>`).join('')}</ul>` : ''}
+  ${s.id === 'sdks' ? `<ul class="card-langs">${SDK_LANGS.map(([l, id, mark]) => `<li><a href="${first.url}#sdk-${id}">${langMark(mark, (...a) => icons.icon(...a), { size: 15, surface: 'theme' })}${l}</a></li>`).join('')}</ul>` : ''}
   <ul class="card-list">${picks.map((p) => `<li><a href="${p.url}">${esc(p.navLabel)}${icons.icon('arrow-right4', 14)}</a></li>`).join('')}</ul>
 </article>`;
   };
@@ -283,7 +298,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <div class="hero-demo" aria-label="Example request">
       <div class="demo-pill demo-pill-a"><span class="demo-dot" aria-hidden="true"></span><span>POST /v1/messages</span></div>
       <div class="code demo-code">
-        <div class="code-head"><span class="code-lang">Shell</span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('copy', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
+        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span><span class="code-sep" aria-hidden="true">/</span><span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('copy', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
 <pre><code class="hljs language-bash">${stats.demoHtml}</code></pre>
       </div>
       <div class="demo-pill demo-pill-b"><span class="mono">sk_test_</span> keys are free in sandbox</div>
@@ -306,7 +321,7 @@ ${sections.map(card).join('\n')}
       <h2 id="path-title">The path most teams take</h2>
     </div>
     <ol class="steps">
-      ${stats.steps.map((st, i) => `<li><a href="${st.url}"><span class="step-n">0${i + 1}</span><span class="step-title">${esc(st.title)}</span><span class="step-text">${esc(st.text)}</span><span class="step-go">${icons.icon('arrow-right4', 16)}</span></a></li>`).join('')}
+      ${stats.steps.map((st, i) => `<li><a href="${st.url}"><span class="step-top"><span class="step-icon">${icons.icon(st.icon, 20)}</span><span class="step-n">0${i + 1}</span></span><span class="step-title">${esc(st.title)}${icons.icon('arrow-right4', 16)}</span><span class="step-text">${esc(st.text)}</span></a></li>`).join('')}
     </ol>
   </section>
 
@@ -323,7 +338,7 @@ ${sections.map(card).join('\n')}
     </div>
   </section>
 </main>
-${footer()}
+${footer({ icons })}
 ${searchDialog({ icons })}`;
   return shell({ headHtml, body, icons, bodyClass: 'is-home' });
 }
@@ -351,7 +366,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <a class="ghost-btn" href="${SITE.base}">${icons.icon('arrow-left4', 16)}Back to the docs home</a>
   </div>
 </main>
-${footer()}
+${footer({ icons })}
 ${searchDialog({ icons })}`;
   return shell({ headHtml, body, icons, bodyClass: 'is-404' });
 }

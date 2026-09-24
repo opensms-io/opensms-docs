@@ -12,24 +12,22 @@
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync, copyFileSync, readdirSync, openSync, readSync, closeSync } from 'node:fs';
 import { join, dirname, posix, relative, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 import { createHash } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import hljs from 'highlight.js/lib/core';
 import sharp from 'sharp';
 import { SITE, SECTIONS, DIRECTORY_TARGETS, HOME_SOURCE, PRIVATE } from './config.mjs';
-import { createRenderer, escapeHtml } from './markdown.mjs';
+import { createRenderer, escapeHtml, langMark } from './markdown.mjs';
 import { IconSet } from './icons.mjs';
 import { describe, MIN, MAX } from './describe.mjs';
 import { normaliseBrand } from './brand.mjs';
-import { ogImage } from './og.mjs';
+import { ogImage, OG_KEY } from './og.mjs';
 import { head, articlePage, homePage, notFoundPage, abs } from './templates.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(HERE, '..', '..');
 const OUT = join(ROOT, 'site');
 const CACHE = join(ROOT, '.cache');
-const require = createRequire(import.meta.url);
 const started = Date.now();
 
 const errors = [];
@@ -179,6 +177,7 @@ function webpVariants(rel, width) {
 /* -------------------------------------------------------------- rendering */
 
 let currentIcons = new IconSet();
+const SDK_MARKS = { typescript: 'typescript', python: 'python', go: 'golang', dotnet: 'dotnet', java: 'java', rust: 'rust', ruby: 'ruby', php: 'php', swift: 'swift' };
 const md = createRenderer({ icon: (...a) => currentIcons.icon(...a) });
 
 function inlineText(tok) {
@@ -186,20 +185,32 @@ function inlineText(tok) {
 }
 
 /** Search entries for one page: its intro plus one per h2/h3 section. */
+const ENDPOINT = /^(GET|POST|PUT|PATCH|DELETE) \//;
 function searchEntries(tokens, pageIndex) {
   const entries = [[pageIndex, '', '', '']];
   let cur = entries[0];
+  let endpoint = false;
   for (let i = 0; i < tokens.length; i += 1) {
     const t = tokens[i];
     if (t.type === 'heading_open' && (t.tag === 'h2' || t.tag === 'h3')) {
-      cur = [pageIndex, inlineText(tokens[i + 1]), t.attrGet('id'), ''];
+      const title = inlineText(tokens[i + 1]);
+      cur = [pageIndex, title, t.attrGet('id'), ''];
+      endpoint = ENDPOINT.test(title);
       entries.push(cur);
       i += 1;
       continue;
     }
-    if (t.type === 'inline' && tokens[i - 1]?.type !== 'heading_open' && cur[3].length < 600) {
-      cur[3] = `${cur[3]} ${inlineText(t)}`.trim();
+    if (t.type !== 'inline' || tokens[i - 1]?.type === 'heading_open') continue;
+    const text = inlineText(t);
+    if (endpoint) {
+      // Endpoint sections: the excerpt is the summary line alone. The operation ID
+      // and tag stay searchable as keywords (e[4]) but are never shown.
+      const meta = text.match(/^Operation ID: (.*?)\. Tag: (.*?)\./);
+      if (meta) cur[4] = [meta[1], meta[2]].filter((v) => !/none in contract/.test(v)).join(' ');
+      else if (!cur[3]) cur[3] = text;
+      continue;
     }
+    if (cur[3].length < 600) cur[3] = `${cur[3]} ${text}`.trim();
   }
   // Keep up to 600 characters per entry, ending on a whole word, with an ellipsis
   // so a snippet taken from the end of a cut entry still reads as cut.
@@ -221,7 +232,9 @@ for (const page of pages) {
     image: (s) => resolveImage(page.path, s),
   };
   const tokens = md.parse(src, env);
-  page.html = md.renderer.render(tokens, md.options, env);
+  page.html = md.renderer.render(tokens, md.options, env)
+    // SDK anchors (<span id="sdk-go">Go</span>) carry the language's mark.
+    .replace(/<span id="sdk-([a-z]+)">/g, (m, id) => `<span id="sdk-${id}" class="sdk-lang">${langMark(SDK_MARKS[id], (...a) => currentIcons.icon(...a), { size: 20, surface: 'theme', cls: 'sdk-mark' })}`);
   page.icons = currentIcons;
   for (const w of env.warnings) fail(`${page.path}: ${w}`);
   if (!env.h1 || env.h1.length !== 1) fail(`${page.path}: needs exactly one h1, found ${env.h1?.length ?? 0}`);
@@ -245,7 +258,7 @@ for (const page of pages) {
   page.minutes = Math.max(1, Math.round(words / 230));
   page.src = src;
   const pageIndex = searchIndex.pages.length;
-  searchIndex.pages.push({ t: page.title, u: page.url, s: page.section.title });
+  searchIndex.pages.push({ t: page.title, u: page.url, s: page.section.title, i: page.section.icon, r: page.section.id === 'api-reference' ? 1 : undefined });
   searchIndex.entries.push(...searchEntries(tokens, pageIndex));
 }
 
@@ -293,20 +306,17 @@ if (errors.length) {
 rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
-// Fonts, self-hosted (variable Figtree and JetBrains Mono, latin + latin-ext).
-const fontDir = (pkg) => join(dirname(require.resolve(`${pkg}/package.json`)), 'files');
-for (const [pkg, from, to] of [
-  ['@fontsource-variable/figtree', 'figtree-latin-wght-normal.woff2', 'figtree-latin.woff2'],
-  ['@fontsource-variable/figtree', 'figtree-latin-ext-wght-normal.woff2', 'figtree-latin-ext.woff2'],
-  ['@fontsource-variable/jetbrains-mono', 'jetbrains-mono-latin-wght-normal.woff2', 'jetbrains-mono-latin.woff2'],
-  ['@fontsource-variable/jetbrains-mono', 'jetbrains-mono-latin-ext-wght-normal.woff2', 'jetbrains-mono-latin-ext.woff2'],
-]) {
-  mkdirSync(join(OUT, 'fonts'), { recursive: true });
-  copyFileSync(join(fontDir(pkg), from), join(OUT, 'fonts', to));
-}
-// Both families are under the SIL Open Font License, which travels with the files.
-copyFileSync(join(dirname(require.resolve('@fontsource-variable/figtree/package.json')), 'LICENSE'), join(OUT, 'fonts', 'OFL-Figtree.txt'));
-copyFileSync(join(dirname(require.resolve('@fontsource-variable/jetbrains-mono/package.json')), 'LICENSE'), join(OUT, 'fonts', 'OFL-JetBrainsMono.txt'));
+// Fonts, self-hosted: byte-for-byte copies of the landing's public/assets/fonts/
+// (variable Figtree and JetBrains Mono, latin + latin-ext, with their SIL Open
+// Font License texts), vendored in ./fonts so both halves of opensms.io render
+// the same glyphs. Refresh them from the landing when it updates its fonts.
+mkdirSync(join(OUT, 'fonts'), { recursive: true });
+for (const f of readdirSync(join(HERE, 'fonts'))) copyFileSync(join(HERE, 'fonts', f), join(OUT, 'fonts', f));
+
+// Programming language marks (SVGL files, one per language; see languages/README.md),
+// loaded by code block headers, language tabs and the SDK pages as <img>.
+mkdirSync(join(OUT, 'languages'), { recursive: true });
+for (const f of readdirSync(join(HERE, 'languages')).filter((f) => f.endsWith('.svg'))) copyFileSync(join(HERE, 'languages', f), join(OUT, 'languages', f));
 
 // One CSS file and one deferred script, content-hashed.
 const css = readFileSync(join(HERE, 'assets', 'docs.css'), 'utf8').replace(/\n\s*\/\*[\s\S]*?\*\//g, '\n').replace(/\n{2,}/g, '\n');
@@ -314,10 +324,8 @@ const js = readFileSync(join(HERE, 'assets', 'docs.js'), 'utf8');
 const assets = {
   css: `${SITE.base}assets/docs.${hash(css)}.css`,
   js: `${SITE.base}assets/docs.${hash(js)}.js`,
-  // The landing's self-hosted Figtree at its stable URL, so moving between the
-  // landing and the docs reuses one cached file. docs.css lists the docs' own
-  // copy second, as a fallback if that URL ever stops resolving.
-  fontFigtree: '/assets/fonts/figtree-latin.woff2',
+  // Preloaded so body text never swaps late; docs.css points at the same file.
+  fontFigtree: `${SITE.base}fonts/figtree-latin.woff2`,
 };
 write(assets.css.slice(SITE.base.length), css);
 write(assets.js.slice(SITE.base.length), js);
@@ -362,15 +370,21 @@ const WEBSITE_ID = `${abs(SITE.base)}#website`;
 pages.forEach((page, i) => {
   const prev = pages[i - 1];
   const next = pages[i + 1];
+  // Docs > section > page, where the section crumb links to the section's first
+  // page. On that first page (and in a one-page section such as SDKs) the section
+  // crumb would point at the page itself, repeating its URL in the BreadcrumbList,
+  // so the trail is Docs > page instead; the eyebrow above the h1 still names the
+  // section.
   const sectionHome = pagesByPath.get(page.section.pages[0].path);
-  // A section with one page (SDKs) is just Docs > page, not Docs > section > page.
-  page.crumbs = page.section.pages.length === 1
+  page.crumbs = sectionHome === page
     ? [{ name: 'Docs', url: SITE.base }, { name: page.title, url: page.url }]
     : [
       { name: 'Docs', url: SITE.base },
       { name: page.section.title, url: sectionHome.url },
       { name: page.navLabel, url: page.url },
     ];
+  const urls = page.crumbs.map((c) => c.url);
+  if (new Set(urls).size !== urls.length) fail(`${page.path}: breadcrumb trail repeats a URL (${urls.join(', ')})`);
   const canonical = abs(page.url);
   const ld = [
     {
@@ -400,10 +414,10 @@ pages.forEach((page, i) => {
   const stats = {
     demoHtml: hljs.highlight(demo, { language: 'bash' }).value,
     steps: [
-      { title: 'Send a sandbox message', text: 'Create an account, mint a sk_test_ key and send your first message in about five minutes.', url: pagesByPath.get('getting-started/quickstart.md').url },
-      { title: 'Authenticate your servers', text: 'Scoped API keys for servers, session tokens for people, and how to rotate them safely.', url: pagesByPath.get('integrate/authentication.md').url },
-      { title: 'Track every delivery', text: 'Signed webhooks for delivered, failed and expired messages, with retries you can replay.', url: pagesByPath.get('integrate/delivery-reports-and-webhooks.md').url },
-      { title: 'Go live', text: 'Verification, legal acceptance, a funded wallet and a sender ID, then switch to a live key.', url: pagesByPath.get('getting-started/going-live.md').url },
+      { icon: 'flash', title: 'Send a sandbox message', text: 'Create an account, mint a sk_test_ key and send your first message in about five minutes.', url: pagesByPath.get('getting-started/quickstart.md').url },
+      { icon: 'key', title: 'Authenticate your servers', text: 'Scoped API keys for servers, session tokens for people, and how to rotate them safely.', url: pagesByPath.get('integrate/authentication.md').url },
+      { icon: 'sms-tracking', title: 'Track every delivery', text: 'Signed webhooks for delivered, failed and expired messages, with retries you can replay.', url: pagesByPath.get('integrate/delivery-reports-and-webhooks.md').url },
+      { icon: 'rocket', title: 'Go live', text: 'Verification, legal acceptance, a funded wallet and a sender ID, then switch to a live key.', url: pagesByPath.get('getting-started/going-live.md').url },
     ],
   };
   const lastmod = pages.map((p) => p.lastmod).sort().pop();
@@ -457,7 +471,7 @@ const llms = [
   '',
   `> ${SITE.summary}`,
   '',
-  'These docs cover the OpenSMS customer API and web app. Every page below is plain Markdown. OpenSMS is pre-launch: sandbox access, and the API origin that the examples write as `$OPENSMS_API`, come with an invitation from the waitlist at ' + `${SITE.origin}/` + '. Sandbox keys start with `sk_test_` and live keys with `sk_live_`. The full text of every page is in one file at ' + abs(`${SITE.base}llms-full.txt`) + '.',
+  'These docs cover the OpenSMS customer API and web app. Every page below is plain Markdown. OpenSMS is pre-launch: sandbox access, and the API origin that the examples write as `$OPENSMS_API`, come with an invitation from the waitlist at ' + `${SITE.origin}/` + '. Sandbox keys start with `sk_test_` and live keys with `sk_live_`. Request and response examples were captured from a running OpenSMS API, with secrets shortened. The sandbox workspaces used had not verified the owner\'s email, so the examples for `POST /v1/messages` and `POST /v1/otp/send` show the `403` refusal and no page shows a captured successful send; the success responses of those operations are described by their fields in the API reference instead. The full text of every page is in one file at ' + abs(`${SITE.base}llms-full.txt`) + '.',
   '',
 ];
 for (const section of SECTIONS) {
@@ -499,7 +513,7 @@ const sectionRedirects = [];
 const hiddenDirs = [];
 for (const rel of dirsWithoutIndex(OUT).sort()) {
   const first = pages.find((p) => p.slug.startsWith(`${rel}/`));
-  if (first && !['og', 'assets', 'fonts'].includes(rel.split('/')[0])) sectionRedirects.push([rel, first.url]);
+  if (first && !['og', 'assets', 'fonts', 'languages'].includes(rel.split('/')[0])) sectionRedirects.push([rel, first.url]);
   else hiddenDirs.push(rel);
 }
 const reEsc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -601,5 +615,6 @@ if (errors.length) {
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 console.log(`build:site wrote ${pages.length} pages + home + 404 to site/ in ${((Date.now() - started) / 1000).toFixed(1)}s`);
 console.log(`  images ${copiedImages.size}, OG cards ${ogJobs.length} (${rendered} rendered, ${ogJobs.length - rendered} from cache)`);
+console.log(`  OG cache key: ${OG_KEY.template}, satori ${OG_KEY.libs.satori}, resvg ${OG_KEY.libs.resvg}, ${OG_KEY.fonts.map((f) => `${f.name} ${f.weight} (${f.version})`).join(', ')}`);
 console.log(`  css ${kb(css.length)}, js ${kb(js.length)}, search index ${kb(statSync(join(OUT, 'search-index.json')).size)}, llms-full.txt ${kb(statSync(join(OUT, 'llms-full.txt')).size)}`);
 console.log(`  descriptions ${MIN}-${MAX} chars: all ${pages.length} in range; titles unique`);

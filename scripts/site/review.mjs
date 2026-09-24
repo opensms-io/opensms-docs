@@ -16,8 +16,11 @@ const BASE = `http://127.0.0.1:${PORT}`;
 
 const PAGES = [
   ['home', '/docs/', null],
+  ['quickstart', '/docs/getting-started/quickstart/', '[id="4-send-your-first-message"]'],
+  ['section-home', '/docs/getting-started/overview/', '.site-footer'],
   ['guide', '/docs/integrate/sending-messages/', '.code'],
-  ['api-reference', '/docs/reference/api/messages/', '.doc-ref .prose h3'],
+  ['sdk', '/docs/integrate/sdk/', '#quick-example'],
+  ['api-reference', '/docs/reference/api/messages/', '.doc-ref .prose h2'],
   ['console-guide', '/docs/console/sender-ids/', 'figure.shot'],
   ['not-found', '/docs/no-such-page/', null],
 ];
@@ -87,6 +90,20 @@ try {
   await page.waitForTimeout(300);
   await page.screenshot({ path: join(OUT, 'search-1440-light.png') });
   shots.push('search-1440-light.png');
+  // The same results in dark, then the empty state (popular pages and sections).
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await page.screenshot({ path: join(OUT, 'search-1440-dark.png') });
+  shots.push('search-1440-dark.png');
+  await page.fill('#search-input', '');
+  await page.dispatchEvent('#search-input', 'input');
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: join(OUT, 'search-empty-1440-dark.png') });
+  shots.push('search-empty-1440-dark.png');
+  await page.evaluate(() => document.documentElement.removeAttribute('data-theme'));
+  await page.screenshot({ path: join(OUT, 'search-empty-1440-light.png') });
+  shots.push('search-empty-1440-light.png');
+  await page.type('#search-input', 'webhook signature');
+  await page.waitForTimeout(300);
   const results = await page.locator('.sr-item').count();
   if (!results) problems.push('search: no results for "webhook signature"');
   await Promise.all([page.waitForURL(/delivery-reports-and-webhooks/, { timeout: 5000 }).catch(() => {}), page.keyboard.press('Enter')]);
@@ -100,12 +117,42 @@ try {
   await m.waitForTimeout(350);
   await m.screenshot({ path: join(OUT, 'drawer-390-light.png') });
   shots.push('drawer-390-light.png');
+  // The drawer foot ("Back to opensms.io" and the waitlist button), in both themes.
+  await m.locator('.sidebar-foot').scrollIntoViewIfNeeded();
+  await m.screenshot({ path: join(OUT, 'drawer-foot-390-light.png') });
+  shots.push('drawer-foot-390-light.png');
+  await m.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await m.waitForTimeout(100);
+  await m.screenshot({ path: join(OUT, 'drawer-foot-390-dark.png') });
+  shots.push('drawer-foot-390-dark.png');
+  await m.evaluate(() => document.documentElement.removeAttribute('data-theme'));
   await m.keyboard.press('Escape');
   await m.waitForTimeout(300);
   await m.click('.toc-mobile summary');
   await m.waitForTimeout(200);
   await m.screenshot({ path: join(OUT, 'toc-390-light.png') });
   shots.push('toc-390-light.png');
+  // Search on a phone, light and dark.
+  await m.goto(`${BASE}/docs/`, { waitUntil: 'networkidle' });
+  await m.click('.search-trigger');
+  await m.keyboard.type('sender id');
+  await m.waitForTimeout(300);
+  await m.screenshot({ path: join(OUT, 'search-390-light.png') });
+  shots.push('search-390-light.png');
+  await m.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await m.screenshot({ path: join(OUT, 'search-390-dark.png') });
+  shots.push('search-390-dark.png');
+  await m.evaluate(() => document.documentElement.removeAttribute('data-theme'));
+  await m.keyboard.press('Escape');
+  // Language tabs: choosing Python switches both groups on the SDK page.
+  await m.goto(`${BASE}/docs/integrate/sdk/`, { waitUntil: 'networkidle' });
+  await m.locator('#tabs-2-t1').scrollIntoViewIfNeeded();
+  await m.click('#tabs-2-t1');
+  await m.waitForTimeout(100);
+  const synced = await m.evaluate(() => document.getElementById('tabs-1-p1').classList.contains('is-active') && document.getElementById('tabs-2-p1').classList.contains('is-active'));
+  if (!synced) problems.push('sdk tabs: choosing Python did not switch both groups');
+  await m.screenshot({ path: join(OUT, 'sdk-tabs-390-light.png') });
+  shots.push('sdk-tabs-390-light.png');
   await m.setViewportSize({ width: 360, height: 780 });
   await m.goto(`${BASE}/docs/reference/api/messages/`, { waitUntil: 'networkidle' });
   const o360 = await m.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

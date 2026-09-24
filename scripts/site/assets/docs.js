@@ -84,7 +84,7 @@
         index = data;
         index.entries.forEach(function (e) {
           e.lt = (data.pages[e[0]].t + ' ' + (e[1] || '')).toLowerCase();
-          e.lx = (e[3] || '').toLowerCase();
+          e.lx = ((e[3] || '') + (e[4] ? ' ' + e[4] : '')).toLowerCase();
         });
         return index;
       });
@@ -155,6 +155,8 @@
       if (!e[1]) score += 4; // the page itself ranks above its sections
       var page = index.pages[e[0]];
       if (e.lt.indexOf(q.toLowerCase()) >= 0) score += 10;
+      // Guides explain; the reference lists. On an equal match the guide leads.
+      if (page.r) score -= 5;
       results.push({ e: e, page: page, score: score });
     });
     results.sort(function (a, b) { return b.score - a.score; });
@@ -165,34 +167,54 @@
     return results.slice().sort(function (a, b) { return order.indexOf(a.page.s) - order.indexOf(b.page.s); });
   }
 
+  var status = doc.getElementById('search-status');
+  function svg(name, size, cls) {
+    return '<svg class="i' + (cls ? ' ' + cls : '') + '" width="' + size + '" height="' + size + '" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+  }
+  var METHOD = /^(GET|POST|PUT|PATCH|DELETE) (\/\S*)$/;
+  function titleHtml(text, terms) {
+    var m = text.match(METHOD);
+    if (m) return '<span class="sr-op"><span class="sr-method m-' + m[1].toLowerCase() + '">' + m[1] + '</span><span class="sr-path">' + highlight(m[2], terms) + '</span></span>';
+    return highlight(text, terms);
+  }
+  function setStatus(text) { if (status) status.textContent = text; }
+
   function render(q) {
     selected = -1;
+    input.removeAttribute('aria-activedescendant');
     var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
-    if (!terms.length) { list.innerHTML = ''; if (empty) empty.hidden = false; return; }
+    if (!terms.length) { list.innerHTML = ''; if (empty) empty.hidden = false; setStatus(''); return; }
     if (empty) empty.hidden = true;
     var results = search(q);
     if (!results.length) {
-      list.innerHTML = '<li class="search-none">No results for “' + esc(q) + '”. Try an endpoint such as <code>/v1/messages</code> or a word like webhook.</li>';
+      list.innerHTML = '<li class="search-none" role="presentation"><span class="sr-icon">' + svg('search', 20) + '</span><span class="search-none-title">No results for \u201c' + esc(q) + '\u201d</span><span>Try an endpoint such as <code>/v1/messages</code>, or a word like <em>webhook</em> or <em>sender ID</em>.</span></li>';
+      setStatus('No results');
       return;
     }
+    var counts = {};
+    results.forEach(function (r) { counts[r.page.s] = (counts[r.page.s] || 0) + 1; });
     var html = '';
     var lastSection = null;
     results.forEach(function (r, i) {
       if (r.page.s !== lastSection) {
-        html += '<li class="sr-group" role="presentation">' + esc(r.page.s) + '</li>';
+        html += '<li class="sr-group" role="presentation"><span>' + esc(r.page.s) + '</span><span class="sr-count">' + counts[r.page.s] + '</span></li>';
         lastSection = r.page.s;
       }
       var href = r.page.u + (r.e[2] ? '#' + r.e[2] : '');
-      var title = r.e[1] ? highlight(r.e[1], terms) + ' <span class="sr-page">/ ' + esc(r.page.t) + '</span>' : highlight(r.page.t, terms);
+      var sep = '<span class="sr-crumb-sep" aria-hidden="true">' + svg('arrow-right4', 11) + '</span>';
+      var crumb = esc(r.page.s) + (r.e[1] ? sep + esc(r.page.t) : '');
+      var text = snippet(r.e[3] || '', terms);
       html += '<li class="sr-item" role="option" id="sr-' + i + '" aria-selected="false"><a href="' + href + '" tabindex="-1">'
-        + '<span class="sr-title">' + title + '</span>'
-        + '<span class="sr-text">' + highlight(snippet(r.e[3] || '', terms), terms) + '</span>'
-        + '<span class="sr-go">' + chevron + '</span></a></li>';
+        + '<span class="sr-icon">' + svg(r.page.i || 'document-text', 18) + '</span>'
+        + '<span class="sr-main"><span class="sr-title">' + titleHtml(r.e[1] || r.page.t, terms) + '</span>'
+        + '<span class="sr-crumb">' + crumb + '</span>'
+        + (text ? '<span class="sr-text">' + highlight(text, terms) + '</span>' : '') + '</span>'
+        + '<span class="sr-go">' + svg('arrow-right4', 16) + '</span></a></li>';
     });
     list.innerHTML = html;
+    setStatus(results.length + (results.length === 1 ? ' result' : ' results'));
     move(0);
   }
-  var chevron = '<svg class="i" width="16" height="16" aria-hidden="true"><use href="#i-arrow-right4"/></svg>';
 
   function move(to) {
     var items = list.querySelectorAll('.sr-item');
@@ -223,6 +245,43 @@
     });
     list.addEventListener('click', function (ev) { if (ev.target.closest('a')) closeSearch(); });
   }
+
+  /* ---------- language tabs ---------- */
+  // Choosing a language in one tab group switches every group on the page that has
+  // it, keeping the clicked tab where it was on screen.
+  function selectTab(tab, focus) {
+    var key = tab.getAttribute('data-tab-key');
+    var before = tab.getBoundingClientRect().top;
+    doc.querySelectorAll('[data-tabs]').forEach(function (group) {
+      var match = group.querySelector('[role="tab"][data-tab-key="' + key + '"]');
+      if (!match) return;
+      group.querySelectorAll('[role="tab"]').forEach(function (t) {
+        var on = t === match;
+        t.setAttribute('aria-selected', String(on));
+        t.tabIndex = on ? 0 : -1;
+        var panel = doc.getElementById(t.getAttribute('aria-controls'));
+        if (panel) panel.classList.toggle('is-active', on);
+      });
+    });
+    var shift = tab.getBoundingClientRect().top - before;
+    if (shift) window.scrollBy(0, shift);
+    if (focus) tab.focus();
+  }
+  doc.querySelectorAll('[data-tabs] [role="tablist"]').forEach(function (bar) {
+    bar.addEventListener('click', function (ev) {
+      var tab = ev.target.closest('[role="tab"]');
+      if (tab) selectTab(tab, false);
+    });
+    bar.addEventListener('keydown', function (ev) {
+      var tabs = Array.prototype.slice.call(bar.querySelectorAll('[role="tab"]'));
+      var at = tabs.indexOf(doc.activeElement);
+      if (at < 0) return;
+      var to = ev.key === 'ArrowRight' ? at + 1 : ev.key === 'ArrowLeft' ? at - 1 : ev.key === 'Home' ? 0 : ev.key === 'End' ? tabs.length - 1 : null;
+      if (to === null) return;
+      ev.preventDefault();
+      selectTab(tabs[(to + tabs.length) % tabs.length], true);
+    });
+  });
 
   /* ---------- events ---------- */
   doc.addEventListener('click', function (ev) {
