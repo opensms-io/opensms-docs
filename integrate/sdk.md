@@ -10,20 +10,21 @@ The source, per-language READMEs and the shared contract live in
 
 ## Clients
 
-| Language | Package | Registry |
-|---|---|---|
-| <span id="sdk-typescript">TypeScript / JavaScript</span> | `@opensms/sdk` | npm |
-| <span id="sdk-python">Python</span> | `opensms` | PyPI |
-| <span id="sdk-go">Go</span> | `github.com/opensms-io/opensms-go` | git tag |
-| <span id="sdk-dotnet">.NET (C#)</span> | `Opensms` | NuGet |
-| <span id="sdk-java">Java</span> | `io.opensms:opensms-java` | Maven Central |
-| <span id="sdk-rust">Rust</span> | `opensms` | crates.io |
-| <span id="sdk-ruby">Ruby</span> | `opensms` | RubyGems |
-| <span id="sdk-php">PHP</span> | `opensms/opensms-php` | Packagist |
-| <span id="sdk-swift">Swift</span> | `OpensmsSDK` | SwiftPM |
+All nine are published at version 0.1.0.
 
-None of the packages is published to its registry yet. Until they are, install from the repository;
-each package README has the exact command.
+| Language | Install | Registry |
+|---|---|---|
+| <span id="sdk-typescript">TypeScript / JavaScript</span> | `npm install @opensms/sdk` | [npm](https://www.npmjs.com/package/@opensms/sdk) |
+| <span id="sdk-python">Python</span> | `pip install opensms` | [PyPI](https://pypi.org/project/opensms/) |
+| <span id="sdk-go">Go</span> | `go get github.com/opensms-io/opensms-go` | [pkg.go.dev](https://pkg.go.dev/github.com/opensms-io/opensms-go) |
+| <span id="sdk-dotnet">.NET (C#)</span> | `dotnet add package Opensms` | [NuGet](https://www.nuget.org/packages/Opensms) |
+| <span id="sdk-java">Java</span> | `io.opensms:opensms-java:0.1.0` | [Maven Central](https://central.sonatype.com/artifact/io.opensms/opensms-java) |
+| <span id="sdk-rust">Rust</span> | `cargo add opensms` | [crates.io](https://crates.io/crates/opensms) |
+| <span id="sdk-ruby">Ruby</span> | `gem install opensms` | [RubyGems](https://rubygems.org/gems/opensms) |
+| <span id="sdk-php">PHP</span> | `composer require opensms/opensms-php` | [Packagist](https://packagist.org/packages/opensms/opensms-php) |
+| <span id="sdk-swift">Swift</span> | `.package(url: "https://github.com/opensms-io/opensms-swift", from: "0.1.0")` | [SwiftPM](https://github.com/opensms-io/opensms-swift) |
+
+Each package README has the full install and usage guide.
 
 ## What the clients cover
 
