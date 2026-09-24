@@ -2,7 +2,7 @@
 
 You can let an AI assistant such as Claude, ChatGPT, Cursor or VS Code send messages and check delivery for your workspace. This guide covers the three places in the web app that control it: the **AI assistants** page with setup steps for each assistant, the consent screen you see when an assistant asks for access, and **Connected AI apps** in Settings, where you see what each assistant did, change its limits or disconnect it. It is for anyone who connects an assistant, and for owners and admins who keep an eye on them.
 
-> **Not in production yet.** AI assistant access is still being built and is not available on opensms.io. The screens below describe the planned design and may change before release. The developer reference is [AI assistants (MCP)](../integrate/mcp.md).
+> **Not deployed yet.** AI assistant access is built and tested, but it is not switched on at opensms.io yet, so these pages are not in the web app you use today. The screens below are the ones that will ship. The developer reference is [AI assistants (MCP)](../integrate/mcp.md).
 
 ## Before you start
 
@@ -35,7 +35,7 @@ From top to bottom:
 4. **Workspace.** Pick the workspace the assistant may use. Each connection is for one workspace only.
 5. **Environment.** **Sandbox** ("Simulated. No real SMS.") or **Live** ("Real SMS, spends credit."). Live is greyed out with the reason when you cannot choose it: "Only owners and admins can connect live" or "This workspace is not live yet".
 6. **This app will be able to.** One row per permission the assistant asked for, grouped under **View** and **Send and spend**, each with a short description and a risk label (Low, Medium or High; sending is High in live). Untick anything you do not want to allow. At least one must stay ticked, and you can never add a permission the assistant did not ask for.
-7. **Limits.** A **daily spend cap** in your workspace currency (leave it empty for no cap) and a **send rate** of 5, 10, 30 or 60 messages a minute (10 by default). This section is open by default for Live.
+7. **Limits.** A **daily spend cap** in your workspace currency (leave it empty for no cap) and a **send rate** of 5, 10, 30 or 60 messages a minute (10 by default). This section is open by default for Live. The cap only stops sends on a **Live** connection: sandbox messages are free, so a sandbox send is never refused by the cap (the assistant can still read the cap and today's spend, which stays at 0, with `get_balance`).
 8. **Authenticator code** (Live only). The 6-digit code from your authenticator app. Five wrong codes in 10 minutes lock the check for a while.
 9. **Replaces your current connection.** If this assistant is already connected to the same workspace and environment, a note says the new connection replaces it.
 10. **Buttons.** **Cancel** tells the assistant you said no. **Allow access** approves and sends you back to the assistant.
