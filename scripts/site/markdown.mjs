@@ -12,6 +12,15 @@ import typescript from 'highlight.js/lib/languages/typescript';
 import python from 'highlight.js/lib/languages/python';
 import http from 'highlight.js/lib/languages/http';
 import plaintext from 'highlight.js/lib/languages/plaintext';
+import go from 'highlight.js/lib/languages/go';
+import php from 'highlight.js/lib/languages/php';
+import ruby from 'highlight.js/lib/languages/ruby';
+import java from 'highlight.js/lib/languages/java';
+import csharp from 'highlight.js/lib/languages/csharp';
+import swift from 'highlight.js/lib/languages/swift';
+import kotlin from 'highlight.js/lib/languages/kotlin';
+import rust from 'highlight.js/lib/languages/rust';
+import { logo, themedLogo } from './logos.mjs';
 
 hljs.registerLanguage('bash', bash);
 hljs.registerLanguage('json', json);
@@ -20,12 +29,23 @@ hljs.registerLanguage('typescript', typescript);
 hljs.registerLanguage('python', python);
 hljs.registerLanguage('http', http);
 hljs.registerLanguage('plaintext', plaintext);
+for (const [name, def] of Object.entries({ go, php, ruby, java, csharp, swift, kotlin, rust })) hljs.registerLanguage(name, def);
 
+// Fence info string to [highlight.js language, visible label, badge]. The badge is
+// a vendored SVGL language logo (`lang:<file>`) or an Iconsax icon (`icon:<name>`)
+// for formats with no brand mark. Code blocks are dark in both themes, so the
+// language logos are the dark-surface variants (see logos/README.md).
 const LANG = {
-  bash: ['bash', 'Shell'], sh: ['bash', 'Shell'], shell: ['bash', 'Shell'], json: ['json', 'JSON'],
-  js: ['javascript', 'JavaScript'], javascript: ['javascript', 'JavaScript'], ts: ['typescript', 'TypeScript'],
-  typescript: ['typescript', 'TypeScript'], python: ['python', 'Python'], py: ['python', 'Python'],
-  http: ['http', 'HTTP'], text: ['plaintext', 'Text'], csv: ['plaintext', 'CSV'], '': ['plaintext', 'Text'],
+  bash: ['bash', 'Shell', 'lang:bash'], sh: ['bash', 'Shell', 'lang:bash'], shell: ['bash', 'Shell', 'lang:bash'],
+  json: ['json', 'JSON', 'lang:json'],
+  js: ['javascript', 'JavaScript', 'lang:javascript'], javascript: ['javascript', 'JavaScript', 'lang:javascript'],
+  ts: ['typescript', 'TypeScript', 'lang:typescript'], typescript: ['typescript', 'TypeScript', 'lang:typescript'],
+  python: ['python', 'Python', 'lang:python'], py: ['python', 'Python', 'lang:python'],
+  go: ['go', 'Go', 'lang:go'], php: ['php', 'PHP', 'lang:php'], ruby: ['ruby', 'Ruby', 'lang:ruby'],
+  java: ['java', 'Java', 'lang:java'], csharp: ['csharp', 'C#', 'lang:csharp'], cs: ['csharp', 'C#', 'lang:csharp'],
+  swift: ['swift', 'Swift', 'lang:swift'], kotlin: ['kotlin', 'Kotlin', 'lang:kotlin'], rust: ['rust', 'Rust', 'lang:rust'],
+  http: ['http', 'HTTP', 'icon:document-code'], text: ['plaintext', 'Text', 'icon:document-code'],
+  csv: ['plaintext', 'CSV', 'icon:document-code'], '': ['plaintext', 'Text', 'icon:document-code'],
 };
 
 /** GitHub-style heading id, identical to scripts/gen-reference.mjs anchor(). */
@@ -93,11 +113,31 @@ export function createRenderer({ icon }) {
 
   const rules = md.renderer.rules;
 
-  rules.heading_open = (tokens, idx) => {
+  // A page can give headings a leading mark (config.mjs `marks`): an AI assistant
+  // logo (`ai:<name>`) or an Iconsax icon (`icon:<name>`), keyed by heading text.
+  const headingMark = (spec, size) => {
+    const [kind, name] = spec.split(':');
+    return kind === 'ai' ? themedLogo('ai', name, size) : icon(name, size);
+  };
+
+  rules.heading_open = (tokens, idx, opts, env) => {
     const t = tokens[idx];
     const inline = tokens[idx + 1];
     const text = inline?.children?.length === 1 && inline.children[0].type === 'text' ? inline.children[0].content : '';
-    return `<${t.tag} id="${t.attrGet('id')}"${METHOD.test(text) ? ' class="op"' : ''}>`;
+    const mark = env.marks?.[inlineText(inline)];
+    if (mark) (env.marksUsed ??= new Set()).add(inlineText(inline));
+    const cls = [METHOD.test(text) && 'op', mark && 'has-mark'].filter(Boolean).join(' ');
+    return `<${t.tag} id="${t.attrGet('id')}"${cls ? ` class="${cls}"` : ''}>${mark ? `<span class="h-mark">${headingMark(mark, t.tag === 'h2' ? 22 : 20)}</span>` : ''}`;
+  };
+
+  // `<div data-client-grid></div>` in a page becomes a grid of cards, one per
+  // heading marked with an AI assistant logo, each linking to its section.
+  rules.html_block = (tokens, idx, opts, env) => {
+    const content = tokens[idx].content;
+    if (!/^<div data-client-grid><\/div>\s*$/.test(content)) return content;
+    const cards = (env.headings ?? []).filter((h) => env.marks?.[h.text]?.startsWith('ai:') || env.marks?.[h.text] === 'icon:ai-chatbot');
+    if (!cards.length) env.warnings?.push('client grid with no marked headings');
+    return `<nav class="client-grid" aria-label="Choose your assistant">${cards.map((h) => `<a class="client-card" href="#${h.id}"><span class="client-logo">${headingMark(env.marks[h.text], 28)}</span><span class="client-name">${escapeHtml(h.text)}</span></a>`).join('')}</nav>\n`;
   };
   rules.heading_close = (tokens, idx, opts, env) => {
     const open = tokens[idx - 2];
@@ -182,15 +222,21 @@ export function createRenderer({ icon }) {
     return defaultTd(tokens, idx, opts, env, self);
   };
 
+  const codeLang = (label, badge) => {
+    const [kind, name] = badge.split(':');
+    const mark = kind === 'lang' ? logo('lang', name, 16) : icon(name, 16, 'code-lang-icon');
+    return `<span class="code-lang">${mark}<span>${escapeHtml(label)}</span></span>`;
+  };
+
   rules.fence = (tokens, idx, opts, env) => {
     const t = tokens[idx];
     const info = (t.info || '').trim().split(/\s+/)[0].toLowerCase();
-    const [lang, label] = LANG[info] ?? ['plaintext', info || 'Text'];
+    const [lang, label, badge] = LANG[info] ?? ['plaintext', info || 'Text', 'icon:document-code'];
     if (!LANG[info]) env.warnings?.push(`unknown code language "${info}"`);
     const code = t.content.replace(/\n$/, '');
     const html = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
     env.codeBlocks = (env.codeBlocks ?? 0) + 1;
-    return `<div class="code"><div class="code-head"><span class="code-lang">${escapeHtml(label)}</span>`
+    return `<div class="code"><div class="code-head">${codeLang(label, badge)}`
       + `<button type="button" class="code-copy" data-copy aria-label="Copy code">${icon('copy', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
       + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>\n`;
   };

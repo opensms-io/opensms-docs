@@ -19,6 +19,7 @@ import hljs from 'highlight.js/lib/core';
 import sharp from 'sharp';
 import { SITE, SECTIONS, DIRECTORY_TARGETS, HOME_SOURCE, PRIVATE } from './config.mjs';
 import { createRenderer, escapeHtml } from './markdown.mjs';
+import { writeLogos } from './logos.mjs';
 import { IconSet } from './icons.mjs';
 import { describe, MIN, MAX } from './describe.mjs';
 import { normaliseBrand } from './brand.mjs';
@@ -59,6 +60,7 @@ for (const section of SECTIONS) {
       editUrl: `${SITE.repo}/blob/${SITE.branch}/${p.path}`,
       labelOverride: p.label,
       seoTitleOverride: p.seoTitle,
+      marks: p.marks,
     };
     pages.push(page);
     pagesByPath.set(p.path, page);
@@ -219,11 +221,13 @@ for (const page of pages) {
     warnings: [],
     link: (href) => resolveLink(page.path, href),
     image: (s) => resolveImage(page.path, s),
+    marks: page.marks,
   };
   const tokens = md.parse(src, env);
   page.html = md.renderer.render(tokens, md.options, env);
   page.icons = currentIcons;
   for (const w of env.warnings) fail(`${page.path}: ${w}`);
+  for (const text of Object.keys(page.marks ?? {})) if (!env.marksUsed?.has(text)) fail(`${page.path}: heading mark "${text}" in config.mjs matches no heading`);
   if (!env.h1 || env.h1.length !== 1) fail(`${page.path}: needs exactly one h1, found ${env.h1?.length ?? 0}`);
   page.title = env.h1?.[0] ?? page.path;
   page.navLabel = page.labelOverride ?? page.title;
@@ -320,6 +324,8 @@ const assets = {
   fontFigtree: '/assets/fonts/figtree-latin.woff2',
 };
 write(assets.css.slice(SITE.base.length), css);
+// Brand logos (languages in code headers, AI assistants on the MCP page), content-hashed.
+const logoCount = writeLogos(write);
 write(assets.js.slice(SITE.base.length), js);
 
 // Images referenced by published pages, plus their WebP variants (cached in
@@ -600,6 +606,6 @@ if (errors.length) {
 
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
 console.log(`build:site wrote ${pages.length} pages + home + 404 to site/ in ${((Date.now() - started) / 1000).toFixed(1)}s`);
-console.log(`  images ${copiedImages.size}, OG cards ${ogJobs.length} (${rendered} rendered, ${ogJobs.length - rendered} from cache)`);
+console.log(`  images ${copiedImages.size}, logos ${logoCount}, OG cards ${ogJobs.length} (${rendered} rendered, ${ogJobs.length - rendered} from cache)`);
 console.log(`  css ${kb(css.length)}, js ${kb(js.length)}, search index ${kb(statSync(join(OUT, 'search-index.json')).size)}, llms-full.txt ${kb(statSync(join(OUT, 'llms-full.txt')).size)}`);
 console.log(`  descriptions ${MIN}-${MAX} chars: all ${pages.length} in range; titles unique`);

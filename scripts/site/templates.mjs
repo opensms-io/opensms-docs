@@ -3,6 +3,7 @@
 // only script is one small deferred file (theme, drawer, search, copy, scrollspy).
 import { SITE, SECTIONS } from './config.mjs';
 import { escapeHtml as esc, wbrPath } from './markdown.mjs';
+import { logo } from './logos.mjs';
 
 const MARK = (h = 26, cls = '') => `<svg class="mark${cls ? ` ${cls}` : ''}" viewBox="0 0 286 368" height="${h}" aria-hidden="true" focusable="false"><g fill="var(--mark)"><rect width="120" height="275" rx="60"/><rect x="145" y="92" width="120" height="275" rx="60"/><path d="M264 292 285 351 250 346Z"/></g></svg>`;
 
@@ -283,7 +284,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <div class="hero-demo" aria-label="Example request">
       <div class="demo-pill demo-pill-a"><span class="demo-dot" aria-hidden="true"></span><span>POST /v1/messages</span></div>
       <div class="code demo-code">
-        <div class="code-head"><span class="code-lang">Shell</span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('copy', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
+        <div class="code-head"><span class="code-lang">${logo('lang', 'bash', 16)}<span>Shell</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('copy', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
 <pre><code class="hljs language-bash">${stats.demoHtml}</code></pre>
       </div>
       <div class="demo-pill demo-pill-b"><span class="mono">sk_test_</span> keys are free in sandbox</div>
