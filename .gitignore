@@ -4,3 +4,6 @@ node_modules/
 *.token
 test-results/
 .DS_Store
+/site/
+/site-review/
+.cache/
