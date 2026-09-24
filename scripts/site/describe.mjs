@@ -32,6 +32,8 @@ export const OVERRIDES = {
   'getting-started/going-live.md': 'Everything between a working sandbox integration and real messages reaching handsets: identity checks, legal acceptance, funding, sender ID and live keys.',
   'getting-started/quickstart.md': 'Go from nothing to a sandbox SMS in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status.',
   'integrate/errors.md': 'Every OpenSMS error uses one JSON shape, RFC 9457 problem details. What each HTTP status means, every error code the API emits and which errors to retry.',
+  'integrate/mcp.md': 'Connect Claude, ChatGPT, Cursor or VS Code to OpenSMS over MCP: OAuth consent, scopes, spend caps, idempotent sends and every tool, resource and prompt.',
+  'console/ai-assistants.md': 'Connect an AI assistant to your workspace, read the consent screen, and see, limit or disconnect assistants in Settings under Connected AI apps.',
   'integrate/otp.md': 'The OTP API generates a numeric code, sends it by SMS and checks the code your user types in. OpenSMS stores only a hash, so you never handle the code.',
   'integrate/sending-messages.md': 'Outbound SMS through the OpenSMS API: single sends, scheduling and cancellation, batches, sender IDs, encoding and segments, statuses and delivery attempts.',
   'reference/api/README.md': 'The exact contract of the OpenSMS customer API: every /v1 operation with its auth, parameters, request fields, responses, errors and live-tested examples.',

@@ -113,7 +113,12 @@ Derive the key from the business event, not from the attempt:
 
 A random UUID per request protects only against retries inside one process. A key derived from your data also protects against a crash and restart between sending and recording the result.
 
+## AI assistants (MCP)
+
+Connections from AI assistants have their own limits on top of the ones above: 120 MCP requests a minute and, by default, 10 spending calls a minute per connection (5, 10, 30 or 60, chosen on the consent screen), plus an optional daily spend cap per connection. Their spending tools are idempotent too: a caller key is kept for 24 hours, and without one the same content to the same number from the same connection is sent once within 10 minutes. Not in production yet; see [AI assistants (MCP)](mcp.md#limits).
+
 ## Related
 
 - [Errors](errors.md) for which statuses are safe to retry.
 - [OTP](otp.md#limits) for the OTP limits in context.
+- [AI assistants (MCP)](mcp.md#idempotency) for idempotency in assistant tool calls.

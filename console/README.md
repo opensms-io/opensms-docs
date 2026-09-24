@@ -38,6 +38,7 @@ If you are new, go through these in order:
 | Sender IDs | [Sender IDs](sender-ids.md) | Apply for the name your messages come from, and follow its review. |
 | Routes | [Routes](routes.md) | See which countries and carriers OpenSMS can reach, and set fallback. |
 | API keys | [API keys](api-keys.md) | Create, rotate and revoke keys for your software. |
+| AI assistants | [AI assistants](ai-assistants.md) | Connect Claude, ChatGPT or another assistant, approve what it may do, and disconnect it (not in production yet). |
 | Webhooks | [Webhooks](webhooks.md) | Tell OpenSMS where to send delivery updates. |
 | Sandbox | [Sandbox](sandbox.md) | Test numbers that force a result, and the sandbox inbox. |
 | Go live | [Go live](go-live.md) | The checklist between sandbox and real sending. |
@@ -90,6 +91,7 @@ Each guide has its own "who can do this" note. Roles are managed in [Settings > 
 - [OTP (verification codes)](otp.md)
 - [Webhooks](webhooks.md)
 - [API keys](api-keys.md)
+- [AI assistants](ai-assistants.md)
 - [Usage](usage.md)
 - [Billing](billing.md)
 - [Routes](routes.md)

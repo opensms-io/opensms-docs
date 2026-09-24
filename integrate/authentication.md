@@ -244,8 +244,13 @@ What two-factor changes:
 | Live owner and finance members | Cannot turn it off (`POST /v1/auth/2fa/disable` returns `409`). |
 | Session-only money actions | Bank-transfer top-ups, auto top-up settings, number purchases and releases, number rules, and live lookups by owners need it. |
 
+## AI assistants
+
+AI assistants do not use either credential. They connect to the OpenSMS MCP server with OAuth: you approve each one on a consent screen, choose one workspace and one environment, and pick from seven of the API key scopes (`messages:read`, `messages:write`, `pricing:read`, `sender-ids:read`, `lookup:read`, `lookup:request`, `wallet:read`). The assistant's access token (`osm_at_...`) only works on the MCP server, and the REST API rejects it. Tool calls are checked against the same scopes as an API key. Not in production yet; see [AI assistants (MCP)](mcp.md).
+
 ## Related
 
+- [AI assistants (MCP)](mcp.md) for OAuth access for Claude, ChatGPT, Cursor and other assistants.
 - [Errors](errors.md) for every `401` and `403` shape.
 - [Rate limits and idempotency](rate-limits-and-idempotency.md) for per-key limits.
 - [Realtime](realtime.md) for WebSocket authentication.

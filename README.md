@@ -37,6 +37,7 @@ Guides for developers calling the API with a key.
 - [Billing and wallet](integrate/billing-and-wallet.md): balances, pricing, spend caps, top-ups
 - [Errors](integrate/errors.md)
 - [Rate limits and idempotency](integrate/rate-limits-and-idempotency.md)
+- [AI assistants (MCP)](integrate/mcp.md): connect Claude, ChatGPT, Cursor, VS Code and other assistants with OAuth, scopes and spend caps (not in production yet)
 - [SDKs](integrate/sdk.md): official clients for TypeScript, Python, Go, .NET, Java, Rust, Ruby, PHP and Swift
 
 ## Reference
@@ -49,7 +50,7 @@ Guides for developers calling the API with a key.
 
 Task-based guides with screenshots, for people using the customer web app: signing up and signing
 in, onboarding, legal acceptance, messages, contacts, templates, sender IDs, numbers, inbound, OTP,
-webhooks, API keys, usage, billing, routes, sandbox, going live, verification, notifications and
+webhooks, API keys, AI assistants, usage, billing, routes, sandbox, going live, verification, notifications and
 settings. Start at the [web app guide](console/README.md).
 
 ## Operator guides

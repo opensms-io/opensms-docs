@@ -17,7 +17,9 @@ const BASE = `http://127.0.0.1:${PORT}`;
 const PAGES = [
   ['home', '/docs/', null],
   ['guide', '/docs/integrate/sending-messages/', '.code'],
-  ['api-reference', '/docs/reference/api/messages/', '.doc-ref .prose h3'],
+  ['api-reference', '/docs/reference/api/messages/', '.doc-ref .prose h2.op'],
+  ['mcp', '/docs/integrate/mcp/', '.client-grid'],
+  ['mcp-tools', '/docs/integrate/mcp/', '#create_batch'],
   ['console-guide', '/docs/console/sender-ids/', 'figure.shot'],
   ['not-found', '/docs/no-such-page/', null],
 ];

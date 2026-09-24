@@ -35,7 +35,7 @@ export const SECTIONS = [
   },
   {
     id: 'integrate', title: 'Integrate', icon: 'sms',
-    blurb: 'Task guides for developers: authentication, sending, webhooks, OTP, lookup, billing and errors.',
+    blurb: 'Task guides for developers: authentication, sending, webhooks, OTP, lookup, billing, errors and AI assistants.',
     pages: [
       { path: 'integrate/authentication.md' },
       { path: 'integrate/sending-messages.md' },
@@ -48,6 +48,31 @@ export const SECTIONS = [
       { path: 'integrate/billing-and-wallet.md' },
       { path: 'integrate/errors.md' },
       { path: 'integrate/rate-limits-and-idempotency.md', label: 'Rate limits and idempotency' },
+      {
+        path: 'integrate/mcp.md', label: 'AI assistants (MCP)', seoTitle: 'Connect AI assistants to OpenSMS with MCP',
+        // Leading marks for headings (see markdown.mjs): assistant logos on the setup
+        // steps, Iconsax icons on the main sections and tools.
+        marks: {
+          'Connect your assistant': 'icon:ai-cloud-connected',
+          Claude: 'ai:claude', ChatGPT: 'ai:openai', 'Claude Code': 'ai:claude', Cursor: 'ai:cursor',
+          'VS Code': 'ai:vscode', Windsurf: 'ai:windsurf', Zed: 'ai:zed', 'Any other MCP client': 'icon:ai-chatbot',
+          'What happens when you connect': 'icon:security-user',
+          'Access control': 'icon:shield-tick', Limits: 'icon:money-send', Idempotency: 'icon:refresh',
+          Tools: 'icon:programming-arrows', Resources: 'icon:document-text', Prompts: 'icon:message-question',
+          Errors: 'icon:danger', 'Revoking access': 'icon:slash', 'Security model': 'icon:lock',
+          Troubleshooting: 'icon:setting', 'For client authors': 'icon:code',
+          send_message: 'icon:send', preview_message: 'icon:eye', get_message: 'icon:message-text',
+          list_messages: 'icon:message-text', send_otp: 'icon:security-user', verify_otp: 'icon:tick-circle',
+          lookup_number: 'icon:radar', get_lookup: 'icon:radar', get_balance: 'icon:wallet',
+          list_sender_ids: 'icon:sender-ids', create_batch: 'icon:sms',
+        },
+        anchors: [
+          { id: 'connect-your-assistant', label: 'Connect your assistant' },
+          { id: 'scopes', label: 'Scopes' },
+          { id: 'tools', label: 'Tools' },
+          { id: 'security-model', label: 'Security model' },
+        ],
+      },
     ],
   },
   {
@@ -120,6 +145,13 @@ export const SECTIONS = [
       { path: 'console/otp.md', label: 'Verification codes' },
       { path: 'console/webhooks.md' },
       { path: 'console/api-keys.md' },
+      {
+        path: 'console/ai-assistants.md', label: 'AI assistants',
+        marks: {
+          'Before you start': 'icon:lamp-on', 'Connect an assistant': 'icon:ai-cloud-connected',
+          'The consent screen': 'icon:security-user', 'Unverified apps': 'icon:danger', 'Connected AI apps': 'icon:ai-chatbot',
+        },
+      },
       { path: 'console/routes.md' },
       { path: 'console/usage.md' },
       { path: 'console/billing.md' },
