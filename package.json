@@ -1,0 +1,12 @@
+{
+  "name": "opensms-docs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "shoot": "node scripts/shoot.mjs",
+    "test": "node tests/run.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}
