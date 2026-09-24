@@ -146,11 +146,14 @@ try {
   await m.keyboard.press('Escape');
   // Language tabs: choosing Python switches both groups on the SDK page.
   await m.goto(`${BASE}/docs/integrate/sdk/`, { waitUntil: 'networkidle' });
-  await m.locator('#tabs-2-t1').scrollIntoViewIfNeeded();
-  await m.click('#tabs-2-t1');
+  const py2 = m.locator('#tabs-2 [data-tab-key="python"], [aria-controls^="tabs-2-"][data-tab-key="python"]').first();
+  await py2.scrollIntoViewIfNeeded();
+  await py2.click();
   await m.waitForTimeout(100);
-  const synced = await m.evaluate(() => document.getElementById('tabs-1-p1').classList.contains('is-active') && document.getElementById('tabs-2-p1').classList.contains('is-active'));
-  if (!synced) problems.push('sdk tabs: choosing Python did not switch both groups');
+  // Every group that has Python now shows it, and the choice is remembered.
+  const synced = await m.evaluate(() => [...document.querySelectorAll('[data-tabs]')].every((g) => !g.querySelector('[data-tab-key="python"]') || g.querySelector('[aria-selected="true"]').dataset.tabKey === 'python')
+    && localStorage.getItem('opensms-docs-lang') === 'python');
+  if (!synced) problems.push('sdk tabs: choosing Python did not switch every group, or was not remembered');
   await m.screenshot({ path: join(OUT, 'sdk-tabs-390-light.png') });
   shots.push('sdk-tabs-390-light.png');
   await m.setViewportSize({ width: 360, height: 780 });

@@ -17,6 +17,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHmac, randomUUID } from 'node:crypto';
 import YAML from 'yaml';
 import { API, call, freshWorkspace, mintKey, adminToken } from '../tests/lib.mjs';
+import { sdkSnippets } from './site/sdk-snippets.mjs';
 
 const DOCS = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 export const SPEC_PATH = resolve(DOCS, '../api/openapi/customer.yaml');
@@ -360,7 +361,8 @@ function renderOperation(spec, o, examples) {
   const ex = examples[o.key] ?? [];
   const skip = examples.__notExercised?.[o.key];
   if (ex.length) {
-    for (const e of ex) lines.push(renderExample(e));
+    // The first example also shows the call in every official SDK that wraps it.
+    ex.forEach((e, i) => lines.push(renderExample(e, i === 0 ? sdkSnippets(o.key) : null)));
   } else if (skip && publicNote(skip)) {
     lines.push(`**Example:** none. ${publicNote(skip)}`, '');
   }
@@ -468,7 +470,11 @@ function publicValue(v) {
   return v;
 }
 
-function renderExample(e) {
+/**
+ * One captured example. With `sdk` (see site/sdk-snippets.mjs) the cURL request
+ * becomes the first tab of a group, followed by the same call in each SDK.
+ */
+function renderExample(e, sdk = null) {
   const lines = [];
   lines.push(`**Example${e.title ? `: ${e.title}` : ''}**`, '');
   e = publicValue(e);
@@ -479,7 +485,13 @@ function renderExample(e) {
     else { const j = JSON.stringify(e.request.body); curl.push(`  -d ${shellQuote(j.length <= 90 ? j : pretty(e.request.body))}`); }
   }
   if (e.request.form) for (const [k, v] of Object.entries(e.request.form)) curl.push(`  -F ${shellQuote(`${k}=${v}`)}`);
-  lines.push('```bash', curl.join(' \\\n'), '```', '');
+  if (sdk) {
+    lines.push('<!-- tabs label="Request example" -->', '```bash tab="cURL"', curl.join(' \\\n'), '```', '');
+    for (const x of sdk) lines.push(`\`\`\`${x.fence} tab="${x.label}"`, x.code, '```', '');
+    lines.push('<!-- /tabs -->', '');
+  } else {
+    lines.push('```bash', curl.join(' \\\n'), '```', '');
+  }
   const tn = [];
   const body = e.response.body;
   lines.push(`Response \`${e.response.status}\`${e.response.contentType ? ` (\`${e.response.contentType}\`)` : ''}:`, '');
@@ -921,8 +933,8 @@ function scenarioList() {
     { op: 'POST /v1/numbers', auth: 'key', url: '/v1/numbers', idem: true, body: { country: 'KE', kind: 'long_code' }, expect: [422, 400], partial: LIVE_ONLY },
     { op: 'DELETE /v1/numbers/{id}', auth: 'key', url: `/v1/numbers/${ZERO}`, idem: true, expect: 422, partial: LIVE_ONLY },
     { op: 'GET /v1/numbers/{id}/rules', auth: 'key', url: `/v1/numbers/${ZERO}/rules`, expect: 422, partial: LIVE_ONLY },
-    { op: 'POST /v1/numbers/{id}/rules', auth: 'key', url: `/v1/numbers/${ZERO}/rules`, idem: true, body: { keyword: 'STOP', action: 'auto_reply', reply_text: 'You are unsubscribed.' }, expect: [400, 422], partial: LIVE_ONLY },
-    { op: 'PUT /v1/numbers/{id}/rules/{rule_id}', auth: 'key', url: `/v1/numbers/${ZERO}/rules/${ZERO}`, body: { keyword: 'STOP', action: 'auto_reply', reply_text: 'You are unsubscribed.' }, expect: [400, 422], partial: LIVE_ONLY },
+    { op: 'POST /v1/numbers/{id}/rules', auth: 'key', url: `/v1/numbers/${ZERO}/rules`, idem: true, body: { match: 'keyword', pattern: 'STOP', action: 'auto_reply', target: 'You are unsubscribed.' }, expect: [400, 422], partial: LIVE_ONLY },
+    { op: 'PUT /v1/numbers/{id}/rules/{rule_id}', auth: 'key', url: `/v1/numbers/${ZERO}/rules/${ZERO}`, body: { match: 'keyword', pattern: 'STOP', action: 'auto_reply', target: 'You are unsubscribed.' }, expect: [400, 422], partial: LIVE_ONLY },
     { op: 'DELETE /v1/numbers/{id}/rules/{rule_id}', auth: 'key', url: `/v1/numbers/${ZERO}/rules/${ZERO}`, expect: 422, partial: LIVE_ONLY },
     { op: 'GET /v1/inbound', auth: 'key', url: '/v1/inbound', expect: 200, check: has('items') },
     { op: 'POST /v1/inbound/{id}/reply', auth: 'key', url: `/v1/inbound/${ZERO}/reply`, idem: true, body: { text: 'Thanks, we got your message.' }, expect: 422, partial: LIVE_ONLY },

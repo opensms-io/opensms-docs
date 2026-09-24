@@ -132,37 +132,69 @@ export function createRenderer({ icon }) {
     }
   });
 
-  // Language tabs: fenced blocks between <!-- tabs --> and <!-- /tabs --> become one
-  // tabbed group. Each block names its tab with tab="..." (default: its language
-  // label) and may set logo="..." (default: its language mark). Without script,
-  // every panel shows, stacked, each with its own header.
+  // Language tabs: consecutive fenced blocks after <!-- tabs label="..." --> become one
+  // tabbed group, closed by <!-- /tabs --> (or by the first thing that is not a code
+  // block or an HTML comment such as a test marker). Each block names its tab with
+  // tab="..." (default: its language label), may set logo="..." (default: its
+  // language mark) and title="..." (a file name, shown next to Copy). A tab's key,
+  // which the page remembers across groups and visits, is its language mark
+  // ("typescript", "golang") or, for shells and data, its label ("curl").
+  // Without script every panel shows, stacked, each with its own header.
   md.core.ruler.push('docs_tabs', (state) => {
     const env = state.env;
+    const tokens = state.tokens;
     let group = null;
-    for (const t of state.tokens) {
+    let autoClosed = false;
+    const isComment = (t) => t.type === 'html_block' && /^<!--[\s\S]*-->\s*$/.test(t.content);
+    const close = (t) => {
+      if (group.items.length < 2) env.warnings?.push(`tab group "${group.label}" has fewer than two code blocks`);
+      if (t) t.type = 'code_tabs_close';
+      group = null;
+    };
+    // Close the open group with a new token inserted at position i.
+    const closeBefore = (i) => {
+      const end = new state.Token('code_tabs_close', '', 0);
+      end.block = true;
+      tokens.splice(i, 0, end);
+      close(null);
+    };
+    for (let i = 0; i < tokens.length; i += 1) {
+      const t = tokens[i];
       if (t.type === 'html_block' && /^<!--\s*tabs\b/.test(t.content)) {
+        if (group) { closeBefore(i); i += 1; }
+        autoClosed = false;
         env.tabGroups = (env.tabGroups ?? 0) + 1;
-        const label = t.content.match(/label="([^"]*)"/)?.[1] ?? 'Language';
+        const label = t.content.match(/label="([^"]*)"/)?.[1] ?? 'Code example';
         group = { id: `tabs-${env.tabGroups}`, label, items: [] };
         t.type = 'code_tabs_open';
         t.meta = group;
       } else if (t.type === 'html_block' && /^<!--\s*\/tabs\s*-->/.test(t.content)) {
-        if (!group) env.warnings?.push('<!-- /tabs --> without <!-- tabs -->');
-        else if (group.items.length < 2) env.warnings?.push(`tab group ${group.id} has fewer than two code blocks`);
-        t.type = 'code_tabs_close';
-        group = null;
+        if (group) close(t);
+        else {
+          if (!autoClosed) env.warnings?.push('<!-- /tabs --> without <!-- tabs -->');
+          t.type = 'code_tabs_stray';
+        }
+        autoClosed = false;
       } else if (group && t.type === 'fence') {
         const info = (t.info || '').trim();
         const name = info.split(/\s+/)[0].toLowerCase();
         const attrs = fenceAttrs(info);
         const [, label, mark] = LANG[name] ?? ['plaintext', name, 'icon:document-text'];
         const tabLabel = attrs.tab ?? label;
-        const item = { index: group.items.length, group: group.id, key: tabLabel.toLowerCase().replace(/[^a-z0-9]+/g, '-'), label: tabLabel, mark: attrs.logo ?? mark };
+        const logo = attrs.logo ?? mark;
+        const key = attrs.key ?? (logo.startsWith('icon:') ? tabLabel : logo).toLowerCase().replace(/[^a-z0-9#+]+/g, '-').replace(/#/g, 'sharp').replace(/\+/g, 'plus');
+        const item = { index: group.items.length, group: group.id, key, label: tabLabel, mark: logo, title: attrs.title ?? '' };
         group.items.push(item);
         t.meta = { ...(t.meta ?? {}), tab: item };
+      } else if (group && !isComment(t)) {
+        // Anything else ends the group; its <!-- /tabs -->, if any, is then ignored.
+        closeBefore(i);
+        autoClosed = true;
+        i += 1;
       }
     }
-    if (group) env.warnings?.push(`tab group ${group.id} is not closed`);
+    if (group) closeBefore(tokens.length);
+    state.tokens = tokens.filter((t) => t.type !== 'code_tabs_stray');
   });
 
   // Drop HTML comments (generator banners, test markers) from the output.
@@ -187,12 +219,21 @@ export function createRenderer({ icon }) {
 
   const rules = md.renderer.rules;
 
+  // One dark shell: the tab strip (logo and name per language) with the file name
+  // of the active tab and a single Copy button, then the panels. With script only
+  // the active panel is displayed, so the group follows its height (docs.css).
   rules.code_tabs_open = (tokens, idx) => {
     const g = tokens[idx].meta;
-    const tabs = g.items.map((it) => `<button type="button" role="tab" class="code-tab" id="${g.id}-t${it.index}" aria-controls="${g.id}-p${it.index}" aria-selected="${it.index === 0}" tabindex="${it.index === 0 ? 0 : -1}" data-tab-key="${escapeHtml(it.key)}">${langMark(it.mark, icon, { size: 16 })}<span>${escapeHtml(it.label)}</span></button>`).join('');
-    return `<div class="code-tabs" data-tabs><div class="code-tabs-bar" role="tablist" aria-label="${escapeHtml(g.label)}">${tabs}</div>\n`;
+    const tabs = g.items.map((it) => `<button type="button" role="tab" class="code-tab" id="${g.id}-t${it.index}" aria-controls="${g.id}-p${it.index}" aria-selected="${it.index === 0}" tabindex="${it.index === 0 ? 0 : -1}" data-tab-key="${escapeHtml(it.key)}"${it.title ? ` data-title="${escapeHtml(it.title)}" title="${escapeHtml(it.title)}"` : ''}>${langMark(it.mark, icon, { size: 16 })}<span${WIDE.has(it.mark) ? ' class="vh"' : ''}>${escapeHtml(it.label)}</span></button>`).join('');
+    // The file name only fits beside a short strip; with more tabs it would crowd them.
+    const first = g.items.length <= 4 ? g.items[0]?.title ?? '' : '';
+    return `<div class="code-tabs" data-tabs>`
+      + `<div class="code-tabs-bar"><div class="code-tabs-list" role="tablist" aria-label="${escapeHtml(g.label)}">${tabs}</div>`
+      + (g.items.length <= 4 ? `<span class="code-tabs-file" aria-hidden="true">${escapeHtml(first)}</span>` : '')
+      + `<button type="button" class="code-copy" data-copy-tabs aria-label="Copy code">${icon('clipboard-close', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
+      + `<div class="code-tabs-panels">\n`;
   };
-  rules.code_tabs_close = () => '</div>\n';
+  rules.code_tabs_close = () => '</div></div>\n';
 
   rules.heading_open = (tokens, idx) => {
     const t = tokens[idx];
@@ -293,16 +334,18 @@ export function createRenderer({ icon }) {
     const code = t.content.replace(/\n$/, '');
     let html = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
     const lines = code.split('\n').length;
-    const numbered = !attrs.nolines && (attrs.lines === 'true' || (NUMBERED.has(lang) && lines >= NUMBER_FROM));
+    // Never inside a tab group: the gutter would come and go as the reader switches
+    // between cURL and an SDK, moving the code sideways.
+    const numbered = !attrs.nolines && !t.meta?.tab && (attrs.lines === 'true' || (NUMBERED.has(lang) && lines >= NUMBER_FROM));
     if (numbered) html = splitLines(html).map((l) => `<span class="ln">${l}</span>`).join('\n');
     env.codeBlocks = (env.codeBlocks ?? 0) + 1;
     const file = attrs.title ? `<span class="code-sep" aria-hidden="true">/</span><span class="code-file">${escapeHtml(attrs.title)}</span>` : '';
     const block = `<div class="code${numbered ? ' has-lines' : ''}"><div class="code-head"><span class="code-meta">${langMark(attrs.logo ?? mark, icon)}<span class="code-lang">${escapeHtml(label)}</span>${file}</span>`
-      + `<button type="button" class="code-copy" data-copy aria-label="Copy code${attrs.title ? `: ${escapeHtml(attrs.title)}` : ''}">${icon('copy', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
+      + `<button type="button" class="code-copy" data-copy aria-label="Copy code${attrs.title ? `: ${escapeHtml(attrs.title)}` : ''}">${icon('clipboard-close', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
       + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>`;
     const tab = t.meta?.tab;
     if (!tab) return `${block}\n`;
-    return `<div class="code-panel${tab.index === 0 ? ' is-active' : ''}" role="tabpanel" id="${tab.group}-p${tab.index}" aria-labelledby="${tab.group}-t${tab.index}" data-tab-key="${escapeHtml(tab.key)}">${block}</div>\n`;
+    return `<div class="code-panel${tab.index === 0 ? ' is-active' : ''}" role="tabpanel" id="${tab.group}-p${tab.index}" aria-labelledby="${tab.group}-t${tab.index}" data-tab-key="${escapeHtml(tab.key)}">${block.replace('<pre>', '<pre tabindex="0">')}</div>\n`;
   };
   rules.code_block = rules.fence;
 

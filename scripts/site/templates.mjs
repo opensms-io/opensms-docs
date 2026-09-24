@@ -11,7 +11,7 @@ const MARK = (h = 26, cls = '') => `<svg class="mark${cls ? ` ${cls}` : ''}" vie
 // (so controls that need the script are hidden without it) and keeps the one
 // theme-color meta in step with the theme actually shown.
 export const THEME_COLOR = { light: '#F4F4F6', dark: '#0B0A14' };
-const THEME_BOOT = `(function(){var d=document.documentElement;d.className=d.className.replace(/\\bno-js\\b/,'js');try{var m=document.cookie.match(/(?:^|; )opensms-theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('opensms-theme');if(t==='dark'){d.setAttribute('data-theme','dark');var c=document.querySelector('meta[name=theme-color]');if(c)c.setAttribute('content','${THEME_COLOR.dark}');}}catch(e){}})();`;
+const THEME_BOOT = `(function(){var d=document.documentElement;d.className=d.className.replace(/\\bno-js\\b/,'js');try{var m=document.cookie.match(/(?:^|; )opensms-theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('opensms-theme');if(t==='dark'){d.setAttribute('data-theme','dark');var c=document.querySelector('meta[name=theme-color]');if(c)c.setAttribute('content','${THEME_COLOR.dark}');}var l=localStorage.getItem('opensms-docs-lang');if(l&&/^[a-z0-9-]+$/.test(l))d.setAttribute('data-lang',l);}catch(e){}})();`;
 
 export const abs = (path) => `${SITE.origin}${path}`;
 
@@ -117,7 +117,7 @@ function sidebar({ icons, pagesByPath, current, drawerOnly = false }) {
     <button type="button" class="icon-btn" data-drawer-close aria-label="Close navigation">${icons.icon('close')}</button>
   </div>
   <nav class="side-nav">
-    <a class="side-home" href="${SITE.base}"${current === null ? ' aria-current="page"' : ''}>${icons.icon('book', 16, 'side-icon')}<span>Docs home</span></a>
+    <a class="side-home" href="${SITE.base}"${current === null ? ' aria-current="page"' : ''}>${icons.icon('ai-book', 16, 'side-icon')}<span>Docs home</span></a>
 ${groups}
   </nav>
   <div class="sidebar-foot">
@@ -237,8 +237,8 @@ ${sidebar({ icons, pagesByPath, current: page.path })}
         <span class="dot-sep" aria-hidden="true">/</span>
         <span>${page.minutes} min read</span>
         <span class="doc-actions">
-          <button type="button" class="chip" data-copy-page="${page.mdUrl}">${icons.icon('copy', 15, 'when-idle')}${icons.icon('copy-success', 15, 'when-done')}<span>Copy as Markdown</span></button>
-          <a class="chip" href="${page.mdUrl}">${icons.icon('document-text', 15)}<span>View .md</span></a>
+          <button type="button" class="chip" data-copy-page="${page.mdUrl}">${icons.icon('clipboard-close', 15, 'when-idle')}${icons.icon('copy-success', 15, 'when-done')}<span>Copy as Markdown</span></button>
+          <a class="chip" href="${page.mdUrl}">${icons.icon('clipboard-close', 15)}<span>View .md</span></a>
         </span>
       </div>
     </header>
@@ -286,7 +286,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
   <section class="hero">
     <svg class="hero-curves" viewBox="0 0 736 920" aria-hidden="true" focusable="false"><g fill="none" stroke="var(--curve)" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="var(--curve)"/></svg>
     <div class="hero-copy">
-      <p class="eyebrow">${icons.icon('book', 15)}OpenSMS documentation</p>
+      <p class="eyebrow">${icons.icon('ai-book', 15)}OpenSMS documentation</p>
       <h1>Build with<br>OpenSMS.</h1>
       <p class="hero-lead">Everything you need to send SMS across Africa: a five-minute quickstart, task guides, official SDKs, the full API reference and step-by-step guides for the web app.</p>
       <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span><kbd class="kbd-cmd">Ctrl K</kbd></button>
@@ -298,7 +298,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <div class="hero-demo" aria-label="Example request">
       <div class="demo-pill demo-pill-a"><span class="demo-dot" aria-hidden="true"></span><span>POST /v1/messages</span></div>
       <div class="code demo-code">
-        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span><span class="code-sep" aria-hidden="true">/</span><span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('copy', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
+        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span><span class="code-sep" aria-hidden="true">/</span><span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clipboard-close', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
 <pre><code class="hljs language-bash">${stats.demoHtml}</code></pre>
       </div>
       <div class="demo-pill demo-pill-b"><span class="mono">sk_test_</span> keys are free in sandbox</div>
@@ -332,8 +332,8 @@ ${sections.map(card).join('\n')}
       <p>Point your assistant at <a href="${SITE.base}llms.txt"><code>/docs/llms.txt</code></a> for an index of every page, or <a href="${SITE.base}llms-full.txt"><code>/docs/llms-full.txt</code></a> for the full text in one file. Any page is available as Markdown by adding <code>.md</code> to its path.</p>
     </div>
     <div class="ai-links">
-      <a class="chip" href="${SITE.base}llms.txt">${icons.icon('document-text', 15)}llms.txt</a>
-      <a class="chip" href="${SITE.base}llms-full.txt">${icons.icon('document-code', 15)}llms-full.txt</a>
+      <a class="chip" href="${SITE.base}llms.txt">${icons.icon('clipboard-close', 15)}llms.txt</a>
+      <a class="chip" href="${SITE.base}llms-full.txt">${icons.icon('clipboard-close', 15)}llms-full.txt</a>
       <a class="chip" href="${SITE.repo}" rel="noopener">${icons.icon('github', 15)}Source on GitHub</a>
     </div>
   </section>

@@ -258,7 +258,7 @@ for (const page of pages) {
   page.minutes = Math.max(1, Math.round(words / 230));
   page.src = src;
   const pageIndex = searchIndex.pages.length;
-  searchIndex.pages.push({ t: page.title, u: page.url, s: page.section.title, i: page.section.icon, r: page.section.id === 'api-reference' ? 1 : undefined });
+  searchIndex.pages.push({ t: page.title, u: page.url, s: page.section.title, i: page.section.icon, r: page.section.id === 'api-reference' ? 1 : undefined, w: page.section.id === 'web-app' ? 1 : undefined });
   searchIndex.entries.push(...searchEntries(tokens, pageIndex));
 }
 
@@ -319,7 +319,23 @@ mkdirSync(join(OUT, 'languages'), { recursive: true });
 for (const f of readdirSync(join(HERE, 'languages')).filter((f) => f.endsWith('.svg'))) copyFileSync(join(HERE, 'languages', f), join(OUT, 'languages', f));
 
 // One CSS file and one deferred script, content-hashed.
-const css = readFileSync(join(HERE, 'assets', 'docs.css'), 'utf8').replace(/\n\s*\/\*[\s\S]*?\*\//g, '\n').replace(/\n{2,}/g, '\n');
+// First-paint rules for the remembered language (html[data-lang], set by the head
+// boot script and removed by docs.js once it has synced the tabs): in a group that
+// has that language, show its panel and mark its tab, so nothing shifts on load.
+const TAB_KEYS = ['curl', 'typescript', 'javascript', 'python', 'golang', 'php', 'java', 'dotnet', 'ruby', 'rust', 'swift'];
+const langCss = TAB_KEYS.map((k) => {
+  const on = `html[data-lang="${k}"]`;
+  const grp = `${on} .code-tabs:has(.code-panel[data-tab-key="${k}"])`;
+  return `${grp} .code-panel:not([data-tab-key="${k}"]){display:none}`
+    + `${on} .code-panel[data-tab-key="${k}"]{display:block}`
+    + `${grp} .code-tab:not([data-tab-key="${k}"]){color:#8F89AE;background:transparent}`
+    + `${grp} .code-tab:not([data-tab-key="${k}"])::after{content:none}`
+    + `${grp} .code-tab:not([data-tab-key="${k}"]) .lang-mark{opacity:.62;filter:saturate(.55)}`
+    + `${on} .code-tab[data-tab-key="${k}"]{color:#FFFFFF;background:var(--code-bg)}`
+    + `${on} .code-tab[data-tab-key="${k}"]::after{content:'';position:absolute;left:8px;right:8px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:#8C7EF0}`
+    + `${on} .code-tab[data-tab-key="${k}"] .lang-mark{opacity:1;filter:none}`;
+}).join('\n');
+const css = readFileSync(join(HERE, 'assets', 'docs.css'), 'utf8').replace(/\n\s*\/\*[\s\S]*?\*\//g, '\n').replace(/\n{2,}/g, '\n') + '\n@media screen{\n' + langCss + '\n}\n';
 const js = readFileSync(join(HERE, 'assets', 'docs.js'), 'utf8');
 const assets = {
   css: `${SITE.base}assets/docs.${hash(css)}.css`,
