@@ -336,10 +336,110 @@ All workspace member roles may read. API keys require wallet:read and remain bou
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/wallet" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const balances = await opensms.wallet.balances();
+
+for (const item of balances) {
+  console.log(item.currency, item.balance);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+balances = client.wallet.balances()
+
+for item in balances:
+    print(item["currency"], item["balance"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+balances, err := client.Wallet.Balances(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range balances {
+	fmt.Println(item.Currency, item.Balance)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$balances = $opensms->wallet->balances();
+
+foreach ($balances as $item) {
+    echo $item['currency'], ' ', $item['balance'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var balances = opensms.wallet().balances();
+
+for (var item : balances) {
+    System.out.println(item.currency + " " + item.balance);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var balances = await client.Wallet.BalancesAsync();
+
+foreach (var item in balances)
+{
+    Console.WriteLine($"{item.Currency} {item.Balance}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+balances = client.wallet.balances()
+
+balances.each do |item|
+  puts "#{item[:currency]} #{item[:balance]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let balances = client.wallet().balances().await?;
+
+for item in &balances {
+    println!("{} {}", item.currency.as_deref().unwrap_or_default(), item.balance.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let balances = try await opensms.wallet.balances()
+
+for item in balances {
+    print(item.currency ?? "", item.balance ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -389,10 +489,110 @@ All workspace member roles may read. API keys require wallet:read. Workspace and
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/wallet/ledger" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const entries = await opensms.wallet.ledger();
+
+for (const item of entries) {
+  console.log(item.id, item.amount);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+entries = client.wallet.ledger()
+
+for item in entries:
+    print(item["id"], item["amount"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+entries, err := client.Wallet.Ledger(ctx, opensms.LedgerParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range entries {
+	fmt.Println(item.ID, item.Amount)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$entries = $opensms->wallet->ledger();
+
+foreach ($entries as $item) {
+    echo $item['id'], ' ', $item['amount'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var entries = opensms.wallet().ledger(null, null);
+
+for (var item : entries) {
+    System.out.println(item.id + " " + item.amount);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var entries = await client.Wallet.LedgerAsync();
+
+foreach (var item in entries)
+{
+    Console.WriteLine($"{item.Id} {item.Amount}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+entries = client.wallet.ledger()
+
+entries.each do |item|
+  puts "#{item[:id]} #{item[:amount]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let entries = client.wallet().ledger(LedgerParams::default()).await?;
+
+for item in &entries {
+    println!("{} {}", item.id, item.amount.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let entries = try await opensms.wallet.ledger()
+
+for item in entries {
+    print(item.id, item.amount ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -532,7 +732,8 @@ Owner, admin and finance sessions may initialize payments. API keys require wall
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/wallet/topups" \
   -H 'Authorization: Bearer sess__9lZ...' \
   -H 'X-Workspace-ID: 45d5c55a-085e-4cce-83aa-e35ef7bb31c4' \
@@ -541,6 +742,135 @@ curl -s -X POST "$OPENSMS_API/v1/wallet/topups" \
   -H 'Content-Type: application/json' \
   -d '{"amount":"1000","currency":"KES","channel":"card"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const topup = await opensms.wallet.createTopup({
+  amount: '1000',
+  currency: 'KES',
+  channel: 'card',
+  email: 'billing@example.com',
+});
+
+console.log(topup.id, topup.authorizationUrl);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+topup = client.wallet.create_topup(
+    amount="1000",
+    currency="KES",
+    channel="card",
+    email="billing@example.com",
+)
+
+print(topup["id"], topup["authorization_url"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+topup, err := client.Wallet.CreateTopup(ctx, opensms.CreateTopupParams{
+	Amount:   "1000",
+	Currency: "KES",
+	Channel:  "card",
+	Email:    "billing@example.com",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(topup.ID, topup.AuthorizationURL)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$topup = $opensms->wallet->createTopup([
+    'amount' => '1000',
+    'currency' => 'KES',
+    'channel' => 'card',
+    'email' => 'billing@example.com',
+]);
+
+echo $topup['id'], ' ', $topup['authorization_url'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var topup = opensms.wallet().createTopup(new TopupParams(
+        "1000",
+        "KES",
+        "card",
+        "billing@example.com"));
+
+System.out.println(topup.id + " " + topup.authorizationUrl);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var topup = await client.Wallet.CreateTopupAsync(new CreateTopupParams
+{
+    Amount = "1000",
+    Currency = "KES",
+    Channel = "card",
+    Email = "billing@example.com",
+});
+
+Console.WriteLine($"{topup.Id} {topup.AuthorizationUrl}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+topup = client.wallet.create_topup(
+  amount: "1000",
+  currency: "KES",
+  channel: "card",
+  email: "billing@example.com"
+)
+
+puts "#{topup[:id]} #{topup[:authorization_url]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let topup = client
+    .wallet()
+    .create_topup(&CreateTopup {
+        amount: "1000".into(),
+        currency: "KES".into(),
+        channel: "card".into(),
+        email: "billing@example.com".into(),
+    })
+    .await?;
+
+println!("{} {}", topup.id, topup.authorization_url.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let topup = try await opensms.wallet.createTopup(.init(
+    amount: "1000",
+    currency: "KES",
+    channel: "card",
+    email: "billing@example.com"
+))
+
+print(topup.id, topup.authorizationUrl ?? "")
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 

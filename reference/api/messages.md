@@ -57,10 +57,116 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/messages?limit=10" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.messages.list({ limit: 10 });
+
+for (const item of page.items) {
+  console.log(item.id, item.status);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.messages.list(limit=10)
+
+for item in page.items:
+    print(item["id"], item["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Messages.List(ctx, opensms.ListMessagesParams{Limit: 10})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Status)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->messages->list(['limit' => 10]);
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['status'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.messages().list(new MessageListParams().limit(10));
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.status);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Messages.ListAsync(new MessageListParams { Limit = 10 });
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Status}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.messages.list(limit: 10)
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:status]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .messages()
+    .list(ListMessages {
+        limit: Some(10),
+        ..Default::default()
+    })
+    .await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.status.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.messages.list(.init(limit: 10))
+
+for item in page.items {
+    print(item.id, item.status ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -116,13 +222,122 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/messages" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-e1d74af4-05c1-46c6-854b-c6ac76ef1ff5' \
   -H 'Content-Type: application/json' \
   -d '{"to":"+254712345678","text":"Your order 1042 has shipped."}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const message = await opensms.messages.send({
+  to: '+254712345678',
+  text: 'Your order 1042 has shipped.',
+});
+
+console.log(message.id, message.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+message = client.messages.send(to="+254712345678", text="Your order 1042 has shipped.")
+
+print(message["id"], message["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+message, err := client.Messages.Send(ctx, opensms.SendMessageParams{
+	To:   "+254712345678",
+	Text: "Your order 1042 has shipped.",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(message.ID, message.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$message = $opensms->messages->send([
+    'to' => '+254712345678',
+    'text' => 'Your order 1042 has shipped.',
+]);
+
+echo $message['id'], ' ', $message['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var message = opensms.messages().send(new SendMessageParams(
+        "+254712345678",
+        "Your order 1042 has shipped."));
+
+System.out.println(message.id + " " + message.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var message = await client.Messages.SendAsync(new SendMessageParams
+{
+    To = "+254712345678",
+    Text = "Your order 1042 has shipped.",
+});
+
+Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+message = client.messages.send(
+  to: "+254712345678",
+  text: "Your order 1042 has shipped."
+)
+
+puts "#{message[:id]} #{message[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let message = client
+    .messages()
+    .send(&SendMessage::new(
+        "+254712345678",
+        "Your order 1042 has shipped.",
+    ))
+    .await?;
+
+println!("{} {}", message.id, message.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let message = try await opensms.messages.send(.init(
+    to: "+254712345678",
+    text: "Your order 1042 has shipped."
+))
+
+print(message.id, message.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `403` (`application/problem+json`):
 
@@ -190,10 +405,97 @@ Sessions require workspace membership. API keys require messages:read.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/messages/00000000-0000-4000-8000-000000000000" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const message = await opensms.messages.get(
+  '00000000-0000-4000-8000-000000000000',
+);
+
+console.log(message.id, message.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+message = client.messages.get("00000000-0000-4000-8000-000000000000")
+
+print(message["id"], message["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+message, err := client.Messages.Get(ctx, "00000000-0000-4000-8000-000000000000")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(message.ID, message.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$message = $opensms->messages->get('00000000-0000-4000-8000-000000000000');
+
+echo $message['id'], ' ', $message['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var message = opensms.messages().get("00000000-0000-4000-8000-000000000000");
+
+System.out.println(message.id + " " + message.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var message = await client.Messages.GetAsync("00000000-0000-4000-8000-000000000000");
+
+Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+message = client.messages.get("00000000-0000-4000-8000-000000000000")
+
+puts "#{message[:id]} #{message[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let message = client
+    .messages()
+    .get("00000000-0000-4000-8000-000000000000")
+    .await?;
+
+println!("{} {}", message.id, message.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let message = try await opensms.messages.get("00000000-0000-4000-8000-000000000000")
+
+print(message.id, message.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `404` (`application/problem+json`):
 
@@ -240,10 +542,117 @@ Returns a bare array ordered by attempt sequence for the explicit workspace and 
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/messages/00000000-0000-4000-8000-000000000000/attempts" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const attempts = await opensms.messages.attempts(
+  '00000000-0000-4000-8000-000000000000',
+);
+
+for (const item of attempts) {
+  console.log(item.id, item.status);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+attempts = client.messages.attempts("00000000-0000-4000-8000-000000000000")
+
+for item in attempts:
+    print(item["id"], item["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+attempts, err := client.Messages.Attempts(ctx, "00000000-0000-4000-8000-000000000000")
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range attempts {
+	fmt.Println(item.ID, item.Status)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$attempts = $opensms->messages->attempts('00000000-0000-4000-8000-000000000000');
+
+foreach ($attempts as $item) {
+    echo $item['id'], ' ', $item['status'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var attempts = opensms.messages().attempts("00000000-0000-4000-8000-000000000000");
+
+for (var item : attempts) {
+    System.out.println(item.id + " " + item.status);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var attempts = await client.Messages.AttemptsAsync(
+    "00000000-0000-4000-8000-000000000000"
+);
+
+foreach (var item in attempts)
+{
+    Console.WriteLine($"{item.Id} {item.Status}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+attempts = client.messages.attempts("00000000-0000-4000-8000-000000000000")
+
+attempts.each do |item|
+  puts "#{item[:id]} #{item[:status]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let attempts = client
+    .messages()
+    .attempts("00000000-0000-4000-8000-000000000000")
+    .await?;
+
+for item in &attempts {
+    println!("{} {}", item.id, item.status.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let attempts = try await opensms.messages.attempts("00000000-0000-4000-8000-000000000000")
+
+for item in attempts {
+    print(item.id, item.status ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `404` (`application/problem+json`):
 
@@ -290,10 +699,97 @@ Sessions require owner, admin, or developer membership. API keys require message
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/messages/00000000-0000-4000-8000-000000000000/cancel" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const message = await opensms.messages.cancel(
+  '00000000-0000-4000-8000-000000000000',
+);
+
+console.log(message.id, message.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+message = client.messages.cancel("00000000-0000-4000-8000-000000000000")
+
+print(message["id"], message["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+message, err := client.Messages.Cancel(ctx, "00000000-0000-4000-8000-000000000000")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(message.ID, message.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$message = $opensms->messages->cancel('00000000-0000-4000-8000-000000000000');
+
+echo $message['id'], ' ', $message['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var message = opensms.messages().cancel("00000000-0000-4000-8000-000000000000");
+
+System.out.println(message.id + " " + message.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var message = await client.Messages.CancelAsync("00000000-0000-4000-8000-000000000000");
+
+Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+message = client.messages.cancel("00000000-0000-4000-8000-000000000000")
+
+puts "#{message[:id]} #{message[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let message = client
+    .messages()
+    .cancel("00000000-0000-4000-8000-000000000000")
+    .await?;
+
+println!("{} {}", message.id, message.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let message = try await opensms.messages.cancel("00000000-0000-4000-8000-000000000000")
+
+print(message.id, message.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `404` (`application/problem+json`):
 

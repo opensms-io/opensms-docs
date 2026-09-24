@@ -48,9 +48,109 @@ Response `200` fields (per array item):
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/countries"
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const countries = await opensms.countries.list();
+
+for (const item of countries) {
+  console.log(item.iso2, item.name);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+countries = client.countries.list()
+
+for item in countries:
+    print(item["iso2"], item["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+countries, err := client.Countries.List(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range countries {
+	fmt.Println(item.ISO2, item.Name)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$countries = $opensms->countries->list();
+
+foreach ($countries as $item) {
+    echo $item['iso2'], ' ', $item['name'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var countries = opensms.countries().list();
+
+for (var item : countries) {
+    System.out.println(item.iso2 + " " + item.name);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var countries = await client.Countries.ListAsync();
+
+foreach (var item in countries)
+{
+    Console.WriteLine($"{item.Iso2} {item.Name}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+countries = client.countries.list()
+
+countries.each do |item|
+  puts "#{item[:iso2]} #{item[:name]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let countries = client.countries().list().await?;
+
+for item in &countries {
+    println!("{} {}", item.iso2.as_deref().unwrap_or_default(), item.name.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let countries = try await opensms.countries.list()
+
+for item in countries {
+    print(item.iso2 ?? "", item.name ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -131,9 +231,109 @@ Response `200` fields (per array item):
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/countries/KE/carriers"
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const carriers = await opensms.countries.carriers('KE');
+
+for (const item of carriers) {
+  console.log(item.id, item.name);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+carriers = client.countries.carriers("KE")
+
+for item in carriers:
+    print(item["id"], item["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+carriers, err := client.Countries.Carriers(ctx, "KE")
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range carriers {
+	fmt.Println(item.ID, item.Name)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$carriers = $opensms->countries->carriers('KE');
+
+foreach ($carriers as $item) {
+    echo $item['id'], ' ', $item['name'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var carriers = opensms.countries().carriers("KE");
+
+for (var item : carriers) {
+    System.out.println(item.id + " " + item.name);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var carriers = await client.Countries.CarriersAsync("KE");
+
+foreach (var item in carriers)
+{
+    Console.WriteLine($"{item.Id} {item.Name}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+carriers = client.countries.carriers("KE")
+
+carriers.each do |item|
+  puts "#{item[:id]} #{item[:name]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let carriers = client.countries().carriers("KE").await?;
+
+for item in &carriers {
+    println!("{} {}", item.id, item.name.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let carriers = try await opensms.countries.carriers("KE")
+
+for item in carriers {
+    print(item.id, item.name ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -204,9 +404,109 @@ Response `200` fields (per array item):
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/countries/KE/routes"
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const routes = await opensms.countries.routes('KE');
+
+for (const item of routes) {
+  console.log(item.carrier, item.provider);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+routes = client.countries.routes("KE")
+
+for item in routes:
+    print(item["carrier"], item["provider"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+routes, err := client.Countries.Routes(ctx, "KE")
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range routes {
+	fmt.Println(item.Carrier, item.Provider)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$routes = $opensms->countries->routes('KE');
+
+foreach ($routes as $item) {
+    echo $item['carrier'], ' ', $item['provider'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var routes = opensms.countries().routes("KE");
+
+for (var item : routes) {
+    System.out.println(item.carrier + " " + item.provider);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var routes = await client.Countries.RoutesAsync("KE");
+
+foreach (var item in routes)
+{
+    Console.WriteLine($"{item.Carrier} {item.Provider}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+routes = client.countries.routes("KE")
+
+routes.each do |item|
+  puts "#{item[:carrier]} #{item[:provider]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let routes = client.countries().routes("KE").await?;
+
+for item in &routes {
+    println!("{} {}", item.carrier.as_deref().unwrap_or_default(), item.provider.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let routes = try await opensms.countries.routes("KE")
+
+for item in routes {
+    print(item.carrier ?? "", item.provider ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

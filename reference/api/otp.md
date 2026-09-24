@@ -48,13 +48,123 @@ Schema: [SendOTPRequest](schemas.md#sendotprequest).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/otp/send" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-2663c32e-214a-480e-9dd8-a15e1180e611' \
   -H 'Content-Type: application/json' \
   -d '{"to":"+254712345678","length":6,"ttl_seconds":300}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const otp = await opensms.otp.send({
+  to: '+254712345678',
+  length: 6,
+  ttlSeconds: 300,
+});
+
+console.log(otp.otpId);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+otp = client.otp.send(to="+254712345678", length=6, ttl_seconds=300)
+
+print(otp["otp_id"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+otp, err := client.OTP.Send(ctx, opensms.SendOTPParams{
+	To:         "+254712345678",
+	Length:     6,
+	TTLSeconds: 300,
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(otp.OTPID)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$otp = $opensms->otp->send([
+    'to' => '+254712345678',
+    'length' => 6,
+    'ttl_seconds' => 300,
+]);
+
+echo $otp['otp_id'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new OtpSendParams("+254712345678")
+    .length(6)
+    .ttlSeconds(300);
+var otp = opensms.otp().send(params);
+
+System.out.println(otp.otpId);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var otp = await client.Otp.SendAsync(new SendOtpParams
+{
+    To = "+254712345678",
+    Length = 6,
+    TtlSeconds = 300,
+});
+
+Console.WriteLine(otp.OtpId);
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+otp = client.otp.send(to: "+254712345678", length: 6, ttl_seconds: 300)
+
+puts otp[:otp_id]
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let otp = client
+    .otp()
+    .send(&SendOtp {
+        to: "+254712345678".into(),
+        length: Some(6),
+        ttl_seconds: Some(300),
+        ..Default::default()
+    })
+    .await?;
+
+println!("{}", otp.otp_id);
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let otp = try await opensms.otp.send(.init(to: "+254712345678", length: 6, ttlSeconds: 300))
+
+print(otp.otpId)
+```
+
+<!-- /tabs -->
 
 Response `403` (`application/problem+json`):
 
@@ -97,12 +207,119 @@ Schema: [VerifyOTPRequest](schemas.md#verifyotprequest).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/otp/verify" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
   -d '{"otp_id":"00000000-0000-4000-8000-000000000000","code":"123456"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const check = await opensms.otp.verify({
+  otpId: '00000000-0000-4000-8000-000000000000',
+  code: '123456',
+});
+
+console.log(check.valid, check.attemptsLeft);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+check = client.otp.verify(otp_id="00000000-0000-4000-8000-000000000000", code="123456")
+
+print(check["valid"], check["attempts_left"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+check, err := client.OTP.Verify(ctx, opensms.VerifyOTPParams{
+	OTPID: "00000000-0000-4000-8000-000000000000",
+	Code:  "123456",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(check.Valid, check.AttemptsLeft)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$check = $opensms->otp->verify([
+    'otp_id' => '00000000-0000-4000-8000-000000000000',
+    'code' => '123456',
+]);
+
+echo $check['valid'], ' ', $check['attempts_left'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var check = opensms.otp().verify("00000000-0000-4000-8000-000000000000", "123456");
+
+System.out.println(check.valid + " " + check.attemptsLeft);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var check = await client.Otp.VerifyAsync(new VerifyOtpParams
+{
+    OtpId = "00000000-0000-4000-8000-000000000000",
+    Code = "123456",
+});
+
+Console.WriteLine($"{check.Valid} {check.AttemptsLeft}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+check = client.otp.verify(
+  otp_id: "00000000-0000-4000-8000-000000000000",
+  code: "123456"
+)
+
+puts "#{check[:valid]} #{check[:attempts_left]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let check = client
+    .otp()
+    .verify(&VerifyOtp::new(
+        "00000000-0000-4000-8000-000000000000",
+        "123456",
+    ))
+    .await?;
+
+println!("{} {}", check.valid.unwrap_or_default(), check.attempts_left.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let check = try await opensms.otp.verify(
+    otpId: "00000000-0000-4000-8000-000000000000",
+    code: "123456"
+)
+
+print(check.valid ?? false, check.attemptsLeft ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `404` (`application/problem+json`):
 

@@ -49,10 +49,116 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sandbox/messages?limit=10" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.sandbox.listMessages({ limit: 10 });
+
+for (const item of page.items) {
+  console.log(item.to, item.text);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.sandbox.list_messages(limit=10)
+
+for item in page.items:
+    print(item["to"], item["text"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Sandbox.ListMessages(ctx, opensms.ListParams{Limit: 10})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.To, item.Text)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->sandbox->listMessages(['limit' => 10]);
+
+foreach ($page->items as $item) {
+    echo $item['to'], ' ', $item['text'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.sandbox().listMessages(new ListParams().limit(10));
+
+for (var item : page.items) {
+    System.out.println(item.to + " " + item.text);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Sandbox.ListMessagesAsync(new ListParams { Limit = 10 });
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.To} {item.Text}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.sandbox.list_messages(limit: 10)
+
+page.items.each do |item|
+  puts "#{item[:to]} #{item[:text]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .sandbox()
+    .list_messages(ListParams {
+        limit: Some(10),
+        ..Default::default()
+    })
+    .await?;
+
+for item in &page.items {
+    println!("{} {}", item.to.as_deref().unwrap_or_default(), item.text.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.sandbox.listMessages(.init(limit: 10))
+
+for item in page.items {
+    print(item.to ?? "", item.text ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

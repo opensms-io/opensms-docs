@@ -47,10 +47,110 @@ Read-only view of the enabled platform content rules (global and per-country) so
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/content-rules" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rules = await opensms.compliance.listContentRules();
+
+for (const item of rules) {
+  console.log(item.id, item.pattern);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rules = client.compliance.list_content_rules()
+
+for item in rules:
+    print(item["id"], item["pattern"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rules, err := client.Compliance.ListContentRules(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range rules {
+	fmt.Println(item.ID, item.Pattern)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rules = $opensms->compliance->listContentRules();
+
+foreach ($rules as $item) {
+    echo $item['id'], ' ', $item['pattern'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var rules = opensms.compliance().listContentRules();
+
+for (var item : rules) {
+    System.out.println(item.id + " " + item.pattern);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rules = await client.Compliance.ListContentRulesAsync();
+
+foreach (var item in rules)
+{
+    Console.WriteLine($"{item.Id} {item.Pattern}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rules = client.compliance.list_content_rules()
+
+rules.each do |item|
+  puts "#{item[:id]} #{item[:pattern]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rules = client.compliance().list_content_rules().await?;
+
+for item in &rules {
+    println!("{} {}", item.id, item.pattern.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rules = try await opensms.compliance.listContentRules()
+
+for item in rules {
+    print(item.id, item.pattern ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -121,10 +221,110 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/compliance/suppressions" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.suppressions.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.e164);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.suppressions.list()
+
+for item in page.items:
+    print(item["id"], item["e164"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Suppressions.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.E164)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->suppressions->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['e164'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.suppressions().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.e164);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Suppressions.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.E164}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.suppressions.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:e164]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.suppressions().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.e164.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.suppressions.list()
+
+for item in page.items {
+    print(item.id, item.e164 ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -193,13 +393,117 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/compliance/suppressions" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-9e51da85-2830-4902-9919-9b1c4182a120' \
   -H 'Content-Type: application/json' \
   -d '{"e164":"+254700000001","reason":"manual"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const suppression = await opensms.suppressions.create({
+  e164: '+254700000001',
+  reason: 'manual',
+});
+
+console.log(suppression.id, suppression.e164);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+suppression = client.suppressions.create(e164="+254700000001", reason="manual")
+
+print(suppression["id"], suppression["e164"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+suppression, err := client.Suppressions.Create(ctx, opensms.CreateSuppressionParams{
+	E164:   "+254700000001",
+	Reason: "manual",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(suppression.ID, suppression.E164)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$suppression = $opensms->suppressions->create([
+    'e164' => '+254700000001',
+    'reason' => 'manual',
+]);
+
+echo $suppression['id'], ' ', $suppression['e164'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var suppression = opensms.suppressions().create("+254700000001", "manual");
+
+System.out.println(suppression.id + " " + suppression.e164);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var suppression = await client.Suppressions.CreateAsync(new SuppressionParams
+{
+    E164 = "+254700000001",
+    Reason = "manual",
+});
+
+Console.WriteLine($"{suppression.Id} {suppression.E164}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+suppression = client.suppressions.create(
+  e164: "+254700000001",
+  reason: "manual"
+)
+
+puts "#{suppression[:id]} #{suppression[:e164]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let suppression = client
+    .suppressions()
+    .create(&CreateSuppression {
+        e164: "+254700000001".into(),
+        reason: "manual".into(),
+    })
+    .await?;
+
+println!("{} {}", suppression.id, suppression.e164.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let suppression = try await opensms.suppressions.create(e164: "+254700000001", reason: "manual")
+
+print(suppression.id, suppression.e164 ?? "")
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -250,9 +554,91 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/countries/KE/compliance"
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rules = await opensms.countries.compliance('KE');
+
+console.log(rules.iso2, rules.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rules = client.countries.compliance("KE")
+
+print(rules["iso2"], rules["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rules, err := client.Countries.Compliance(ctx, "KE")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(rules.ISO2, rules.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rules = $opensms->countries->compliance('KE');
+
+echo $rules['iso2'], ' ', $rules['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var rules = opensms.countries().compliance("KE");
+
+System.out.println(rules.iso2 + " " + rules.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rules = await client.Countries.ComplianceAsync("KE");
+
+Console.WriteLine($"{rules.Iso2} {rules.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rules = client.countries.compliance("KE")
+
+puts "#{rules[:iso2]} #{rules[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rules = client.countries().compliance("KE").await?;
+
+println!("{} {}", rules.iso2.as_deref().unwrap_or_default(), rules.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rules = try await opensms.countries.compliance("KE")
+
+print(rules.iso2 ?? "", rules.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -339,7 +725,8 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/compliance/suppressions/import" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-03c4cba7-75e3-406b-9bf6-2d77a4dfd04f' \
@@ -357,6 +744,123 @@ curl -s -X POST "$OPENSMS_API/v1/compliance/suppressions/import" \
   ]
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const imported = await opensms.suppressions.import([
+  { e164: '+254700000002', reason: 'complaint' },
+  { e164: '+254700000003', reason: 'manual' },
+]);
+
+console.log(imported.created, imported.received);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+imported = client.suppressions.import_([
+    {"e164": "+254700000002", "reason": "complaint"},
+    {"e164": "+254700000003", "reason": "manual"},
+])
+
+print(imported["created"], imported["received"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+imported, err := client.Suppressions.Import(ctx, []opensms.SuppressionInput{
+	{E164: "+254700000002", Reason: "complaint"},
+	{E164: "+254700000003", Reason: "manual"},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(imported.Created, imported.Received)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$imported = $opensms->suppressions->import([
+    ['e164' => '+254700000002', 'reason' => 'complaint'],
+    ['e164' => '+254700000003', 'reason' => 'manual'],
+]);
+
+echo $imported['created'], ' ', $imported['received'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var imported = opensms.suppressions().importItems(List.of(
+    new SuppressionInput("+254700000002", "complaint"),
+    new SuppressionInput("+254700000003", "manual")));
+
+System.out.println(imported.created + " " + imported.received);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var imported = await client.Suppressions.ImportAsync(
+[
+    new SuppressionParams { E164 = "+254700000002", Reason = "complaint" },
+    new SuppressionParams { E164 = "+254700000003", Reason = "manual" },
+]);
+
+Console.WriteLine($"{imported.Created} {imported.Received}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+imported = client.suppressions.import([
+  { e164: "+254700000002", reason: "complaint" },
+  { e164: "+254700000003", reason: "manual" }
+])
+
+puts "#{imported[:created]} #{imported[:received]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let imported = client
+    .suppressions()
+    .import(&[
+        CreateSuppression {
+            e164: "+254700000002".into(),
+            reason: "complaint".into(),
+        },
+        CreateSuppression {
+            e164: "+254700000003".into(),
+            reason: "manual".into(),
+        },
+    ])
+    .await?;
+
+println!("{} {}", imported.created.unwrap_or_default(), imported.received.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let imported = try await opensms.suppressions.`import`([
+    .init(e164: "+254700000002", reason: "complaint"),
+    .init(e164: "+254700000003", reason: "manual"),
+])
+
+print(imported.created ?? 0, imported.received ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -400,10 +904,75 @@ Operation ID: _none in contract_. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/compliance/suppressions/34" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.suppressions.delete(34);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.suppressions.delete(34)
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.Suppressions.Delete(ctx, 34)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->suppressions->delete(34);
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.suppressions().delete(34);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.Suppressions.DeleteAsync(34);
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.suppressions.delete(34)
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client.suppressions().delete(34).await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.suppressions.delete(34)
+```
+
+<!-- /tabs -->
 
 Response `204`:
 
@@ -441,10 +1010,110 @@ Operation ID: _none in contract_. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/compliance/countries" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const countries = await opensms.compliance.listCountries();
+
+for (const item of countries) {
+  console.log(item.iso2, item.name);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+countries = client.compliance.list_countries()
+
+for item in countries:
+    print(item["iso2"], item["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+countries, err := client.Compliance.ListCountries(ctx)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range countries {
+	fmt.Println(item.ISO2, item.Name)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$countries = $opensms->compliance->listCountries();
+
+foreach ($countries as $item) {
+    echo $item['iso2'], ' ', $item['name'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var countries = opensms.compliance().listCountries();
+
+for (var item : countries) {
+    System.out.println(item.iso2 + " " + item.name);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var countries = await client.Compliance.ListCountriesAsync();
+
+foreach (var item in countries)
+{
+    Console.WriteLine($"{item.Iso2} {item.Name}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+countries = client.compliance.list_countries()
+
+countries.each do |item|
+  puts "#{item[:iso2]} #{item[:name]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let countries = client.compliance().list_countries().await?;
+
+for item in &countries {
+    println!("{} {}", item.iso2.as_deref().unwrap_or_default(), item.name.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let countries = try await opensms.compliance.listCountries()
+
+for item in countries {
+    print(item.iso2 ?? "", item.name ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -515,10 +1184,92 @@ Operation ID: _none in contract_. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/compliance/countries/KE" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rules = await opensms.compliance.getCountry('KE');
+
+console.log(rules.iso2, rules.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rules = client.compliance.get_country("KE")
+
+print(rules["iso2"], rules["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rules, err := client.Compliance.GetCountry(ctx, "KE")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(rules.ISO2, rules.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rules = $opensms->compliance->getCountry('KE');
+
+echo $rules['iso2'], ' ', $rules['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var rules = opensms.compliance().getCountry("KE");
+
+System.out.println(rules.iso2 + " " + rules.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rules = await client.Compliance.GetCountryAsync("KE");
+
+Console.WriteLine($"{rules.Iso2} {rules.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rules = client.compliance.get_country("KE")
+
+puts "#{rules[:iso2]} #{rules[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rules = client.compliance().get_country("KE").await?;
+
+println!("{} {}", rules.iso2.as_deref().unwrap_or_default(), rules.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rules = try await opensms.compliance.getCountry("KE")
+
+print(rules.iso2 ?? "", rules.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

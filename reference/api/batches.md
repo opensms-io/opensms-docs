@@ -62,7 +62,8 @@ Type: string (binary).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/messages/batch" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-586f73ae-4ce7-4053-b670-82c8e3489c40' \
@@ -84,6 +85,152 @@ curl -s -X POST "$OPENSMS_API/v1/messages/batch" \
   ]
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const batch = await opensms.batches.create({
+  items: [
+    { to: '+254712345678', text: 'Hi Amina, your order has shipped.' },
+    { to: '+254722000111', text: 'Hi Brian, your order has shipped.' },
+    { to: '0700', text: 'bad number' },
+  ],
+});
+
+console.log(batch.id, batch.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+batch = client.batches.create(
+    items=[
+        {"to": "+254712345678", "text": "Hi Amina, your order has shipped."},
+        {"to": "+254722000111", "text": "Hi Brian, your order has shipped."},
+        {"to": "0700", "text": "bad number"},
+    ],
+)
+
+print(batch["id"], batch["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+batch, err := client.Batches.Create(ctx, opensms.CreateBatchParams{
+	Items: []opensms.BatchItemInput{
+		{To: "+254712345678", Text: "Hi Amina, your order has shipped."},
+		{To: "+254722000111", Text: "Hi Brian, your order has shipped."},
+		{To: "0700", Text: "bad number"},
+	},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(batch.ID, batch.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$batch = $opensms->batches->create([
+    'items' => [
+        ['to' => '+254712345678', 'text' => 'Hi Amina, your order has shipped.'],
+        ['to' => '+254722000111', 'text' => 'Hi Brian, your order has shipped.'],
+        ['to' => '0700', 'text' => 'bad number'],
+    ],
+]);
+
+echo $batch['id'], ' ', $batch['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var batch = opensms.batches().create(List.of(
+    new BatchItemInput("+254712345678", "Hi Amina, your order has shipped."),
+    new BatchItemInput("+254722000111", "Hi Brian, your order has shipped."),
+    new BatchItemInput("0700", "bad number")));
+
+System.out.println(batch.id + " " + batch.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var batch = await client.Batches.CreateAsync(new CreateBatchParams
+{
+    Items =
+    [
+        new BatchItemInput
+        {
+            To = "+254712345678",
+            Text = "Hi Amina, your order has shipped.",
+        },
+        new BatchItemInput
+        {
+            To = "+254722000111",
+            Text = "Hi Brian, your order has shipped.",
+        },
+        new BatchItemInput { To = "0700", Text = "bad number" },
+    ],
+});
+
+Console.WriteLine($"{batch.Id} {batch.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+batch = client.batches.create(
+  items: [
+    { to: "+254712345678", text: "Hi Amina, your order has shipped." },
+    { to: "+254722000111", text: "Hi Brian, your order has shipped." },
+    { to: "0700", text: "bad number" }
+  ]
+)
+
+puts "#{batch[:id]} #{batch[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let batch = client
+    .batches()
+    .create(&CreateBatch {
+        items: vec![
+            BatchItemInput::new("+254712345678", "Hi Amina, your order has shipped."),
+            BatchItemInput::new("+254722000111", "Hi Brian, your order has shipped."),
+            BatchItemInput::new("0700", "bad number"),
+        ],
+        ..Default::default()
+    })
+    .await?;
+
+println!("{} {}", batch.id, batch.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let batch = try await opensms.batches.create(.init(
+    items: [
+        .init(to: "+254712345678", text: "Hi Amina, your order has shipped."),
+        .init(to: "+254722000111", text: "Hi Brian, your order has shipped."),
+        .init(to: "0700", text: "bad number"),
+    ]
+))
+
+print(batch.id, batch.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `202` (`application/json`):
 
@@ -135,10 +282,95 @@ Status, totals, estimated cost and timestamps for one batch. Workspace and envir
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const batch = await opensms.batches.get('959d8d9f-e177-4d5b-a62c-e25a66563a59');
+
+console.log(batch.id, batch.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+batch = client.batches.get("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(batch["id"], batch["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+batch, err := client.Batches.Get(ctx, "959d8d9f-e177-4d5b-a62c-e25a66563a59")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(batch.ID, batch.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$batch = $opensms->batches->get('959d8d9f-e177-4d5b-a62c-e25a66563a59');
+
+echo $batch['id'], ' ', $batch['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var batch = opensms.batches().get("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+System.out.println(batch.id + " " + batch.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var batch = await client.Batches.GetAsync("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+Console.WriteLine($"{batch.Id} {batch.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+batch = client.batches.get("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+puts "#{batch[:id]} #{batch[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let batch = client
+    .batches()
+    .get("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+    .await?;
+
+println!("{} {}", batch.id, batch.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let batch = try await opensms.batches.get("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(batch.id, batch.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -186,10 +418,99 @@ Operation ID: `getBatchValidation`. Tag: `Batches`.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/validation" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const report = await opensms.batches.validation(
+  '959d8d9f-e177-4d5b-a62c-e25a66563a59',
+);
+
+console.log(report.valid, report.invalid);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+report = client.batches.validation("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(report["valid"], report["invalid"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+report, err := client.Batches.Validation(ctx, "959d8d9f-e177-4d5b-a62c-e25a66563a59")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(report.Valid, report.Invalid)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$report = $opensms->batches->validation('959d8d9f-e177-4d5b-a62c-e25a66563a59');
+
+echo $report['valid'], ' ', $report['invalid'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var report = opensms.batches().validation("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+System.out.println(report.valid + " " + report.invalid);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var report = await client.Batches.ValidationAsync(
+    "959d8d9f-e177-4d5b-a62c-e25a66563a59"
+);
+
+Console.WriteLine($"{report.Valid} {report.Invalid}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+report = client.batches.validation("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+puts "#{report[:valid]} #{report[:invalid]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let report = client
+    .batches()
+    .validation("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+    .await?;
+
+println!("{} {}", report.valid.unwrap_or_default(), report.invalid.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let report = try await opensms.batches.validation("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(report.valid ?? 0, report.invalid ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -258,11 +579,98 @@ Operation ID: `startBatch`. Tag: `Batches`.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/start" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-96c980a3-f76b-496c-a991-ec4435ce9a34'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const batch = await opensms.batches.start(
+  '959d8d9f-e177-4d5b-a62c-e25a66563a59',
+);
+
+console.log(batch.id, batch.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+batch = client.batches.start("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(batch["id"], batch["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+batch, err := client.Batches.Start(ctx, "959d8d9f-e177-4d5b-a62c-e25a66563a59")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(batch.ID, batch.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$batch = $opensms->batches->start('959d8d9f-e177-4d5b-a62c-e25a66563a59');
+
+echo $batch['id'], ' ', $batch['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var batch = opensms.batches().start("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+System.out.println(batch.id + " " + batch.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var batch = await client.Batches.StartAsync("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+Console.WriteLine($"{batch.Id} {batch.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+batch = client.batches.start("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+puts "#{batch[:id]} #{batch[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let batch = client
+    .batches()
+    .start("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+    .await?;
+
+println!("{} {}", batch.id, batch.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let batch = try await opensms.batches.start("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(batch.id, batch.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -311,11 +719,98 @@ Operation ID: `stopBatch`. Tag: `Batches`.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/stop" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-ab981dc3-23b9-49e9-b4e8-393762c07197'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const stopped = await opensms.batches.stop(
+  '959d8d9f-e177-4d5b-a62c-e25a66563a59',
+);
+
+console.log(stopped.id, stopped.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+stopped = client.batches.stop("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(stopped["id"], stopped["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+stopped, err := client.Batches.Stop(ctx, "959d8d9f-e177-4d5b-a62c-e25a66563a59")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(stopped.ID, stopped.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$stopped = $opensms->batches->stop('959d8d9f-e177-4d5b-a62c-e25a66563a59');
+
+echo $stopped['id'], ' ', $stopped['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var stopped = opensms.batches().stop("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+System.out.println(stopped.id + " " + stopped.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var stopped = await client.Batches.StopAsync("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+Console.WriteLine($"{stopped.Id} {stopped.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+stopped = client.batches.stop("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+puts "#{stopped[:id]} #{stopped[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let stopped = client
+    .batches()
+    .stop("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+    .await?;
+
+println!("{} {}", stopped.id, stopped.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let stopped = try await opensms.batches.stop("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+print(stopped.id, stopped.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `409` (`application/problem+json`):
 
@@ -369,10 +864,122 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/batches/959d8d9f-e177-4d5b-a62c-e25a66563a59/items" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.batches.listItems(
+  '959d8d9f-e177-4d5b-a62c-e25a66563a59',
+);
+
+for (const item of page.items) {
+  console.log(item.id, item.status);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.batches.list_items("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+for item in page.items:
+    print(item["id"], item["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Batches.ListItems(
+	ctx,
+	"959d8d9f-e177-4d5b-a62c-e25a66563a59",
+	opensms.ListBatchItemsParams{},
+)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Status)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->batches->listItems('959d8d9f-e177-4d5b-a62c-e25a66563a59');
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['status'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.batches().listItems("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.status);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Batches.ListItemsAsync("959d8d9f-e177-4d5b-a62c-e25a66563a59");
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Status}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.batches.list_items("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:status]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .batches()
+    .list_items(
+        "959d8d9f-e177-4d5b-a62c-e25a66563a59",
+        ListBatchItems::default(),
+    )
+    .await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.status.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.batches.listItems("959d8d9f-e177-4d5b-a62c-e25a66563a59")
+
+for item in page.items {
+    print(item.id, item.status ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

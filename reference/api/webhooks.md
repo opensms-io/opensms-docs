@@ -52,10 +52,110 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/webhooks" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.webhooks.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.url);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.webhooks.list()
+
+for item in page.items:
+    print(item["id"], item["url"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Webhooks.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.URL)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->webhooks->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['url'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.webhooks().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.url);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Webhooks.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Url}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.webhooks.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:url]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.webhooks().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.url.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.webhooks.list()
+
+for item in page.items {
+    print(item.id, item.url ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -117,7 +217,8 @@ Schema: [WebhookRequest](schemas.md#webhookrequest).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/webhooks" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-0b6960f4-14bd-4895-82f6-71c39bf6b5e5' \
@@ -127,6 +228,118 @@ curl -s -X POST "$OPENSMS_API/v1/webhooks" \
   "events": ["message.delivered", "message.failed"]
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const endpoint = await opensms.webhooks.create({
+  url: 'https://hooks.example.com/opensms',
+  events: ['message.delivered', 'message.failed'],
+});
+
+console.log(endpoint.id, endpoint.secret);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+endpoint = client.webhooks.create(
+    url="https://hooks.example.com/opensms",
+    events=["message.delivered", "message.failed"],
+)
+
+print(endpoint["id"], endpoint["secret"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+endpoint, err := client.Webhooks.Create(ctx, opensms.CreateWebhookParams{
+	URL:    "https://hooks.example.com/opensms",
+	Events: []string{"message.delivered", "message.failed"},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(endpoint.ID, endpoint.Secret)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$endpoint = $opensms->webhooks->create([
+    'url' => 'https://hooks.example.com/opensms',
+    'events' => ['message.delivered', 'message.failed'],
+]);
+
+echo $endpoint['id'], ' ', $endpoint['secret'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var endpoint = opensms.webhooks().create(new WebhookParams(
+        "https://hooks.example.com/opensms",
+        List.of("message.delivered", "message.failed")));
+
+System.out.println(endpoint.id + " " + endpoint.secret);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var endpoint = await client.Webhooks.CreateAsync(new CreateWebhookParams
+{
+    Url = "https://hooks.example.com/opensms",
+    Events = ["message.delivered", "message.failed"],
+});
+
+Console.WriteLine($"{endpoint.Id} {endpoint.Secret}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+endpoint = client.webhooks.create(
+  url: "https://hooks.example.com/opensms",
+  events: ["message.delivered", "message.failed"]
+)
+
+puts "#{endpoint[:id]} #{endpoint[:secret]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let endpoint = client
+    .webhooks()
+    .create(&CreateWebhook {
+        url: "https://hooks.example.com/opensms".into(),
+        events: vec!["message.delivered".into(), "message.failed".into()],
+        ..Default::default()
+    })
+    .await?;
+
+println!("{} {}", endpoint.id, endpoint.secret.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let endpoint = try await opensms.webhooks.create(url: "https://hooks.example.com/opensms", events: [
+    "message.delivered",
+    "message.failed",
+])
+
+print(endpoint.id, endpoint.secret ?? "")
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -174,10 +387,97 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const endpoint = await opensms.webhooks.get(
+  'd429eb48-c7ce-40ad-b9c1-a7db7bec6522',
+);
+
+console.log(endpoint.id, endpoint.url);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+endpoint = client.webhooks.get("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+print(endpoint["id"], endpoint["url"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+endpoint, err := client.Webhooks.Get(ctx, "d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(endpoint.ID, endpoint.URL)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$endpoint = $opensms->webhooks->get('d429eb48-c7ce-40ad-b9c1-a7db7bec6522');
+
+echo $endpoint['id'], ' ', $endpoint['url'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var endpoint = opensms.webhooks().get("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+
+System.out.println(endpoint.id + " " + endpoint.url);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var endpoint = await client.Webhooks.GetAsync("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+
+Console.WriteLine($"{endpoint.Id} {endpoint.Url}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+endpoint = client.webhooks.get("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+puts "#{endpoint[:id]} #{endpoint[:url]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let endpoint = client
+    .webhooks()
+    .get("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+    .await?;
+
+println!("{} {}", endpoint.id, endpoint.url.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let endpoint = try await opensms.webhooks.get("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+print(endpoint.id, endpoint.url ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -235,7 +535,8 @@ Schema: [WebhookRequest](schemas.md#webhookrequest).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PUT "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
@@ -245,6 +546,143 @@ curl -s -X PUT "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
   "enabled": true
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const endpoint = await opensms.webhooks.update(
+  'd429eb48-c7ce-40ad-b9c1-a7db7bec6522',
+  {
+    url: 'https://hooks.example.com/opensms/v2',
+    events: ['message.delivered'],
+    enabled: true,
+  },
+);
+
+console.log(endpoint.id, endpoint.url);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+endpoint = client.webhooks.update(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+    url="https://hooks.example.com/opensms/v2",
+    events=["message.delivered"],
+    enabled=True,
+)
+
+print(endpoint["id"], endpoint["url"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+endpoint, err := client.Webhooks.Update(
+	ctx,
+	"d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+	opensms.UpdateWebhookParams{
+		URL:     "https://hooks.example.com/opensms/v2",
+		Events:  []string{"message.delivered"},
+		Enabled: true,
+	},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(endpoint.ID, endpoint.URL)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$endpoint = $opensms->webhooks->update('d429eb48-c7ce-40ad-b9c1-a7db7bec6522', [
+    'url' => 'https://hooks.example.com/opensms/v2',
+    'events' => ['message.delivered'],
+    'enabled' => true,
+]);
+
+echo $endpoint['id'], ' ', $endpoint['url'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new WebhookParams(
+        "https://hooks.example.com/opensms/v2",
+        List.of("message.delivered"))
+    .enabled(true);
+var endpoint = opensms.webhooks().update("d429eb48-c7ce-40ad-b9c1-a7db7bec6522", params);
+
+System.out.println(endpoint.id + " " + endpoint.url);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var endpoint = await client.Webhooks.UpdateAsync(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+    new UpdateWebhookParams
+    {
+        Url = "https://hooks.example.com/opensms/v2",
+        Events = ["message.delivered"],
+        Enabled = true,
+    }
+);
+
+Console.WriteLine($"{endpoint.Id} {endpoint.Url}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+endpoint = client.webhooks.update(
+  "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+  url: "https://hooks.example.com/opensms/v2",
+  events: ["message.delivered"],
+  enabled: true
+)
+
+puts "#{endpoint[:id]} #{endpoint[:url]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let endpoint = client
+    .webhooks()
+    .update(
+        "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+        &UpdateWebhook {
+            url: "https://hooks.example.com/opensms/v2".into(),
+            events: vec!["message.delivered".into()],
+            enabled: true,
+        },
+    )
+    .await?;
+
+println!("{} {}", endpoint.id, endpoint.url.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let endpoint = try await opensms.webhooks.update(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+    url: "https://hooks.example.com/opensms/v2",
+    events: ["message.delivered"],
+    enabled: true
+)
+
+print(endpoint.id, endpoint.url ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -383,10 +821,78 @@ Optional idempotency keys replay the original response; changed input returns 40
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.webhooks.delete('d429eb48-c7ce-40ad-b9c1-a7db7bec6522');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.webhooks.delete("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.Webhooks.Delete(ctx, "d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->webhooks->delete('d429eb48-c7ce-40ad-b9c1-a7db7bec6522');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.webhooks().delete("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.Webhooks.DeleteAsync("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.webhooks.delete("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .webhooks()
+    .delete("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.webhooks.delete("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+```
+
+<!-- /tabs -->
 
 Response `204` (`application/json`):
 
@@ -433,10 +939,124 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/deliveries" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.webhooks.listDeliveries(
+  'd429eb48-c7ce-40ad-b9c1-a7db7bec6522',
+);
+
+for (const item of page.items) {
+  console.log(item.id, item.status);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.webhooks.list_deliveries("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+for item in page.items:
+    print(item["id"], item["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Webhooks.ListDeliveries(
+	ctx,
+	"d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+	opensms.ListParams{},
+)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Status)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->webhooks->listDeliveries('d429eb48-c7ce-40ad-b9c1-a7db7bec6522');
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['status'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.webhooks().listDeliveries("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.status);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Webhooks.ListDeliveriesAsync(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522"
+);
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Status}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.webhooks.list_deliveries("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:status]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .webhooks()
+    .list_deliveries(
+        "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+        ListParams::default(),
+    )
+    .await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.status.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.webhooks.listDeliveries("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+for item in page.items {
+    print(item.id, item.status ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -500,11 +1120,96 @@ Response `202` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/test" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-8fb812ab-4b64-4a3e-8e83-954276f761d9'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const ack = await opensms.webhooks.test('d429eb48-c7ce-40ad-b9c1-a7db7bec6522');
+
+console.log(ack.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+ack = client.webhooks.test("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+print(ack["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+ack, err := client.Webhooks.Test(ctx, "d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(ack.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$ack = $opensms->webhooks->test('d429eb48-c7ce-40ad-b9c1-a7db7bec6522');
+
+echo $ack['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var ack = opensms.webhooks().test("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+
+System.out.println(ack.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var ack = await client.Webhooks.TestAsync("d429eb48-c7ce-40ad-b9c1-a7db7bec6522");
+
+Console.WriteLine(ack.Status);
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+ack = client.webhooks.test("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+puts ack[:status]
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let ack = client
+    .webhooks()
+    .test("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+    .await?;
+
+println!("{}", ack.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let ack = try await opensms.webhooks.test("d429eb48-c7ce-40ad-b9c1-a7db7bec6522")
+
+print(ack.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `202` (`application/json`):
 
@@ -633,13 +1338,140 @@ Response `202` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/webhooks/d429eb48-c7ce-40ad-b9c1-a7db7bec6522/deliveries/21/replay" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-f01618ec-5485-4b61-b356-410e69ca959c' \
   -H 'Content-Type: application/json' \
   -d '{"generation":0,"reason":"receiver was down"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const ack = await opensms.webhooks.replayDelivery(
+  'd429eb48-c7ce-40ad-b9c1-a7db7bec6522',
+  21,
+  { generation: 0, reason: 'receiver was down' },
+);
+
+console.log(ack.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+ack = client.webhooks.replay_delivery(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+    21,
+    generation=0,
+    reason="receiver was down",
+)
+
+print(ack["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+ack, err := client.Webhooks.ReplayDelivery(
+	ctx,
+	"d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+	21,
+	opensms.ReplayDeliveryParams{Generation: 0, Reason: "receiver was down"},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(ack.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$ack = $opensms->webhooks->replayDelivery('d429eb48-c7ce-40ad-b9c1-a7db7bec6522', 21, [
+    'generation' => 0,
+    'reason' => 'receiver was down',
+]);
+
+echo $ack['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var ack = opensms.webhooks().replayDelivery(
+        "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+        21,
+        0,
+        "receiver was down");
+
+System.out.println(ack.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var ack = await client.Webhooks.ReplayDeliveryAsync(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+    21,
+    new ReplayDeliveryParams { Generation = 0, Reason = "receiver was down" }
+);
+
+Console.WriteLine(ack.Status);
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+ack = client.webhooks.replay_delivery(
+  "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+  21,
+  generation: 0,
+  reason: "receiver was down"
+)
+
+puts ack[:status]
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let ack = client
+    .webhooks()
+    .replay_delivery(
+        "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+        21,
+        &ReplayDelivery {
+            generation: 0,
+            reason: "receiver was down".into(),
+        },
+    )
+    .await?;
+
+println!("{}", ack.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let ack = try await opensms.webhooks.replayDelivery(
+    "d429eb48-c7ce-40ad-b9c1-a7db7bec6522",
+    deliveryId: 21,
+    generation: 0,
+    reason: "receiver was down"
+)
+
+print(ack.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `409` (`application/problem+json`):
 

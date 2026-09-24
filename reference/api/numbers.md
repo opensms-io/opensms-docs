@@ -50,10 +50,110 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/numbers" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.numbers.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.number);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.numbers.list()
+
+for item in page.items:
+    print(item["id"], item["number"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Numbers.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Number)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->numbers->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['number'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.numbers().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.number);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Numbers.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Number}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.numbers.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:number]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.numbers().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.number.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.numbers.list()
+
+for item in page.items {
+    print(item.id, item.number ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -110,13 +210,111 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/numbers" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-f170564b-4e39-4bf4-90bc-98c553219bf8' \
   -H 'Content-Type: application/json' \
   -d '{"country":"KE","kind":"long_code"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const number = await opensms.numbers.assign({
+  country: 'KE',
+  kind: 'long_code',
+});
+
+console.log(number.id, number.number);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+number = client.numbers.assign(country="KE", kind="long_code")
+
+print(number["id"], number["number"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+number, err := client.Numbers.Assign(ctx, opensms.AssignNumberParams{
+	Country: "KE",
+	Kind:    "long_code",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(number.ID, number.Number)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$number = $opensms->numbers->assign(['country' => 'KE', 'kind' => 'long_code']);
+
+echo $number['id'], ' ', $number['number'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var number = opensms.numbers().assign("KE", "long_code");
+
+System.out.println(number.id + " " + number.number);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var number = await client.Numbers.AssignAsync(new NumberSearchParams
+{
+    Country = "KE",
+    Kind = "long_code",
+});
+
+Console.WriteLine($"{number.Id} {number.Number}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+number = client.numbers.assign(country: "KE", kind: "long_code")
+
+puts "#{number[:id]} #{number[:number]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let number = client
+    .numbers()
+    .assign(&NumberQuery {
+        country: "KE".into(),
+        kind: "long_code".into(),
+    })
+    .await?;
+
+println!("{} {}", number.id, number.number.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let number = try await opensms.numbers.assign(country: "KE", kind: "long_code")
+
+print(number.id, number.number ?? "")
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 
@@ -164,10 +362,126 @@ Returns at most 200 available numbers ordered by monthly fee and number. Sandbox
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/numbers/available?country=KE&kind=long_code" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const numbers = await opensms.numbers.available({
+  country: 'KE',
+  kind: 'long_code',
+});
+
+for (const item of numbers) {
+  console.log(item.number, item.monthlyFee);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+numbers = client.numbers.available(country="KE", kind="long_code")
+
+for item in numbers:
+    print(item["number"], item["monthly_fee"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+numbers, err := client.Numbers.Available(ctx, opensms.AvailableNumbersParams{
+	Country: "KE",
+	Kind:    "long_code",
+})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range numbers {
+	fmt.Println(item.Number, item.MonthlyFee)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$numbers = $opensms->numbers->available(['country' => 'KE', 'kind' => 'long_code']);
+
+foreach ($numbers as $item) {
+    echo $item['number'], ' ', $item['monthly_fee'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var numbers = opensms.numbers().available("KE", "long_code");
+
+for (var item : numbers) {
+    System.out.println(item.number + " " + item.monthlyFee);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var numbers = await client.Numbers.AvailableAsync(new NumberSearchParams
+{
+    Country = "KE",
+    Kind = "long_code",
+});
+
+foreach (var item in numbers)
+{
+    Console.WriteLine($"{item.Number} {item.MonthlyFee}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+numbers = client.numbers.available(country: "KE", kind: "long_code")
+
+numbers.each do |item|
+  puts "#{item[:number]} #{item[:monthly_fee]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let numbers = client
+    .numbers()
+    .available(&NumberQuery {
+        country: "KE".into(),
+        kind: "long_code".into(),
+    })
+    .await?;
+
+for item in &numbers {
+    println!("{} {}", item.number.as_deref().unwrap_or_default(), item.monthly_fee.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let numbers = try await opensms.numbers.available(country: "KE", kind: "long_code")
+
+for item in numbers {
+    print(item.number ?? "", item.monthlyFee ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -212,11 +526,79 @@ Current owner/admin browser sessions require enabled TOTP and explicit X-Workspa
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-ef518583-ef40-4d68-834c-c13d1fa346d7'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.numbers.release('00000000-0000-4000-8000-000000000000');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.numbers.release("00000000-0000-4000-8000-000000000000")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.Numbers.Release(ctx, "00000000-0000-4000-8000-000000000000")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->numbers->release('00000000-0000-4000-8000-000000000000');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.numbers().release("00000000-0000-4000-8000-000000000000");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.Numbers.ReleaseAsync("00000000-0000-4000-8000-000000000000");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.numbers.release("00000000-0000-4000-8000-000000000000")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .numbers()
+    .release("00000000-0000-4000-8000-000000000000")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.numbers.release("00000000-0000-4000-8000-000000000000")
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 
@@ -268,10 +650,122 @@ Current members or numbers:read API keys; live environment required. Returns ite
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.numbers.listRules(
+  '00000000-0000-4000-8000-000000000000',
+);
+
+for (const item of page.items) {
+  console.log(item.id, item.match);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.numbers.list_rules("00000000-0000-4000-8000-000000000000")
+
+for item in page.items:
+    print(item["id"], item["match"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Numbers.ListRules(
+	ctx,
+	"00000000-0000-4000-8000-000000000000",
+	opensms.ListParams{},
+)
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Match)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->numbers->listRules('00000000-0000-4000-8000-000000000000');
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['match'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.numbers().listRules("00000000-0000-4000-8000-000000000000");
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.match);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Numbers.ListRulesAsync("00000000-0000-4000-8000-000000000000");
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Match}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.numbers.list_rules("00000000-0000-4000-8000-000000000000")
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:match]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .numbers()
+    .list_rules(
+        "00000000-0000-4000-8000-000000000000",
+        ListParams::default(),
+    )
+    .await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.r#match.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.numbers.listRules("00000000-0000-4000-8000-000000000000")
+
+for item in page.items {
+    print(item.id, item.match ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 
@@ -335,13 +829,162 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-fb25df47-ce51-435f-a159-b79727b621d8' \
   -H 'Content-Type: application/json' \
-  -d '{"keyword":"STOP","action":"auto_reply","reply_text":"You are unsubscribed."}'
+  -d '{
+  "match": "keyword",
+  "pattern": "STOP",
+  "action": "auto_reply",
+  "target": "You are unsubscribed."
+}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rule = await opensms.numbers.createRule(
+  '00000000-0000-4000-8000-000000000000',
+  {
+    match: 'keyword',
+    pattern: 'STOP',
+    action: 'auto_reply',
+    target: 'You are unsubscribed.',
+  },
+);
+
+console.log(rule.id, rule.action);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rule = client.numbers.create_rule(
+    "00000000-0000-4000-8000-000000000000",
+    match="keyword",
+    pattern="STOP",
+    action="auto_reply",
+    target="You are unsubscribed.",
+)
+
+print(rule["id"], rule["action"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rule, err := client.Numbers.CreateRule(
+	ctx,
+	"00000000-0000-4000-8000-000000000000",
+	opensms.NumberRuleParams{
+		Match:   "keyword",
+		Pattern: "STOP",
+		Action:  "auto_reply",
+		Target:  "You are unsubscribed.",
+	},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(rule.ID, rule.Action)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rule = $opensms->numbers->createRule('00000000-0000-4000-8000-000000000000', [
+    'match' => 'keyword',
+    'pattern' => 'STOP',
+    'action' => 'auto_reply',
+    'target' => 'You are unsubscribed.',
+]);
+
+echo $rule['id'], ' ', $rule['action'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new NumberRuleParams("keyword", "auto_reply", "You are unsubscribed.")
+    .pattern("STOP");
+var rule = opensms.numbers().createRule("00000000-0000-4000-8000-000000000000", params);
+
+System.out.println(rule.id + " " + rule.action);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rule = await client.Numbers.CreateRuleAsync(
+    "00000000-0000-4000-8000-000000000000",
+    new NumberRuleParams
+    {
+        Match = "keyword",
+        Pattern = "STOP",
+        Action = "auto_reply",
+        Target = "You are unsubscribed.",
+    }
+);
+
+Console.WriteLine($"{rule.Id} {rule.Action}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rule = client.numbers.create_rule(
+  "00000000-0000-4000-8000-000000000000",
+  match: "keyword",
+  pattern: "STOP",
+  action: "auto_reply",
+  target: "You are unsubscribed."
+)
+
+puts "#{rule[:id]} #{rule[:action]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rule = client
+    .numbers()
+    .create_rule(
+        "00000000-0000-4000-8000-000000000000",
+        &NumberRuleInput {
+            r#match: "keyword".into(),
+            pattern: Some("STOP".into()),
+            action: "auto_reply".into(),
+            target: "You are unsubscribed.".into(),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", rule.id, rule.action.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rule = try await opensms.numbers.createRule("00000000-0000-4000-8000-000000000000", .init(
+    match: "keyword",
+    pattern: "STOP",
+    action: "auto_reply",
+    target: "You are unsubscribed."
+))
+
+print(rule.id, rule.action ?? "")
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 
@@ -404,12 +1047,170 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PUT "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules/00000000-0000-4000-8000-000000000000" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
-  -d '{"keyword":"STOP","action":"auto_reply","reply_text":"You are unsubscribed."}'
+  -d '{
+  "match": "keyword",
+  "pattern": "STOP",
+  "action": "auto_reply",
+  "target": "You are unsubscribed."
+}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rule = await opensms.numbers.updateRule(
+  '00000000-0000-4000-8000-000000000000',
+  '00000000-0000-4000-8000-000000000000',
+  {
+    match: 'keyword',
+    pattern: 'STOP',
+    action: 'auto_reply',
+    target: 'You are unsubscribed.',
+  },
+);
+
+console.log(rule.id, rule.action);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rule = client.numbers.update_rule(
+    "00000000-0000-4000-8000-000000000000",
+    "00000000-0000-4000-8000-000000000000",
+    match="keyword",
+    pattern="STOP",
+    action="auto_reply",
+    target="You are unsubscribed.",
+)
+
+print(rule["id"], rule["action"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rule, err := client.Numbers.UpdateRule(
+	ctx,
+	"00000000-0000-4000-8000-000000000000",
+	"00000000-0000-4000-8000-000000000000",
+	opensms.NumberRuleParams{
+		Match:   "keyword",
+		Pattern: "STOP",
+		Action:  "auto_reply",
+		Target:  "You are unsubscribed.",
+	},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(rule.ID, rule.Action)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rule = $opensms->numbers->updateRule(
+    '00000000-0000-4000-8000-000000000000',
+    '00000000-0000-4000-8000-000000000000',
+    [
+        'match' => 'keyword',
+        'pattern' => 'STOP',
+        'action' => 'auto_reply',
+        'target' => 'You are unsubscribed.',
+    ],
+);
+
+echo $rule['id'], ' ', $rule['action'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new NumberRuleParams("keyword", "auto_reply", "You are unsubscribed.")
+    .pattern("STOP");
+var rule = opensms.numbers().updateRule("00000000-0000-4000-8000-000000000000", "00000000-0000-4000-8000-000000000000", params);
+
+System.out.println(rule.id + " " + rule.action);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rule = await client.Numbers.UpdateRuleAsync(
+    "00000000-0000-4000-8000-000000000000",
+    "00000000-0000-4000-8000-000000000000",
+    new NumberRuleParams
+    {
+        Match = "keyword",
+        Pattern = "STOP",
+        Action = "auto_reply",
+        Target = "You are unsubscribed.",
+    }
+);
+
+Console.WriteLine($"{rule.Id} {rule.Action}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rule = client.numbers.update_rule(
+  "00000000-0000-4000-8000-000000000000",
+  "00000000-0000-4000-8000-000000000000",
+  match: "keyword",
+  pattern: "STOP",
+  action: "auto_reply",
+  target: "You are unsubscribed."
+)
+
+puts "#{rule[:id]} #{rule[:action]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rule = client
+    .numbers()
+    .update_rule(
+        "00000000-0000-4000-8000-000000000000",
+        "00000000-0000-4000-8000-000000000000",
+        &NumberRuleInput {
+            r#match: "keyword".into(),
+            pattern: Some("STOP".into()),
+            action: "auto_reply".into(),
+            target: "You are unsubscribed.".into(),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", rule.id, rule.action.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rule = try await opensms.numbers.updateRule(
+    "00000000-0000-4000-8000-000000000000",
+    ruleId: "00000000-0000-4000-8000-000000000000",
+    .init(match: "keyword", pattern: "STOP", action: "auto_reply", target: "You are unsubscribed.")
+)
+
+print(rule.id, rule.action ?? "")
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 
@@ -460,10 +1261,105 @@ Current owner/admin browser sessions with enabled TOTP or numbers:manage API key
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/numbers/00000000-0000-4000-8000-000000000000/rules/00000000-0000-4000-8000-000000000000" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.numbers.deleteRule(
+  '00000000-0000-4000-8000-000000000000',
+  '00000000-0000-4000-8000-000000000000',
+);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.numbers.delete_rule(
+    "00000000-0000-4000-8000-000000000000",
+    "00000000-0000-4000-8000-000000000000",
+)
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.Numbers.DeleteRule(
+	ctx,
+	"00000000-0000-4000-8000-000000000000",
+	"00000000-0000-4000-8000-000000000000",
+)
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->numbers->deleteRule(
+    '00000000-0000-4000-8000-000000000000',
+    '00000000-0000-4000-8000-000000000000',
+);
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.numbers().deleteRule(
+        "00000000-0000-4000-8000-000000000000",
+        "00000000-0000-4000-8000-000000000000");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.Numbers.DeleteRuleAsync(
+    "00000000-0000-4000-8000-000000000000",
+    "00000000-0000-4000-8000-000000000000"
+);
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.numbers.delete_rule(
+  "00000000-0000-4000-8000-000000000000",
+  "00000000-0000-4000-8000-000000000000"
+)
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .numbers()
+    .delete_rule(
+        "00000000-0000-4000-8000-000000000000",
+        "00000000-0000-4000-8000-000000000000",
+    )
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.numbers.deleteRule(
+    "00000000-0000-4000-8000-000000000000",
+    ruleId: "00000000-0000-4000-8000-000000000000"
+)
+```
+
+<!-- /tabs -->
 
 Response `422` (`application/problem+json`):
 

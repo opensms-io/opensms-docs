@@ -50,10 +50,95 @@ All active member roles may read with browser session and both selection headers
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/analytics/overview" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const overview = await opensms.analytics.overview();
+
+console.log(overview.sent, overview.delivered);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+overview = client.analytics.overview()
+
+print(overview["sent"], overview["delivered"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+overview, err := client.Analytics.Overview(ctx, opensms.AnalyticsParams{})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(overview.Sent, overview.Delivered)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$overview = $opensms->analytics->overview();
+
+echo $overview['sent'], ' ', $overview['delivered'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var overview = opensms.analytics().overview();
+
+System.out.println(overview.sent + " " + overview.delivered);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var overview = await client.Analytics.OverviewAsync();
+
+Console.WriteLine($"{overview.Sent} {overview.Delivered}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+overview = client.analytics.overview()
+
+puts "#{overview[:sent]} #{overview[:delivered]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let overview = client
+    .analytics()
+    .overview(AnalyticsQuery::default())
+    .await?;
+
+println!("{} {}", overview.sent.unwrap_or_default(), overview.delivered.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let overview = try await opensms.analytics.overview()
+
+print(overview.sent ?? 0, overview.delivered ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -108,10 +193,113 @@ All active member roles may read with browser session and both selection headers
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/analytics/by-country" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rows = await opensms.analytics.byCountry();
+
+for (const item of rows) {
+  console.log(item.key, item.sent);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rows = client.analytics.by_country()
+
+for item in rows:
+    print(item["key"], item["sent"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rows, err := client.Analytics.ByCountry(ctx, opensms.AnalyticsParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range rows {
+	fmt.Println(item.Key, item.Sent)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rows = $opensms->analytics->byCountry();
+
+foreach ($rows as $item) {
+    echo $item['key'], ' ', $item['sent'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var rows = opensms.analytics().byCountry();
+
+for (var item : rows) {
+    System.out.println(item.key + " " + item.sent);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rows = await client.Analytics.ByCountryAsync();
+
+foreach (var item in rows)
+{
+    Console.WriteLine($"{item.Key} {item.Sent}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rows = client.analytics.by_country()
+
+rows.each do |item|
+  puts "#{item[:key]} #{item[:sent]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rows = client
+    .analytics()
+    .by_country(AnalyticsQuery::default())
+    .await?;
+
+for item in &rows {
+    println!("{} {}", item.key.as_deref().unwrap_or_default(), item.sent.unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rows = try await opensms.analytics.byCountry()
+
+for item in rows {
+    print(item.key ?? "", item.sent ?? 0)
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -155,10 +343,113 @@ All active member roles may read with browser session and both selection headers
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/analytics/by-carrier" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rows = await opensms.analytics.byCarrier();
+
+for (const item of rows) {
+  console.log(item.key, item.sent);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rows = client.analytics.by_carrier()
+
+for item in rows:
+    print(item["key"], item["sent"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rows, err := client.Analytics.ByCarrier(ctx, opensms.AnalyticsParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range rows {
+	fmt.Println(item.Key, item.Sent)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rows = $opensms->analytics->byCarrier();
+
+foreach ($rows as $item) {
+    echo $item['key'], ' ', $item['sent'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var rows = opensms.analytics().byCarrier();
+
+for (var item : rows) {
+    System.out.println(item.key + " " + item.sent);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rows = await client.Analytics.ByCarrierAsync();
+
+foreach (var item in rows)
+{
+    Console.WriteLine($"{item.Key} {item.Sent}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rows = client.analytics.by_carrier()
+
+rows.each do |item|
+  puts "#{item[:key]} #{item[:sent]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rows = client
+    .analytics()
+    .by_carrier(AnalyticsQuery::default())
+    .await?;
+
+for item in &rows {
+    println!("{} {}", item.key.as_deref().unwrap_or_default(), item.sent.unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rows = try await opensms.analytics.byCarrier()
+
+for item in rows {
+    print(item.key ?? "", item.sent ?? 0)
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -202,10 +493,113 @@ All active member roles may read with browser session and both selection headers
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/analytics/by-sender-id" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const rows = await opensms.analytics.bySenderId();
+
+for (const item of rows) {
+  console.log(item.key, item.sent);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+rows = client.analytics.by_sender_id()
+
+for item in rows:
+    print(item["key"], item["sent"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+rows, err := client.Analytics.BySenderID(ctx, opensms.AnalyticsParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range rows {
+	fmt.Println(item.Key, item.Sent)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$rows = $opensms->analytics->bySenderId();
+
+foreach ($rows as $item) {
+    echo $item['key'], ' ', $item['sent'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var rows = opensms.analytics().bySenderId();
+
+for (var item : rows) {
+    System.out.println(item.key + " " + item.sent);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var rows = await client.Analytics.BySenderIdAsync();
+
+foreach (var item in rows)
+{
+    Console.WriteLine($"{item.Key} {item.Sent}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+rows = client.analytics.by_sender_id()
+
+rows.each do |item|
+  puts "#{item[:key]} #{item[:sent]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let rows = client
+    .analytics()
+    .by_sender_id(AnalyticsQuery::default())
+    .await?;
+
+for item in &rows {
+    println!("{} {}", item.key.as_deref().unwrap_or_default(), item.sent.unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let rows = try await opensms.analytics.bySenderId()
+
+for item in rows {
+    print(item.key ?? "", item.sent ?? 0)
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -249,10 +643,119 @@ All active member roles may read with browser session and both selection headers
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/analytics/timeseries?bucket=day" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const points = await opensms.analytics.timeseries({ bucket: 'day' });
+
+for (const item of points) {
+  console.log(item.bucket, item.sent);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+points = client.analytics.timeseries(bucket="day")
+
+for item in points:
+    print(item["bucket"], item["sent"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+points, err := client.Analytics.Timeseries(ctx, opensms.AnalyticsParams{Bucket: "day"})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range points {
+	fmt.Println(item.Bucket, item.Sent)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$points = $opensms->analytics->timeseries(['bucket' => 'day']);
+
+foreach ($points as $item) {
+    echo $item['bucket'], ' ', $item['sent'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var points = opensms.analytics().timeseries(new AnalyticsParams().bucket("day"));
+
+for (var item : points) {
+    System.out.println(item.bucket + " " + item.sent);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var points = await client.Analytics.TimeseriesAsync(new AnalyticsQuery
+{
+    Bucket = "day",
+});
+
+foreach (var item in points)
+{
+    Console.WriteLine($"{item.Bucket} {item.Sent}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+points = client.analytics.timeseries(bucket: "day")
+
+points.each do |item|
+  puts "#{item[:bucket]} #{item[:sent]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let points = client
+    .analytics()
+    .timeseries(AnalyticsQuery {
+        bucket: Some("day".into()),
+        ..Default::default()
+    })
+    .await?;
+
+for item in &points {
+    println!("{} {}", item.bucket.as_deref().unwrap_or_default(), item.sent.unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let points = try await opensms.analytics.timeseries(.init(bucket: "day"))
+
+for item in points {
+    print(item.bucket?.description ?? "", item.sent ?? 0)
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

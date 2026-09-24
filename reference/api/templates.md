@@ -53,10 +53,110 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/templates" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.templates.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.name);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.templates.list()
+
+for item in page.items:
+    print(item["id"], item["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Templates.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Name)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->templates->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['name'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.templates().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.name);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Templates.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Name}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.templates.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:name]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.templates().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.name.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.templates.list()
+
+for item in page.items {
+    print(item.id, item.name ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -117,13 +217,127 @@ Owner, admin or developer session, or templates:manage API key. Idempotency repl
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/templates" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-41d9f1b4-3fd8-4291-9b4d-35d7697f0aa5' \
   -H 'Content-Type: application/json' \
   -d '{"name":"order_shipped","body":"Hi {{name}}, order {{order}} has shipped."}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const template = await opensms.templates.create({
+  name: 'order_shipped',
+  body: 'Hi {{name}}, order {{order}} has shipped.',
+});
+
+console.log(template.id, template.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+template = client.templates.create(
+    name="order_shipped",
+    body="Hi {{name}}, order {{order}} has shipped.",
+)
+
+print(template["id"], template["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+template, err := client.Templates.Create(ctx, opensms.CreateTemplateParams{
+	Name: "order_shipped",
+	Body: "Hi {{name}}, order {{order}} has shipped.",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(template.ID, template.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$template = $opensms->templates->create([
+    'name' => 'order_shipped',
+    'body' => 'Hi {{name}}, order {{order}} has shipped.',
+]);
+
+echo $template['id'], ' ', $template['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new TemplateParams()
+    .name("order_shipped")
+    .body("Hi {{name}}, order {{order}} has shipped.");
+var template = opensms.templates().create(params);
+
+System.out.println(template.id + " " + template.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var template = await client.Templates.CreateAsync(new CreateTemplateParams
+{
+    Name = "order_shipped",
+    Body = "Hi {{name}}, order {{order}} has shipped.",
+});
+
+Console.WriteLine($"{template.Id} {template.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+template = client.templates.create(
+  name: "order_shipped",
+  body: "Hi {{name}}, order {{order}} has shipped."
+)
+
+puts "#{template[:id]} #{template[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let template = client
+    .templates()
+    .create(&CreateTemplate {
+        name: "order_shipped".into(),
+        body: "Hi {{name}}, order {{order}} has shipped.".into(),
+        ..Default::default()
+    })
+    .await?;
+
+println!("{} {}", template.id, template.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let template = try await opensms.templates.create(
+    name: "order_shipped",
+    body: "Hi {{name}}, order {{order}} has shipped."
+)
+
+print(template.id, template.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -215,10 +429,97 @@ Operation ID: `getTemplate`. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/templates/8a5ec16b-30a7-48c8-ab2d-15037a667874" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const template = await opensms.templates.get(
+  '8a5ec16b-30a7-48c8-ab2d-15037a667874',
+);
+
+console.log(template.id, template.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+template = client.templates.get("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+
+print(template["id"], template["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+template, err := client.Templates.Get(ctx, "8a5ec16b-30a7-48c8-ab2d-15037a667874")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(template.ID, template.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$template = $opensms->templates->get('8a5ec16b-30a7-48c8-ab2d-15037a667874');
+
+echo $template['id'], ' ', $template['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var template = opensms.templates().get("8a5ec16b-30a7-48c8-ab2d-15037a667874");
+
+System.out.println(template.id + " " + template.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var template = await client.Templates.GetAsync("8a5ec16b-30a7-48c8-ab2d-15037a667874");
+
+Console.WriteLine($"{template.Id} {template.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+template = client.templates.get("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+
+puts "#{template[:id]} #{template[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let template = client
+    .templates()
+    .get("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+    .await?;
+
+println!("{} {}", template.id, template.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let template = try await opensms.templates.get("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+
+print(template.id, template.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -278,12 +579,126 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PATCH "$OPENSMS_API/v1/templates/8a5ec16b-30a7-48c8-ab2d-15037a667874" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
   -d '{"body":"Hi {{name}}, order {{order}} is on its way."}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const template = await opensms.templates.update(
+  '8a5ec16b-30a7-48c8-ab2d-15037a667874',
+  { body: 'Hi {{name}}, order {{order}} is on its way.' },
+);
+
+console.log(template.id, template.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+template = client.templates.update(
+    "8a5ec16b-30a7-48c8-ab2d-15037a667874",
+    body="Hi {{name}}, order {{order}} is on its way.",
+)
+
+print(template["id"], template["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+template, err := client.Templates.Update(
+	ctx,
+	"8a5ec16b-30a7-48c8-ab2d-15037a667874",
+	opensms.UpdateTemplateParams{Body: "Hi {{name}}, order {{order}} is on its way."},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(template.ID, template.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$template = $opensms->templates->update('8a5ec16b-30a7-48c8-ab2d-15037a667874', [
+    'body' => 'Hi {{name}}, order {{order}} is on its way.',
+]);
+
+echo $template['id'], ' ', $template['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new TemplateParams()
+    .body("Hi {{name}}, order {{order}} is on its way.");
+var template = opensms.templates().update("8a5ec16b-30a7-48c8-ab2d-15037a667874", params);
+
+System.out.println(template.id + " " + template.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var template = await client.Templates.UpdateAsync(
+    "8a5ec16b-30a7-48c8-ab2d-15037a667874",
+    new UpdateTemplateParams { Body = "Hi {{name}}, order {{order}} is on its way." }
+);
+
+Console.WriteLine($"{template.Id} {template.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+template = client.templates.update(
+  "8a5ec16b-30a7-48c8-ab2d-15037a667874",
+  body: "Hi {{name}}, order {{order}} is on its way."
+)
+
+puts "#{template[:id]} #{template[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let template = client
+    .templates()
+    .update(
+        "8a5ec16b-30a7-48c8-ab2d-15037a667874",
+        &UpdateTemplate {
+            body: Some("Hi {{name}}, order {{order}} is on its way.".into()),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", template.id, template.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let template = try await opensms.templates.update(
+    "8a5ec16b-30a7-48c8-ab2d-15037a667874",
+    body: "Hi {{name}}, order {{order}} is on its way."
+)
+
+print(template.id, template.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -331,10 +746,78 @@ Soft delete preserves historical message references. Owner, admin or developer s
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/templates/8a5ec16b-30a7-48c8-ab2d-15037a667874" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.templates.delete('8a5ec16b-30a7-48c8-ab2d-15037a667874');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.templates.delete("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.Templates.Delete(ctx, "8a5ec16b-30a7-48c8-ab2d-15037a667874")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->templates->delete('8a5ec16b-30a7-48c8-ab2d-15037a667874');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.templates().delete("8a5ec16b-30a7-48c8-ab2d-15037a667874");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.Templates.DeleteAsync("8a5ec16b-30a7-48c8-ab2d-15037a667874");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.templates.delete("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .templates()
+    .delete("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.templates.delete("8a5ec16b-30a7-48c8-ab2d-15037a667874")
+```
+
+<!-- /tabs -->
 
 Response `204`:
 
