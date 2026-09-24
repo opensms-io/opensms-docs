@@ -2,7 +2,7 @@
 
 You can let an AI assistant such as Claude, ChatGPT, Cursor or VS Code send messages and check delivery for your workspace. This guide covers the three places in the web app that control it: the **AI assistants** page with setup steps for each assistant, the consent screen you see when an assistant asks for access, and **Connected AI apps** in Settings, where you see what each assistant did, change its limits or disconnect it. It is for anyone who connects an assistant, and for owners and admins who keep an eye on them.
 
-> **Not in production yet.** AI assistant access is built and tested but is not live on opensms.io yet. The screens below may still change before release. The developer reference is [AI assistants (MCP)](../integrate/mcp.md).
+> **Not in production yet.** AI assistant access is still being built and is not available on opensms.io. The screens below describe the planned design and may change before release. The developer reference is [AI assistants (MCP)](../integrate/mcp.md).
 
 ## Before you start
 

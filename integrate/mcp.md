@@ -2,7 +2,7 @@
 
 OpenSMS runs a hosted Model Context Protocol (MCP) server, so an AI assistant such as Claude, ChatGPT, Cursor or VS Code can send SMS, run one-time passcodes, look up numbers and read delivery status for you. This page is for developers and workspace owners connecting an assistant: how to connect each client, what an assistant is allowed to do, the limits that keep it safe, and the full reference for every tool, resource and prompt.
 
-> **Not in production yet.** The MCP server is built and tested but is not deployed to `mcp.opensms.io` yet. Everything on this page describes the contract the server implements; the URL will start answering when it ships. Until then, [send with an API key](sending-messages.md).
+> **Not in production yet.** The MCP server is still being built and is not deployed to `mcp.opensms.io`. This page describes the agreed design the server is being built to; details can change before release, and the URL does not answer yet. Until it ships, [send with an API key](sending-messages.md).
 
 ## At a glance
 
@@ -241,7 +241,7 @@ Annotations tell clients how careful to be. OpenSMS marks anything that spends m
 | [`list_sender_ids`](#list_sender_ids) | `sender-ids:read` | yes | no | yes | no | no |
 | [`create_batch`](#create_batch) | `messages:write` | no | yes | yes | yes | confirm only |
 
-The examples below are `tools/call` requests. Example results are not shown yet: they will be added from a real run once the server is deployed, rather than written by hand.
+The examples below are `tools/call` requests. Example results are not shown yet: they will be added from a real run of the server once it exists, rather than written by hand.
 
 Phone numbers are E.164 everywhere (`^\+[1-9][0-9]{7,14}$`, for example `+254712345678`). Every input object rejects unknown properties.
 
@@ -262,6 +262,20 @@ Sends one SMS through `POST /v1/messages`.
 Output: `message_id`, `status`, `to`, `sender_id`, `parts`, `encoding`, `price`, `currency`, `environment`, `idempotency_key`, `replayed`, `scheduled_at` and `console_url` (the message in the web app).
 
 A `callback_url` is deliberately not accepted: an assistant cannot point delivery reports at an address of its choosing.
+
+The input schema, as the design specifies it (the other tools follow the same pattern, with the fields in their tables):
+
+```json
+{"type": "object", "additionalProperties": false, "required": ["to", "text"],
+ "properties": {
+  "to": {"type": "string", "pattern": "^\\+[1-9][0-9]{7,14}$"},
+  "text": {"type": "string", "minLength": 1, "maxLength": 1600},
+  "sender_id": {"type": "string", "maxLength": 15},
+  "traffic_type": {"type": "string", "enum": ["transactional", "marketing"], "default": "transactional"},
+  "scheduled_at": {"type": "string", "format": "date-time"},
+  "idempotency_key": {"type": "string", "pattern": "^[A-Za-z0-9._:-]{8,128}$"},
+  "metadata": {"type": "object", "maxProperties": 20}}}
+```
 
 ```json
 {"jsonrpc": "2.0", "id": 7, "method": "tools/call", "params": {
