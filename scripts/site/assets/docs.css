@@ -28,7 +28,7 @@
   --shadow: 0 14px 30px -14px rgba(16,17,22,.18);
   --font: Figtree, 'Figtree Fallback', system-ui, sans-serif;
   --mono: 'JetBrains Mono', 'JetBrains Mono Fallback', monospace;
-  --header-h: 68px; --side-w: 284px; --toc-w: 232px; --gutter: clamp(16px, 4vw, 56px);
+  --header-h: 68px; --page-w: 1180px; --side-w: 284px; --toc-w: 232px; --gutter: clamp(16px, 4vw, 56px);
   color-scheme: light;
 }
 html[data-theme="dark"] {
@@ -406,7 +406,9 @@ kbd { font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--mu
 /* ---------- docs home ---------- */
 .home { overflow: hidden; }
 /* One container and one vertical rhythm for every home section. */
-.hero, .home-block { max-width: 1200px; margin: 0 auto; padding-inline: var(--gutter); }
+/* The home and 404 pages share one 1180px content column with the landing
+   site: header, sections and footer all line up at every screen width. */
+.hero, .home-block, .is-home .top-inner, .is-404 .top-inner, .is-home .site-footer, .is-404 .site-footer { box-sizing: content-box; max-width: var(--page-w); margin-inline: auto; padding-inline: var(--gutter); }
 .hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: center; gap: clamp(32px, 5vw, 72px); padding-block: clamp(40px, 6vw, 88px) clamp(24px, 3vw, 40px); }
 .hero-curves { position: absolute; z-index: 0; right: -4%; top: -6%; width: min(560px, 46vw); height: auto; pointer-events: none; }
 .hero-copy, .hero-demo { position: relative; z-index: 1; min-width: 0; }
@@ -483,7 +485,7 @@ kbd { font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--mu
 .ai-links .chip { height: 40px; padding: 0 16px; font-size: 13.5px; }
 
 /* ---------- 404 ---------- */
-.notfound { position: relative; overflow: hidden; max-width: 1320px; margin: 0 auto; min-height: calc(100vh - var(--header-h) - 90px); padding: clamp(48px, 8vw, 120px) var(--gutter); }
+.notfound { position: relative; overflow: hidden; box-sizing: content-box; max-width: var(--page-w); margin: 0 auto; min-height: calc(100vh - var(--header-h) - 90px); padding: clamp(48px, 8vw, 120px) var(--gutter); }
 .notfound .hero-curves { top: 4%; right: 2%; }
 .nf-copy { position: relative; z-index: 1; max-width: 640px; }
 .notfound .eyebrow { color: var(--muted); }
