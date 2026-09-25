@@ -6,10 +6,10 @@ This guide takes you from nothing to a sandbox message in about five minutes: cr
 
 You need `curl`. From step 4 on, every example also has a tab for each [official SDK](../integrate/sdk.md): install the one for your language to follow along in code.
 
-> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access comes with an invitation from the [waitlist](https://opensms.io/#docs), and the invitation gives you the API origin to use below.
+> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup), or [sign in](https://opensms.io/login) if you already have one. The API origin to use below is `https://opensms.io`.
 
 ```sh
-export OPENSMS_API=<the API origin from your sandbox invitation>
+export OPENSMS_API=https://opensms.io
 ```
 
 ## 1. Create an account and workspace
@@ -231,7 +231,7 @@ print(message.id, message.status ?? "")
 ```
 <!-- /tabs -->
 
-The SDK clients call `https://api.opensms.io` unless you give them another base URL. Until launch, pass the origin from your invitation as the client's base URL option (each SDK's README shows it).
+The SDK clients (0.1.1 and later) call `https://opensms.io` by default; the [SDK guide](../integrate/sdk.md#client-setup) shows how to point them at another origin.
 
 With a verified email this returns `201 Created` and the message object, with `status` `queued` and `price` `0`. That response was not captured for this page (see the note at the top); its fields are in the [Message schema](../reference/api/schemas.md#message), and [sending messages](../integrate/sending-messages.md#response) explains each one.
 
@@ -252,7 +252,7 @@ The same send over plain HTTP, with no dependency, then a read of the message it
 // send.mjs: send one sandbox message and read it back (Node 18 or newer).
 import { randomUUID } from 'node:crypto';
 
-const API = process.env.OPENSMS_API; // the API origin from your sandbox invitation
+const API = process.env.OPENSMS_API; // the API origin, https://opensms.io
 const KEY = process.env.OPENSMS_API_KEY; // sk_test_...
 
 async function opensms(method, path, { body, idempotencyKey } = {}) {
@@ -296,7 +296,7 @@ The same over plain HTTP with `requests` (Python 3.9 or newer).
 import os, sys, uuid
 import requests
 
-API = os.environ["OPENSMS_API"]  # the API origin from your sandbox invitation
+API = os.environ["OPENSMS_API"]  # the API origin, https://opensms.io
 KEY = os.environ["OPENSMS_API_KEY"]  # sk_test_...
 session = requests.Session()
 session.headers["Authorization"] = f"Bearer {KEY}"

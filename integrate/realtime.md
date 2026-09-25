@@ -69,7 +69,7 @@ The [SDKs](sdk.md) do not include a WebSocket client, so connect with your langu
 <!-- test:realtime-node -->
 ```js
 // realtime.mjs (Node 22 or newer: global WebSocket)
-const API = process.env.OPENSMS_API; // the API origin from your sandbox invitation
+const API = process.env.OPENSMS_API; // the API origin, https://opensms.io
 const ws = new WebSocket(API.replace(/^http/, 'ws') + '/v1/realtime', {
   headers: { authorization: `Bearer ${process.env.OPENSMS_API_KEY}` },
 });

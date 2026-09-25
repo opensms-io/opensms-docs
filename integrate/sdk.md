@@ -13,15 +13,15 @@ The source, per-language READMEs and the shared contract live in
 
 | Language | Package | Registry | Status |
 |---|---|---|---|
-| <span id="sdk-typescript">TypeScript</span> | `@opensms/sdk` | npm | Published, 0.1.0 |
-| <span id="sdk-python">Python</span> | `opensms` | PyPI | Published, 0.1.0 |
-| <span id="sdk-go">Go</span> | `github.com/opensms-io/opensms-go` | Go modules | Published, v0.1.0 |
-| <span id="sdk-dotnet">.NET (C#)</span> | `Opensms` | NuGet | Published, 0.1.0 |
-| <span id="sdk-java">Java</span> | `io.opensms:opensms-java` | Maven Central | Published, 0.1.0 |
-| <span id="sdk-rust">Rust</span> | `opensms` | crates.io | Published, 0.1.0 |
-| <span id="sdk-ruby">Ruby</span> | `opensms` | RubyGems | Published, 0.1.0 |
-| <span id="sdk-php">PHP</span> | `opensms/opensms-php` | Packagist | Published, v0.1.0 |
-| <span id="sdk-swift">Swift</span> | `opensms-swift` (product `Opensms`) | SwiftPM (git tag) | Tagged, 0.1.0 |
+| <span id="sdk-typescript">TypeScript</span> | `@opensms/sdk` | npm | Published, 0.1.1 |
+| <span id="sdk-python">Python</span> | `opensms` | PyPI | Published, 0.1.1 |
+| <span id="sdk-go">Go</span> | `github.com/opensms-io/opensms-go` | Go modules | Published, v0.1.1 |
+| <span id="sdk-dotnet">.NET (C#)</span> | `Opensms` | NuGet | Published, 0.1.1 |
+| <span id="sdk-java">Java</span> | `io.opensms:opensms-java` | Maven Central | Published, 0.1.1 |
+| <span id="sdk-rust">Rust</span> | `opensms` | crates.io | Published, 0.1.1 |
+| <span id="sdk-ruby">Ruby</span> | `opensms` | RubyGems | Published, 0.1.1 |
+| <span id="sdk-php">PHP</span> | `opensms/opensms-php` | Packagist | Published, v0.1.1 |
+| <span id="sdk-swift">Swift</span> | `opensms-swift` (product `Opensms`) | SwiftPM (git tag) | Tagged, 0.1.1 |
 
 ### Install
 
@@ -35,7 +35,7 @@ pip install opensms
 ```
 
 ```sh tab="Go" logo="golang" title="Terminal"
-go get github.com/opensms-io/opensms-go@v0.1.0
+go get github.com/opensms-io/opensms-go@v0.1.1
 ```
 
 ```sh tab="PHP" logo="php" title="Terminal"
@@ -44,7 +44,7 @@ composer require opensms/opensms-php
 
 ```kotlin tab="Java" logo="java" title="build.gradle.kts"
 dependencies {
-    implementation("io.opensms:opensms-java:0.1.0")
+    implementation("io.opensms:opensms-java:0.1.1")
 }
 ```
 
@@ -65,7 +65,7 @@ cargo add tokio --features full
 dependencies: [
     .package(
         url: "https://github.com/opensms-io/opensms-swift",
-        from: "0.1.0"
+        from: "0.1.1"
     ),
 ],
 targets: [
@@ -82,7 +82,7 @@ On Maven rather than Gradle, add the same coordinates to `pom.xml`:
 <dependency>
   <groupId>io.opensms</groupId>
   <artifactId>opensms-java</artifactId>
-  <version>0.1.0</version>
+  <version>0.1.1</version>
 </dependency>
 ```
 
@@ -90,12 +90,12 @@ On Maven rather than Gradle, add the same coordinates to `pom.xml`:
 
 Every client is built once from an API key and reused. The tabs below are complete programs: the
 imports, the setup line and, in Go, Java and Rust, the `main` function. They also show how to point
-the client at another API origin, such as a self-hosted deployment, through `OPENSMS_BASE_URL`. The
-default is `https://api.opensms.io`.
+the client at another API origin through `OPENSMS_BASE_URL`. Since 0.1.1 the clients' built-in default
+is `https://opensms.io`, the hosted API, so you only set it for a different origin.
 
 <!-- tabs label="SDK language" -->
 ```sh tab="cURL" title="Terminal"
-export OPENSMS_API=https://api.opensms.io
+export OPENSMS_API=https://opensms.io
 export OPENSMS_API_KEY=sk_test_...
 
 curl -s $OPENSMS_API/v1/wallet -H "authorization: Bearer $OPENSMS_API_KEY"
@@ -391,7 +391,7 @@ A sandbox key (`sk_test_...`) talks to your sandbox; a live key (`sk_live_...`) 
 key alone selects the workspace, so the clients never send `X-Workspace-ID`.
 
 A fuller example: read the wallet, send, and handle a refusal. Save it as `example.mjs` and run it
-with `OPENSMS_API_KEY` set (and `OPENSMS_BASE_URL` when you are not calling the hosted API):
+with `OPENSMS_API_KEY` and `OPENSMS_BASE_URL=https://opensms.io` set:
 
 <!-- test:sdk-example -->
 ```js title="example.mjs"
@@ -399,7 +399,7 @@ import { Opensms, OpensmsError } from '@opensms/sdk';
 
 const opensms = new Opensms({
   apiKey: process.env.OPENSMS_API_KEY,
-  // Leave OPENSMS_BASE_URL unset to call https://api.opensms.io
+  // OPENSMS_BASE_URL=https://opensms.io (the built-in default host does not resolve today)
   baseUrl: process.env.OPENSMS_BASE_URL,
 });
 
