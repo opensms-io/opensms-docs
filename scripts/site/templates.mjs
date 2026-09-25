@@ -19,7 +19,7 @@ function jsonLd(obj) {
   return `<script type="application/ld+json">${JSON.stringify(obj).replace(/</g, '\\u003c')}</script>`;
 }
 
-export function head({ title, description, canonical, ogImage, ogAlt, markdownUrl, noindex, ld = [], assets, type = 'article', modified }) {
+export function head({ title, description, canonical, ogImage, ogAlt, ogUrl = canonical, markdownUrl, noindex, ld = [], assets, type = 'article', modified }) {
   const tags = [
     '<meta charset="utf-8">',
     `<meta name="theme-color" content="${THEME_COLOR.light}">`,
@@ -31,6 +31,7 @@ export function head({ title, description, canonical, ogImage, ogAlt, markdownUr
     `<link rel="preload" href="${assets.fontFigtree}" as="font" type="font/woff2" crossorigin>`,
     `<link rel="stylesheet" href="${assets.css}">`,
     `<script src="${assets.js}" defer></script>`,
+    '<link rel="icon" href="/favicon.ico" sizes="32x32">',
     '<link rel="icon" type="image/svg+xml" href="/favicon.svg">',
     '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">',
     '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
@@ -38,14 +39,16 @@ export function head({ title, description, canonical, ogImage, ogAlt, markdownUr
   ];
   if (markdownUrl) tags.push(`<link rel="alternate" type="text/markdown" href="${markdownUrl}" title="Markdown">`);
   tags.push(`<link rel="alternate" type="text/plain" href="${SITE.base}llms.txt" title="llms.txt">`);
-  if (!noindex) {
+  // Noindex pages (the 404) still get social tags when they pass an image, so a
+  // shared broken link previews like the landing 404 does.
+  if (!noindex || ogImage) {
     tags.push(
       `<meta property="og:type" content="${type}">`,
       '<meta property="og:site_name" content="OpenSMS">',
       '<meta property="og:locale" content="en_US">',
       `<meta property="og:title" content="${esc(title)}">`,
       `<meta property="og:description" content="${esc(description)}">`,
-      `<meta property="og:url" content="${canonical}">`,
+      `<meta property="og:url" content="${ogUrl}">`,
       `<meta property="og:image" content="${ogImage}">`,
       '<meta property="og:image:type" content="image/png">',
       '<meta property="og:image:width" content="1200">',
@@ -76,7 +79,7 @@ function header({ icons, activeSection }) {
   return `<a class="skip" href="#content">Skip to content</a>
 <header class="top">
   <div class="top-inner">
-    <button type="button" class="icon-btn menu-btn" data-drawer-open aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">${icons.icon('menu')}</button>
+    <button type="button" class="icon-btn menu-btn" data-drawer-open aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">${icons.icon('menu')}<span class="sr-only">Open navigation</span></button>
     <div class="brand">
       <a href="/" class="brand-mark" aria-label="OpenSMS home">${MARK(26)}<span class="brand-word"><span class="w-open">open</span><span class="w-sms">sms</span></span></a>
       <a href="${SITE.base}" class="brand-docs">Docs</a>
@@ -85,10 +88,10 @@ function header({ icons, activeSection }) {
       ${links.map(([id, label, href]) => `<a href="${href}"${id === activeSection ? ' aria-current="true"' : ''}>${label}</a>`).join('')}
     </nav>
     <div class="top-right">
-      <button type="button" class="search-trigger" data-search-open aria-label="Search the docs" aria-keyshortcuts="Meta+K Control+K /">${icons.icon('search', 17)}<span class="search-trigger-text">Search docs</span><kbd class="kbd-cmd">Ctrl K</kbd></button>
-      <a class="icon-btn gh-btn" href="${SITE.repo}" aria-label="The docs on GitHub" rel="noopener">${icons.icon('github')}</a>
-      <button type="button" class="icon-btn" data-action="toggle-theme" aria-label="Toggle dark mode">${icons.icon('moon', 18, 'when-light')}${icons.icon('sun', 18, 'when-dark')}</button>
-      <a class="cta-btn" href="/#docs">Join the waitlist</a>
+      <button type="button" class="search-trigger" data-search-open aria-keyshortcuts="Meta+K Control+K /">${icons.icon('search', 17)}<span class="search-trigger-text">Search docs</span><kbd class="kbd-cmd" aria-hidden="true">Ctrl K</kbd></button>
+      <a class="icon-btn gh-btn" href="${SITE.repo}" aria-label="The docs on GitHub" rel="noopener">${icons.icon('github')}<span class="sr-only">The docs on GitHub</span></a>
+      <button type="button" class="icon-btn" data-action="toggle-theme" aria-label="Toggle dark mode">${icons.icon('moon', 18, 'when-light')}${icons.icon('sun', 18, 'when-dark')}<span class="sr-only">Toggle dark mode</span></button>
+      <a class="cta-btn" href="${SITE.origin}/signup">Get started</a>
     </div>
   </div>
 </header>`;
@@ -114,7 +117,7 @@ function sidebar({ icons, pagesByPath, current, drawerOnly = false }) {
   return `<aside class="sidebar${drawerOnly ? ' drawer-only' : ''}" id="sidebar" aria-label="Docs navigation">
   <div class="sidebar-head">
     <span class="sidebar-title">Documentation</span>
-    <button type="button" class="icon-btn" data-drawer-close aria-label="Close navigation">${icons.icon('close')}</button>
+    <button type="button" class="icon-btn" data-drawer-close aria-label="Close navigation">${icons.icon('close')}<span class="sr-only">Close navigation</span></button>
   </div>
   <nav class="side-nav">
     <a class="side-home" href="${SITE.base}"${current === null ? ' aria-current="page"' : ''}>${icons.icon('ai-book', 16, 'side-icon')}<span>Docs home</span></a>
@@ -122,7 +125,7 @@ ${groups}
   </nav>
   <div class="sidebar-foot">
     <a class="back-link" href="/">${icons.icon('arrow-left4', 16)}<span>Back to opensms.io</span></a>
-    <a class="cta-btn" href="/#docs">Join the waitlist</a>
+    <a class="cta-btn" href="${SITE.origin}/signup">Get started</a>
   </div>
 </aside>
 <div class="scrim" data-drawer-close hidden></div>`;
@@ -268,14 +271,14 @@ export function homePage({ icons, pagesByPath, sections, headHtml, stats }) {
     const first = pages[0];
     const picks = pages.slice(s.id === 'api-reference' || s.id === 'web-app' ? 1 : 0, (s.id === 'sdks' ? 1 : 5) + (s.id === 'api-reference' || s.id === 'web-app' ? 1 : 0));
     return `<article class="card card-${s.id}">
-  <a class="card-link" href="${first.url}" aria-label="${esc(s.title)}"></a>
+  <a class="card-link" href="${first.url}" aria-label="${esc(s.title)}"><span class="sr-only">${esc(s.title)}</span></a>
   <div class="card-top">
     <span class="card-icon">${icons.icon(s.icon, 22)}</span>
     <span class="card-count">${s.pages.length === 1 ? '9 languages' : `${s.pages.length} pages`}</span>
   </div>
   <h2 class="card-title">${esc(s.title)}</h2>
   <p class="card-blurb">${esc(s.blurb)}</p>
-  ${s.id === 'sdks' ? `<ul class="card-langs">${SDK_LANGS.map(([l, id, mark]) => `<li><a href="${first.url}#sdk-${id}">${langMark(mark, (...a) => icons.icon(...a), { size: 15, surface: 'theme' })}${l}</a></li>`).join('')}</ul>` : ''}
+  ${s.id === 'sdks' ? `<ul class="card-langs">${SDK_LANGS.map(([l, id, mark]) => `<li><a href="${first.url}#sdk-${id}">${langMark(mark, (...a) => icons.icon(...a), { size: 15, surface: 'theme' })}${l}<span class="sr-only"> SDK</span></a></li>`).join('')}</ul>` : ''}
   <ul class="card-list">${picks.map((p) => `<li><a href="${p.url}">${esc(p.navLabel)}${icons.icon('arrow-right4', 14)}</a></li>`).join('')}</ul>
 </article>`;
   };
@@ -287,7 +290,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <svg class="hero-curves" viewBox="0 0 736 920" aria-hidden="true" focusable="false"><g fill="none" stroke="var(--curve)" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="var(--curve)"/></svg>
     <div class="hero-copy">
       <p class="eyebrow">${icons.icon('ai-book', 15)}OpenSMS documentation</p>
-      <h1>Build with<br>OpenSMS.</h1>
+      <h1>Build with<br> OpenSMS.</h1>
       <p class="hero-lead">Everything you need to send SMS across Africa: a five-minute quickstart, task guides, official SDKs, the full API reference and step-by-step guides for the web app.</p>
       <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span><kbd class="kbd-cmd">Ctrl K</kbd></button>
       <div class="hero-ctas">

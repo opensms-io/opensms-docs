@@ -367,7 +367,7 @@ export function createRenderer({ icon }) {
     const tag = `<img src="${escapeHtml(img.src)}" alt="${escapeHtml(alt)}" width="${img.width}" height="${img.height}" loading="lazy" decoding="async">`;
     if (!img.webp?.length) return tag;
     const srcset = img.webp.map((v) => `${escapeHtml(v.src)} ${v.width}w`).join(', ');
-    return `<picture><source type="image/webp" srcset="${srcset}" sizes="(max-width: 800px) 100vw, 760px">${tag}</picture>`;
+    return `<picture><source type="image/webp" srcset="${srcset}" sizes="(max-width: 800px) calc(100vw - 32px), 780px">${tag}</picture>`;
   };
 
   // A paragraph holding only an image becomes a figure with a caption.

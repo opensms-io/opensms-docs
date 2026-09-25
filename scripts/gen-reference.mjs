@@ -552,7 +552,7 @@ function renderIndex(spec, all, examples) {
   const lines = [HEADER, '# Customer API reference', ''];
   lines.push('The exact contract of the OpenSMS customer API, for developers integrating with it. It is generated from the OpenAPI contract of record and lists every operation with its auth, parameters, request fields, responses and error statuses, and almost every operation also carries an example request and response. If you are new to OpenSMS, start with the task guides in [Integrate](../../integrate/) and come back here for field-level detail.', '');
   lines.push(`Contract version \`${spec.info.version}\` (OpenAPI \`${spec.openapi}\`): ${Object.keys(spec.paths).length} paths, ${all.length} operations, ${Object.keys(spec.components.schemas).length} named schemas.`, '');
-  lines.push('> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access, and the API origin to use as `$OPENSMS_API`, come with an invitation from the [waitlist](https://opensms.io/#docs).', '');
+  lines.push('> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup) to get a sandbox API key. The API origin to use as `$OPENSMS_API` is `https://opensms.io`.', '');
   lines.push('## Pages', '');
   lines.push('| Page | Operations | Contract tag | Covers |', '| --- | --- | --- | --- |');
   for (const g of GROUPS) {
@@ -563,7 +563,7 @@ function renderIndex(spec, all, examples) {
   lines.push(`| [Schemas](schemas.md) | | | Every named request and response schema. |`, '');
   lines.push('The contract tags only ' + all.filter((o) => o.tag).length + ` of ${all.length} operations. Tagged operations sit on their tag's page; untagged operations are placed by path prefix (for example \`/v1/contacts\` and \`/v1/contact-groups\` share "Contacts and groups"). The "Contract tag" column shows which is which.`, '');
   lines.push('## Conventions', '');
-  lines.push('**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL: the API origin from your sandbox invitation.', '');
+  lines.push('**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL: `https://opensms.io`.', '');
   lines.push('**Authentication.** Two bearer credentials exist (`components.securitySchemes`):', '');
   lines.push(table(['Scheme', 'Header', 'Used by', 'Workspace and environment'], [
     ['`Session`', '`Authorization: Bearer sess_...`', 'People: the customer app, or a script acting as a signed-in user. Returned by signup and login.', 'Send `X-Workspace-ID: <workspace uuid>` and `X-Environment: sandbox` or `live` on workspace-scoped calls. The contract marks both headers optional (because API keys ignore them), but session calls without `X-Environment` are rejected with 400.'],

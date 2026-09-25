@@ -117,7 +117,7 @@ try {
   await m.waitForTimeout(350);
   await m.screenshot({ path: join(OUT, 'drawer-390-light.png') });
   shots.push('drawer-390-light.png');
-  // The drawer foot ("Back to opensms.io" and the waitlist button), in both themes.
+  // The drawer foot ("Back to opensms.io" and the Get started button), in both themes.
   await m.locator('.sidebar-foot').scrollIntoViewIfNeeded();
   await m.screenshot({ path: join(OUT, 'drawer-foot-390-light.png') });
   shots.push('drawer-foot-390-light.png');

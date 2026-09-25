@@ -267,6 +267,8 @@ for (const c of anchorChecks) {
   if (target?.ids && !target.ids.has(c.anchor)) fail(`${c.from}: link to missing anchor #${c.anchor} in ${c.target}`);
 }
 
+const TITLE_MIN = 30;
+const TITLE_MAX = 65;
 // SEO titles: the h1, or a config override, disambiguated where a page's name
 // collides with another page's name, sidebar label or parenthesised short name
 // (so the OTP reference page does not compete with "One-time passcodes (OTP)").
@@ -283,7 +285,13 @@ for (const p of pages) {
     if (p.section.id === 'api-reference') t = `${p.title} API`;
     else if (p.section.id === 'web-app') t = `${p.title} in the web app`;
   }
+  // Too short to say what the page is in a result list: name the kind of page.
+  if (!p.seoTitleOverride && `${t} | ${SITE.name}`.length < TITLE_MIN) {
+    if (p.section.id === 'api-reference') t = / API$/.test(t) ? `${t} reference` : `${t} API reference`;
+    else if (p.section.id === 'web-app') t = `${t} in the web app`;
+  }
   p.seoTitle = `${t} | ${SITE.name}`;
+  if (p.seoTitle.length < TITLE_MIN || p.seoTitle.length > TITLE_MAX) fail(`${p.path}: title "${p.seoTitle}" is ${p.seoTitle.length} characters (want ${TITLE_MIN}-${TITLE_MAX}); set seoTitle in config.mjs`);
 }
 const seen = new Map();
 for (const p of pages) {
@@ -310,8 +318,19 @@ mkdirSync(OUT, { recursive: true });
 // (variable Figtree and JetBrains Mono, latin + latin-ext, with their SIL Open
 // Font License texts), vendored in ./fonts so both halves of opensms.io render
 // the same glyphs. Refresh them from the landing when it updates its fonts.
+// docs.css and the preload use content-hashed copies in assets/ (cached for a
+// year, like the CSS and JS); the plain copies in fonts/ stay for anything that
+// links to them by name.
 mkdirSync(join(OUT, 'fonts'), { recursive: true });
-for (const f of readdirSync(join(HERE, 'fonts'))) copyFileSync(join(HERE, 'fonts', f), join(OUT, 'fonts', f));
+mkdirSync(join(OUT, 'assets'), { recursive: true });
+const hashedFonts = new Map();
+for (const f of readdirSync(join(HERE, 'fonts'))) {
+  copyFileSync(join(HERE, 'fonts', f), join(OUT, 'fonts', f));
+  if (!f.endsWith('.woff2')) continue;
+  const hashed = f.replace(/\.woff2$/, `.${hash(readFileSync(join(HERE, 'fonts', f)))}.woff2`);
+  copyFileSync(join(HERE, 'fonts', f), join(OUT, 'assets', hashed));
+  hashedFonts.set(f, hashed);
+}
 
 // Programming language marks (SVGL files, one per language; see languages/README.md),
 // loaded by code block headers, language tabs and the SDK pages as <img>.
@@ -335,13 +354,13 @@ const langCss = TAB_KEYS.map((k) => {
     + `${on} .code-tab[data-tab-key="${k}"]::after{content:'';position:absolute;left:8px;right:8px;bottom:0;height:2px;border-radius:2px 2px 0 0;background:#8C7EF0}`
     + `${on} .code-tab[data-tab-key="${k}"] .lang-mark{opacity:1;filter:none}`;
 }).join('\n');
-const css = readFileSync(join(HERE, 'assets', 'docs.css'), 'utf8').replace(/\n\s*\/\*[\s\S]*?\*\//g, '\n').replace(/\n{2,}/g, '\n') + '\n@media screen{\n' + langCss + '\n}\n';
+const css = readFileSync(join(HERE, 'assets', 'docs.css'), 'utf8').replace(/\.\.\/fonts\/([\w.-]+\.woff2)/g, (m, f) => (hashedFonts.has(f) ? hashedFonts.get(f) : m)).replace(/\n\s*\/\*[\s\S]*?\*\//g, '\n').replace(/\n{2,}/g, '\n') + '\n@media screen{\n' + langCss + '\n}\n';
 const js = readFileSync(join(HERE, 'assets', 'docs.js'), 'utf8');
 const assets = {
   css: `${SITE.base}assets/docs.${hash(css)}.css`,
   js: `${SITE.base}assets/docs.${hash(js)}.js`,
   // Preloaded so body text never swaps late; docs.css points at the same file.
-  fontFigtree: `${SITE.base}fonts/figtree-latin.woff2`,
+  fontFigtree: `${SITE.base}assets/${hashedFonts.get('figtree-latin.woff2')}`,
 };
 write(assets.css.slice(SITE.base.length), css);
 write(assets.js.slice(SITE.base.length), js);
@@ -444,7 +463,7 @@ pages.forEach((page, i) => {
   }];
   const headHtml = head({
     title: SITE.homeTitle, description: SITE.homeDescription, canonical: abs(SITE.base), ogImage: abs(`${SITE.base}og/index.png`),
-    ogAlt: 'OpenSMS Docs: guides, API reference and SDKs', markdownUrl: null, ld, assets, type: 'website',
+    ogAlt: 'OpenSMS Docs: guides, API reference and SDKs', markdownUrl: `${SITE.base}index.md`, ld, assets, type: 'website',
   });
   write('index.html', homePage({ icons, pagesByPath, sections: SECTIONS, headHtml, stats }));
   searchIndex.lastmod = lastmod;
@@ -453,7 +472,8 @@ pages.forEach((page, i) => {
 // 404.
 {
   const icons = new IconSet();
-  const headHtml = head({ title: `Page not found | ${SITE.name}`, description: 'This page does not exist in the OpenSMS docs. Search the docs or start from the quickstart, the integration guides or the API reference.', noindex: true, assets });
+  const headHtml = head({ title: `Docs page not found | ${SITE.name}`, description: 'This page does not exist in the OpenSMS docs. Search the docs or start from the quickstart, the integration guides or the API reference.', noindex: true, assets,
+    type: 'website', ogUrl: abs(`${SITE.base}404.html`), ogImage: `${SITE.origin}/og/not-found.png`, ogAlt: 'Page not found | OpenSMS' });
   write('404.html', notFoundPage({ icons, pagesByPath, headHtml }));
 }
 
@@ -487,7 +507,7 @@ const llms = [
   '',
   `> ${SITE.summary}`,
   '',
-  'These docs cover the OpenSMS customer API and web app. Every page below is plain Markdown. OpenSMS is pre-launch: sandbox access, and the API origin that the examples write as `$OPENSMS_API`, come with an invitation from the waitlist at ' + `${SITE.origin}/` + '. Sandbox keys start with `sk_test_` and live keys with `sk_live_`. Request and response examples were captured from a running OpenSMS API, with secrets shortened. The sandbox workspaces used had not verified the owner\'s email, so the examples for `POST /v1/messages` and `POST /v1/otp/send` show the `403` refusal and no page shows a captured successful send; the success responses of those operations are described by their fields in the API reference instead. The full text of every page is in one file at ' + abs(`${SITE.base}llms-full.txt`) + '.',
+  'These docs cover the OpenSMS customer API and web app. Every page below is plain Markdown. Anyone can create an account at ' + `${SITE.origin}/signup` + ' to get a sandbox API key, and the API origin that the examples write as `$OPENSMS_API` is ' + `${SITE.origin}` + '. The SDKs\' built-in default base URL, `https://api.opensms.io`, does not resolve today, so pass ' + `${SITE.origin}` + ' as their base URL option. Sandbox keys start with `sk_test_` and live keys with `sk_live_`. Request and response examples were captured from a running OpenSMS API, with secrets shortened. The sandbox workspaces used had not verified the owner\'s email, so the examples for `POST /v1/messages` and `POST /v1/otp/send` show the `403` refusal and no page shows a captured successful send; the success responses of those operations are described by their fields in the API reference instead. The full text of every page is in one file at ' + abs(`${SITE.base}llms-full.txt`) + '.',
   '',
 ];
 for (const section of SECTIONS) {
@@ -499,6 +519,8 @@ for (const section of SECTIONS) {
   llms.push('');
 }
 write('llms.txt', llms.join('\n'));
+// The docs home as Markdown: the same section index the home page links to.
+write('index.md', llms.join('\n'));
 
 const full = [`# ${SITE.name}`, '', `> ${SITE.summary}`, ''];
 for (const page of pages) {
@@ -566,6 +588,8 @@ RedirectMatch 301 "^(/docs/[^.]*[^/.])$" "${SITE.origin}$1/"
 
 # Raw Markdown and the llms files are for tools, not search results.
 SetEnvIf Request_URI "^(/docs/.+)\\.md$" DOCS_MD_PAGE=$1/
+# The docs home in Markdown (index.md) belongs to /docs/, not /docs/index/.
+SetEnvIf Request_URI "^/docs/index\\.md$" DOCS_MD_PAGE=/docs/
 <IfModule mod_headers.c>
   <FilesMatch "\\.(md|txt)$">
     Header set X-Robots-Tag "noindex"
