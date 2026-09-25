@@ -44,7 +44,7 @@ If the list of documents cannot be loaded (for example a network blip), the scre
 
 > **Asked again in a new browser?** The web app remembers your acceptance in the browser you accepted in, so a new browser, a new device or cleared site data can show the screen again for documents you already accepted. Accepting again is safe: the server keeps your original acceptance record and does not create a duplicate.
 
-## Why it matters
+## Needed to go live
 
 Going live requires the workspace owner to have accepted the current terms and DPA. The [Go live](go-live.md) page also has **Accept** buttons for both documents, so the owner can accept there too.
 

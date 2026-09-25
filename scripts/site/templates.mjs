@@ -85,10 +85,10 @@ function header({ icons, activeSection }) {
       <a href="${SITE.base}" class="brand-docs">Docs</a>
     </div>
     <nav class="top-nav" aria-label="Sections">
-      ${links.map(([id, label, href]) => `<a href="${href}"${id === activeSection ? ' aria-current="true"' : ''}>${label}</a>`).join('')}
+      ${links.map(([id, label, href]) => `<a href="${href}"${id === activeSection ? ' aria-current="true"' : ''}>${label}</a>`).join(' ')}
     </nav>
     <div class="top-right">
-      <button type="button" class="search-trigger" data-search-open aria-keyshortcuts="Meta+K Control+K /">${icons.icon('search', 17)}<span class="search-trigger-text">Search docs</span><kbd class="kbd-cmd" aria-hidden="true">Ctrl K</kbd></button>
+      <button type="button" class="search-trigger" data-search-open aria-keyshortcuts="Meta+K Control+K /">${icons.icon('search', 17)}<span class="search-trigger-text">Search docs</span> <kbd class="kbd-cmd" aria-hidden="true">Ctrl K</kbd></button>
       <a class="icon-btn gh-btn" href="${SITE.repo}" aria-label="The docs on GitHub" rel="noopener">${icons.icon('github')}<span class="sr-only">The docs on GitHub</span></a>
       <button type="button" class="icon-btn" data-action="toggle-theme" aria-label="Toggle dark mode">${icons.icon('moon', 18, 'when-light')}${icons.icon('sun', 18, 'when-dark')}<span class="sr-only">Toggle dark mode</span></button>
       <a class="cta-btn" href="${SITE.origin}/signup">Get started</a>
@@ -144,7 +144,7 @@ function searchDialog({ icons }) {
   const sectionOf = (id) => SECTIONS.find((s) => s.id === id);
   const popular = POPULAR.map(([path, sid, label, line]) => {
     const sec = sectionOf(sid);
-    return `<li><a class="sp-item" href="${SITE.base}${path}"><span class="sr-icon">${icons.icon(sec.icon, 18)}</span><span class="sr-main"><span class="sr-title">${esc(label)}</span><span class="sr-crumb">${esc(sec.title)}<span class="sr-crumb-sep" aria-hidden="true">${icons.icon('arrow-right4', 11)}</span>${esc(line)}</span></span><span class="sr-go">${icons.icon('arrow-right4', 16)}</span></a></li>`;
+    return `<li><a class="sp-item" href="${SITE.base}${path}"><span class="sr-icon">${icons.icon(sec.icon, 18)}</span><span class="sr-main"><span class="sr-title">${esc(label)}</span> <span class="sr-crumb">${esc(sec.title)} <span class="sr-crumb-sep" aria-hidden="true">${icons.icon('arrow-right4', 11)}</span> ${esc(line)}</span></span><span class="sr-go">${icons.icon('arrow-right4', 16)}</span></a></li>`;
   }).join('');
   const sections = SECTIONS.map((s) => `<li><a href="${SITE.base}${s.pages[0].path.replace(/(^|\/)README\.md$/, '$1').replace(/\.md$/, '/')}">${icons.icon(s.icon, 16)}<span>${esc(s.title)}</span></a></li>`).join('');
   return `<div class="search" id="search" role="dialog" aria-modal="true" aria-label="Search the docs" hidden>
@@ -152,7 +152,7 @@ function searchDialog({ icons }) {
   <div class="search-panel">
     <div class="search-bar">
       <span class="search-bar-icon">${icons.icon('search', 20)}</span>
-      <input id="search-input" type="search" placeholder="Search guides, endpoints and screens" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-describedby="search-status">
+      <input id="search-input" type="search" aria-label="Search the docs" placeholder="Search guides, endpoints and screens" autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go" role="combobox" aria-expanded="true" aria-controls="search-results" aria-autocomplete="list" aria-describedby="search-status">
       <button type="button" class="search-esc" data-search-close aria-label="Close search">Esc</button>
     </div>
     <div class="search-body">
@@ -176,11 +176,45 @@ function searchDialog({ icons }) {
 </div>`;
 }
 
+// The same columns and links as the landing footer (landing/src/chrome/
+// site-footer.html), so both halves of opensms.io end the same way.
+const FOOTER_COLUMNS = [
+  ['Product', [['Countries', '/countries/'], ['Pricing', '/pricing/'], ['SDKs', '/#sdks'], ['Status', 'https://opensms.io/status'], ['Console', 'https://opensms.io/app']]],
+  ['Developers', [['Docs', SITE.base], ['API reference', `${SITE.base}reference/api/`], ['SDK guide', `${SITE.base}integrate/sdk/`], ['MCP server', `${SITE.base}integrate/mcp/`], ['llms.txt', `${SITE.base}llms.txt`]]],
+  ['Company', [['About', '/about/'], ['Contact', '/contact/'], ['Brand', '/brand/']]],
+  ['Legal', [['Privacy', '/privacy/'], ['Terms', '/terms/']]],
+];
+const FOOTER_SOCIAL = [
+  ['GitHub', 'github', 'https://github.com/opensms-io'],
+  ['Facebook', 'facebook', 'https://www.facebook.com/profile.php?id=61594556871099'],
+  ['YouTube', 'youtube', 'https://www.youtube.com/@opensmsio'],
+  ['TikTok', 'tiktok', 'https://www.tiktok.com/@opensms60'],
+];
+const FOOTER_REVIEWS = [
+  ['Trustpilot', 'https://www.trustpilot.com/review/opensms.io'],
+  ['G2', 'https://www.g2.com/products/opensms/reviews'],
+  ['Google', 'https://www.google.com/maps/place/opensms.io/data=!4m2!3m1!1s0x0:0x65ae4635bbad2a10'],
+];
+
 function footer({ icons }) {
   const year = 2026;
+  const cols = FOOTER_COLUMNS.map(([title, links]) => `<div class="footer-col"><h2 class="footer-heading">${title}</h2><ul>${links.map(([label, href]) => `<li><a href="${href}">${label}</a></li>`).join('')}</ul></div>`).join('');
+  const social = FOOTER_SOCIAL.map(([name, icon, href]) => `<li><a class="footer-icon" href="${href}" rel="me noopener" aria-label="OpenSMS on ${name}">${icons.icon(icon, 18)}</a></li>`).join('');
+  const reviews = FOOTER_REVIEWS.map(([name, href]) => `<li><a class="footer-review" href="${href}" rel="me noopener">${name}</a></li>`).join('');
   return `<footer class="site-footer">
-  <span class="footer-brand">${MARK(16)}${year} OpenSMS. All rights reserved.</span>
-  <span class="footer-links"><a class="back-link" href="/">${icons.icon('arrow-left4', 14)}<span>Back to opensms.io</span></a><span class="dot-sep" aria-hidden="true">/</span><a href="${SITE.base}">Docs</a><span class="dot-sep" aria-hidden="true">/</span><a href="${SITE.base}llms.txt">llms.txt</a><span class="dot-sep" aria-hidden="true">/</span><a href="/brand/">Brand</a><span class="dot-sep" aria-hidden="true">/</span><a href="/privacy/">Privacy</a><span class="dot-sep" aria-hidden="true">/</span><a href="/terms/">Terms</a><span class="dot-sep" aria-hidden="true">/</span><a href="https://github.com/opensms-io" rel="me noopener">GitHub</a></span>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="/" class="brand-mark" aria-label="OpenSMS home">${MARK(26)}<span class="brand-word"><span class="w-open">open</span><span class="w-sms">sms</span></span></a>
+      <p class="footer-tagline">Prepaid SMS API for businesses sending across Africa. Based in Kenya.</p>
+      <a class="back-link" href="/">${icons.icon('arrow-left4', 14)}<span>Back to opensms.io</span></a>
+      <p class="footer-copy">&copy; ${year} OpenSMS. All rights reserved.</p>
+    </div>
+    <nav class="footer-nav" aria-label="Footer">${cols}</nav>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-group"><span class="footer-label" id="footer-follow">Follow</span><ul class="footer-social" aria-labelledby="footer-follow">${social}</ul></div>
+    <div class="footer-group"><span class="footer-label" id="footer-reviews">Reviews</span><ul class="footer-social" aria-labelledby="footer-reviews">${reviews}</ul></div>
+  </div>
 </footer>`;
 }
 
@@ -211,7 +245,7 @@ function tocHtml(headings) {
   const top = Math.min(...items.map((h) => h.level));
   const label = (text) => {
     const m = text.match(OP);
-    return m ? `<span class="toc-op"><span class="toc-m method-${m[1].toLowerCase()}">${m[1]}</span><span class="toc-path">${wbrPath(m[2])}</span></span>` : esc(text);
+    return m ? `<span class="toc-op"><span class="toc-m method-${m[1].toLowerCase()}">${m[1]}</span> <span class="toc-path">${wbrPath(m[2])}</span></span>` : esc(text);
   };
   return `<ul>${items.map((h) => `<li class="toc-l${h.level - top + 2}"><a href="#${h.id}" data-toc="${h.id}">${label(h.text)}</a></li>`).join('')}</ul>`;
 }
@@ -224,7 +258,7 @@ export function articlePage({ page, prev, next, icons, pagesByPath, assets, head
   const pager = (p, dir) => {
     if (!p) return '<span></span>';
     const chev = dir === 'prev' ? icons.icon('arrow-left4', 18, 'pager-chev') : icons.icon('arrow-right4', 18, 'pager-chev');
-    return `<a class="pager pager-${dir}" href="${p.url}" rel="${dir}">${dir === 'prev' ? chev : ''}<span class="pager-text"><span class="pager-label">${dir === 'prev' ? 'Previous' : 'Next'}<span class="pager-section"> / ${esc(p.section.title)}</span></span><span class="pager-title">${esc(p.navLabel)}</span></span>${dir === 'next' ? chev : ''}</a>`;
+    return `<a class="pager pager-${dir}" href="${p.url}" rel="${dir}">${dir === 'prev' ? chev : ''}<span class="pager-text"><span class="pager-label">${dir === 'prev' ? 'Previous' : 'Next'}<span class="pager-section"> / ${esc(p.section.title)}</span></span> <span class="pager-title">${esc(p.navLabel)}</span></span>${dir === 'next' ? chev : ''}</a>`;
   };
   const body = `${header({ icons, activeSection: page.section.id })}
 <div class="shell">
@@ -254,7 +288,7 @@ ${page.html}
         <a class="edit-link" href="${page.editUrl}" rel="noopener">${icons.icon('edit', 16)}Edit this page on GitHub</a>
         <span class="muted">Last updated <time datetime="${page.lastmod}">${fmtDate(page.lastmod)}</time></span>
       </div>
-      <nav class="pagers" aria-label="Previous and next pages">${pager(prev, 'prev')}${pager(next, 'next')}</nav>
+      <nav class="pagers" aria-label="Previous and next pages">${pager(prev, 'prev')} ${pager(next, 'next')}</nav>
     </footer>
   </article>
   ${toc ? `<aside class="toc" aria-label="On this page"><p class="toc-title">On this page</p><nav>${toc}</nav><a class="toc-top" href="#content">${icons.icon('arrow-up3', 14)}Back to top</a></aside>` : '<aside class="toc toc-empty" aria-hidden="true"></aside>'}
@@ -290,9 +324,9 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <svg class="hero-curves" viewBox="0 0 736 920" aria-hidden="true" focusable="false"><g fill="none" stroke="var(--curve)" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="var(--curve)"/></svg>
     <div class="hero-copy">
       <p class="eyebrow">${icons.icon('ai-book', 15)}OpenSMS documentation</p>
-      <h1>Build with<br> OpenSMS.</h1>
-      <p class="hero-lead">Everything you need to send SMS across Africa: a five-minute quickstart, task guides, official SDKs, the full API reference and step-by-step guides for the web app.</p>
-      <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span><kbd class="kbd-cmd">Ctrl K</kbd></button>
+      <h1>Build with<br> OpenSMS</h1>
+      <p class="hero-lead">How to send SMS with OpenSMS: a five-minute quickstart, task guides, official SDKs, the full API reference and step-by-step guides for the web app.</p>
+      <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span> <kbd class="kbd-cmd" aria-hidden="true">Ctrl K</kbd></button>
       <div class="hero-ctas">
         <a class="cta-btn cta-lg" href="${quick.url}">${icons.icon('flash', 17)}Start the quickstart</a>
         <a class="ghost-btn" href="${SITE.base}reference/api/">${icons.icon('document-code', 17)}Browse the API</a>
@@ -301,7 +335,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <div class="hero-demo" aria-label="Example request">
       <div class="demo-pill demo-pill-a"><span class="demo-dot" aria-hidden="true"></span><span>POST /v1/messages</span></div>
       <div class="code demo-code">
-        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span><span class="code-sep" aria-hidden="true">/</span><span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clip-board', 16, 'when-idle')}${icons.icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
+        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span> <span class="code-sep" aria-hidden="true">/</span> <span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clip-board', 16, 'when-idle')}${icons.icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
 <pre><code class="hljs language-bash">${stats.demoHtml}</code></pre>
       </div>
       <div class="demo-pill demo-pill-b"><span class="mono">sk_test_</span> keys are free in sandbox</div>
@@ -311,7 +345,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
   <section class="home-sections" aria-labelledby="sections-title">
     <div class="home-head">
       <p class="label">Explore</p>
-      <h2 id="sections-title">Five ways in</h2>
+      <h2 id="sections-title">Docs by section</h2>
     </div>
     <div class="cards">
 ${sections.map(card).join('\n')}
@@ -320,11 +354,11 @@ ${sections.map(card).join('\n')}
 
   <section class="home-path" aria-labelledby="path-title">
     <div class="home-head">
-      <p class="label">From zero to live</p>
-      <h2 id="path-title">The path most teams take</h2>
+      <p class="label">Getting started</p>
+      <h2 id="path-title">From first message to live traffic</h2>
     </div>
     <ol class="steps">
-      ${stats.steps.map((st, i) => `<li><a href="${st.url}"><span class="step-top"><span class="step-icon">${icons.icon(st.icon, 20)}</span><span class="step-n">0${i + 1}</span></span><span class="step-title">${esc(st.title)}${icons.icon('arrow-right4', 16)}</span><span class="step-text">${esc(st.text)}</span></a></li>`).join('')}
+      ${stats.steps.map((st, i) => `<li><a href="${st.url}"><span class="step-top"><span class="step-icon">${icons.icon(st.icon, 20)}</span><span class="step-n">0${i + 1}</span></span> <span class="step-title">${esc(st.title)}${icons.icon('arrow-right4', 16)}</span> <span class="step-text">${esc(st.text)}</span></a></li>`).join('')}
     </ol>
   </section>
 
@@ -361,10 +395,10 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
 <main id="content" class="notfound">
   <svg class="hero-curves" viewBox="0 0 736 920" aria-hidden="true" focusable="false"><g fill="none" stroke="var(--curve)" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="var(--curve)"/></svg>
   <div class="nf-copy">
-    <p class="eyebrow mono">404 / NOT DELIVERED</p>
-    <h1>This page never arrived.</h1>
+    <p class="eyebrow mono">404 / NOT FOUND</p>
+    <h1>Page not found</h1>
     <p class="hero-lead">The link may be old, or the page moved when the docs were reorganised. Search for it, or start from one of these.</p>
-    <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span><kbd class="kbd-cmd">Ctrl K</kbd></button>
+    <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span> <kbd class="kbd-cmd" aria-hidden="true">Ctrl K</kbd></button>
     <ul class="nf-links">${links}</ul>
     <a class="ghost-btn" href="${SITE.base}">${icons.icon('arrow-left4', 16)}Back to the docs home</a>
   </div>

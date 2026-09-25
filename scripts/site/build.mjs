@@ -450,7 +450,7 @@ pages.forEach((page, i) => {
     demoHtml: hljs.highlight(demo, { language: 'bash' }).value,
     steps: [
       { icon: 'flash', title: 'Send a sandbox message', text: 'Create an account, mint a sk_test_ key and send your first message in about five minutes.', url: pagesByPath.get('getting-started/quickstart.md').url },
-      { icon: 'key', title: 'Authenticate your servers', text: 'Scoped API keys for servers, session tokens for people, and how to rotate them safely.', url: pagesByPath.get('integrate/authentication.md').url },
+      { icon: 'key', title: 'Authenticate your servers', text: 'Scoped API keys for servers, session tokens for people, and how to rotate and revoke keys.', url: pagesByPath.get('integrate/authentication.md').url },
       { icon: 'sms-tracking', title: 'Track every delivery', text: 'Signed webhooks for delivered, failed and expired messages, with retries you can replay.', url: pagesByPath.get('integrate/delivery-reports-and-webhooks.md').url },
       { icon: 'rocket', title: 'Go live', text: 'Verification, legal acceptance, a funded wallet and a sender ID, then switch to a live key.', url: pagesByPath.get('getting-started/going-live.md').url },
     ],

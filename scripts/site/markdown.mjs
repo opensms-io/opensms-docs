@@ -254,7 +254,7 @@ export function createRenderer({ icon }) {
     const text = tokens.length === 1 && tokens[0].type === 'text' ? tokens[0].content : null;
     const m = text && text.match(METHOD);
     if (m && env.__inHeading) {
-      return `<span class="method method-${m[1].toLowerCase()}">${m[1]}</span><code class="op-path">${wbrPath(m[2])}</code>`;
+      return `<span class="method method-${m[1].toLowerCase()}">${m[1]} </span><code class="op-path">${wbrPath(m[2])}</code>`;
     }
     return defaultInline(tokens, opts, env);
   };
@@ -339,7 +339,7 @@ export function createRenderer({ icon }) {
     const numbered = !attrs.nolines && !t.meta?.tab && (attrs.lines === 'true' || (NUMBERED.has(lang) && lines >= NUMBER_FROM));
     if (numbered) html = splitLines(html).map((l) => `<span class="ln">${l}</span>`).join('\n');
     env.codeBlocks = (env.codeBlocks ?? 0) + 1;
-    const file = attrs.title ? `<span class="code-sep" aria-hidden="true">/</span><span class="code-file">${escapeHtml(attrs.title)}</span>` : '';
+    const file = attrs.title ? ` <span class="code-sep" aria-hidden="true">/</span> <span class="code-file">${escapeHtml(attrs.title)}</span>` : '';
     const block = `<div class="code${numbered ? ' has-lines' : ''}"><div class="code-head"><span class="code-meta">${langMark(attrs.logo ?? mark, icon)}<span class="code-lang">${escapeHtml(label)}</span>${file}</span>`
       + `<button type="button" class="code-copy" data-copy aria-label="Copy code${attrs.title ? `: ${escapeHtml(attrs.title)}` : ''}">${icon('clip-board', 16, 'when-idle')}${icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
       + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>`;

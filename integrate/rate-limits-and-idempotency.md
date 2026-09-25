@@ -1,6 +1,6 @@
 # Rate limits and idempotency
 
-This page explains the limits the API enforces (per API key and per recipient) and how the `Idempotency-Key` header makes retries safe. It is for developers building send paths that must never double-send and must behave well under load or network failures.
+The API limits requests per API key and messages per recipient number. The `Idempotency-Key` header lets you retry a request without it taking effect twice. It is for developers building send paths that must never double-send and must behave well under load or network failures.
 
 ## Rate limits
 
