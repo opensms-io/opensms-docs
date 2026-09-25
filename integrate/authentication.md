@@ -32,6 +32,8 @@ A session is created by:
 | `POST /v1/auth/login/2fa` `{challenge_token, code}` | `201` and a session |
 | `POST /v1/auth/login/code` then `/v1/auth/login/code/verify` | Passwordless login by emailed code (needs email delivery) |
 
+The SDKs authenticate with API keys only, so every session call on this page is shown with cURL.
+
 The `token` field (`sess_...`) is the bearer credential. A session expires after **30 minutes without an authenticated request** or **30 days after it was issued**, whichever comes first. Every authenticated HTTP request pushes the idle deadline forward; the absolute deadline never moves. `expires_at` in the response is the absolute deadline.
 
 Eight failed password attempts within 30 minutes lock the email (`429` `"login temporarily locked"`) until fewer than eight failures fall inside the last 30 minutes. Attempts made while locked count as failures too, so keep retrying and the lock keeps extending. A wrong password returns `401` `"invalid email or password"`.
@@ -69,6 +71,96 @@ An API key looks like `sk_test_` or `sk_live_` followed by 32 random characters.
 - `sk_test_` keys act on sandbox data only. Any workspace member who can create keys can create them.
 - `sk_live_` keys act on live data only. Only owners and admins can create them.
 
+A call with a key needs only the `Authorization` header. Each SDK takes the key once, when you build the client, and reports the environment the key selects:
+
+<!-- tabs label="Call the API with a key" -->
+```sh tab="cURL" title="Terminal"
+curl -s "$OPENSMS_API/v1/messages?limit=1" -H "authorization: Bearer $OPENSMS_API_KEY"
+```
+
+```ts tab="TypeScript" logo="typescript" title="key-check.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+console.log(opensms.environment); // "sandbox" for sk_test_, "live" for sk_live_
+
+const page = await opensms.messages.list({ limit: 1 });
+console.log(page.items.length, page.nextCursor);
+```
+
+```python tab="Python" logo="python" title="key_check.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+print(client.environment)  # "sandbox" for sk_test_, "live" for sk_live_
+
+page = client.messages.list(limit=1)
+print(len(page.items), page.next_cursor)
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(client.Environment()) // "sandbox" for sk_test_, "live" for sk_live_
+
+page, err := client.Messages.List(context.Background(), opensms.ListMessagesParams{Limit: 1})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(len(page.Items), page.NextCursor)
+```
+
+```php tab="PHP" logo="php" title="key-check.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+echo $opensms->environment, PHP_EOL; // "sandbox" for sk_test_, "live" for sk_live_
+
+$page = $opensms->messages->list(['limit' => 1]);
+echo count($page->items), ' ', $page->nextCursor ?? 'null', PHP_EOL;
+```
+
+```java tab="Java" logo="java" title="KeyCheck.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+System.out.println(opensms.environment()); // "sandbox" for sk_test_, "live" for sk_live_
+
+Page<Message> page = opensms.messages().list(new MessageListParams().limit(1));
+System.out.println(page.items.size() + " " + page.nextCursor);
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+Console.WriteLine(client.Environment); // "sandbox" for sk_test_, "live" for sk_live_
+
+var page = await client.Messages.ListAsync(new MessageListParams { Limit = 1 });
+Console.WriteLine($"{page.Items.Count} {page.NextCursor}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="key_check.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+puts client.environment # "sandbox" for sk_test_, "live" for sk_live_
+
+page = client.messages.list(limit: 1)
+puts "#{page.items.length} #{page.next_cursor.inspect}"
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+println!("{}", client.environment()); // "sandbox" for sk_test_, "live" for sk_live_
+
+let page = client
+    .messages()
+    .list(ListMessages { limit: Some(1), ..Default::default() })
+    .await?;
+println!("{} {}", page.items.len(), page.next_cursor.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+print(opensms.environment) // "sandbox" for sk_test_, "live" for sk_live_
+
+let page = try await opensms.messages.list(.init(limit: 1))
+print(page.items.count, page.nextCursor ?? "nil")
+```
+<!-- /tabs -->
+
 Because the key already carries its workspace and environment, **do not send `X-Workspace-ID` or `X-Environment` with a key**. Most endpoints ignore them. Batches, lookup and inbound reject a value that differs from the key's own, for example:
 
 ```json
@@ -96,6 +188,8 @@ The server stores only an Argon2id hash of the key. The secret is shown once, in
 `last_used_at` is updated every time the key authenticates, even if the call is then refused. Owners and admins see all keys; developers see sandbox keys only.
 
 ### Creating a key
+
+Key management needs a session, so it is not in the SDKs:
 
 ```sh
 curl -s -X POST $OPENSMS_API/v1/keys \
@@ -180,7 +274,7 @@ Invalid scope requests fail with `400` and a code:
 
 ## Rotating a key
 
-`POST /v1/keys/{id}/rotate` (owner or admin session) issues a new secret with the same label, scopes and environment, and schedules the old key to expire in 24 hours. Deploy the new secret within that window.
+`POST /v1/keys/{id}/rotate` (owner or admin session) issues a new secret with the same label, scopes and environment, and schedules the old key to expire in 24 hours. Deploy the new secret within that window. Like creation, rotation is session only and not in the SDKs.
 
 ```sh
 curl -s -X POST $OPENSMS_API/v1/keys/f5850170-a747-4f76-b91f-31531ab2d34d/rotate \

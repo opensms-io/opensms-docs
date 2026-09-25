@@ -30,23 +30,23 @@ export const SECTIONS = [
     pages: [
       { path: 'getting-started/overview.md', label: 'Overview' },
       { path: 'getting-started/quickstart.md', label: 'Quickstart' },
-      { path: 'getting-started/going-live.md', label: 'Going live' },
+      { path: 'getting-started/going-live.md', label: 'Going live', seoTitle: 'Going live: from sandbox to real traffic' },
     ],
   },
   {
     id: 'integrate', title: 'Integrate', icon: 'sms',
     blurb: 'Task guides for developers: authentication, sending, webhooks, OTP, lookup, billing, errors and AI assistants.',
     pages: [
-      { path: 'integrate/authentication.md' },
+      { path: 'integrate/authentication.md', seoTitle: 'Authentication: API keys, sessions and scopes' },
       { path: 'integrate/sending-messages.md' },
       { path: 'integrate/delivery-reports-and-webhooks.md', label: 'Delivery reports and webhooks' },
       { path: 'integrate/otp.md', label: 'One-time passcodes' },
-      { path: 'integrate/lookup.md' },
+      { path: 'integrate/lookup.md', seoTitle: 'Number lookup: carrier, porting and validity' },
       { path: 'integrate/inbound.md', label: 'Inbound messages' },
       { path: 'integrate/contacts-and-templates.md' },
       { path: 'integrate/realtime.md', label: 'Realtime' },
       { path: 'integrate/billing-and-wallet.md' },
-      { path: 'integrate/errors.md' },
+      { path: 'integrate/errors.md', seoTitle: 'Errors: problem details, codes and retries' },
       { path: 'integrate/rate-limits-and-idempotency.md', label: 'Rate limits and idempotency' },
       {
         path: 'integrate/mcp.md', label: 'AI assistants (MCP)', seoTitle: 'Connect AI assistants to OpenSMS with MCP',

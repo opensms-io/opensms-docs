@@ -16,8 +16,11 @@ const BASE = `http://127.0.0.1:${PORT}`;
 
 const PAGES = [
   ['home', '/docs/', null],
+  ['quickstart', '/docs/getting-started/quickstart/', '[id="4-send-your-first-message"]'],
+  ['section-home', '/docs/getting-started/overview/', '.site-footer'],
   ['guide', '/docs/integrate/sending-messages/', '.code'],
-  ['api-reference', '/docs/reference/api/messages/', '.doc-ref .prose h2.op'],
+  ['sdk', '/docs/integrate/sdk/', '#quick-example'],
+  ['api-reference', '/docs/reference/api/messages/', '.doc-ref .prose h2'],
   ['mcp', '/docs/integrate/mcp/', '.client-grid'],
   ['mcp-tools', '/docs/integrate/mcp/', '#create_batch'],
   ['console-guide', '/docs/console/sender-ids/', 'figure.shot'],
@@ -89,6 +92,20 @@ try {
   await page.waitForTimeout(300);
   await page.screenshot({ path: join(OUT, 'search-1440-light.png') });
   shots.push('search-1440-light.png');
+  // The same results in dark, then the empty state (popular pages and sections).
+  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await page.screenshot({ path: join(OUT, 'search-1440-dark.png') });
+  shots.push('search-1440-dark.png');
+  await page.fill('#search-input', '');
+  await page.dispatchEvent('#search-input', 'input');
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: join(OUT, 'search-empty-1440-dark.png') });
+  shots.push('search-empty-1440-dark.png');
+  await page.evaluate(() => document.documentElement.removeAttribute('data-theme'));
+  await page.screenshot({ path: join(OUT, 'search-empty-1440-light.png') });
+  shots.push('search-empty-1440-light.png');
+  await page.type('#search-input', 'webhook signature');
+  await page.waitForTimeout(300);
   const results = await page.locator('.sr-item').count();
   if (!results) problems.push('search: no results for "webhook signature"');
   await Promise.all([page.waitForURL(/delivery-reports-and-webhooks/, { timeout: 5000 }).catch(() => {}), page.keyboard.press('Enter')]);
@@ -102,12 +119,45 @@ try {
   await m.waitForTimeout(350);
   await m.screenshot({ path: join(OUT, 'drawer-390-light.png') });
   shots.push('drawer-390-light.png');
+  // The drawer foot ("Back to opensms.io" and the Get started button), in both themes.
+  await m.locator('.sidebar-foot').scrollIntoViewIfNeeded();
+  await m.screenshot({ path: join(OUT, 'drawer-foot-390-light.png') });
+  shots.push('drawer-foot-390-light.png');
+  await m.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await m.waitForTimeout(100);
+  await m.screenshot({ path: join(OUT, 'drawer-foot-390-dark.png') });
+  shots.push('drawer-foot-390-dark.png');
+  await m.evaluate(() => document.documentElement.removeAttribute('data-theme'));
   await m.keyboard.press('Escape');
   await m.waitForTimeout(300);
   await m.click('.toc-mobile summary');
   await m.waitForTimeout(200);
   await m.screenshot({ path: join(OUT, 'toc-390-light.png') });
   shots.push('toc-390-light.png');
+  // Search on a phone, light and dark.
+  await m.goto(`${BASE}/docs/`, { waitUntil: 'networkidle' });
+  await m.click('.search-trigger');
+  await m.keyboard.type('sender id');
+  await m.waitForTimeout(300);
+  await m.screenshot({ path: join(OUT, 'search-390-light.png') });
+  shots.push('search-390-light.png');
+  await m.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  await m.screenshot({ path: join(OUT, 'search-390-dark.png') });
+  shots.push('search-390-dark.png');
+  await m.evaluate(() => document.documentElement.removeAttribute('data-theme'));
+  await m.keyboard.press('Escape');
+  // Language tabs: choosing Python switches both groups on the SDK page.
+  await m.goto(`${BASE}/docs/integrate/sdk/`, { waitUntil: 'networkidle' });
+  const py2 = m.locator('#tabs-2 [data-tab-key="python"], [aria-controls^="tabs-2-"][data-tab-key="python"]').first();
+  await py2.scrollIntoViewIfNeeded();
+  await py2.click();
+  await m.waitForTimeout(100);
+  // Every group that has Python now shows it, and the choice is remembered.
+  const synced = await m.evaluate(() => [...document.querySelectorAll('[data-tabs]')].every((g) => !g.querySelector('[data-tab-key="python"]') || g.querySelector('[aria-selected="true"]').dataset.tabKey === 'python')
+    && localStorage.getItem('opensms-docs-lang') === 'python');
+  if (!synced) problems.push('sdk tabs: choosing Python did not switch every group, or was not remembered');
+  await m.screenshot({ path: join(OUT, 'sdk-tabs-390-light.png') });
+  shots.push('sdk-tabs-390-light.png');
   await m.setViewportSize({ width: 360, height: 780 });
   await m.goto(`${BASE}/docs/reference/api/messages/`, { waitUntil: 'networkidle' });
   const o360 = await m.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

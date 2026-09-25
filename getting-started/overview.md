@@ -5,7 +5,7 @@ OpenSMS is a prepaid SMS platform with an HTTP API. You create an account and a 
 - New here? Go to the [quickstart](quickstart.md).
 - Ready for production? Read [going live](going-live.md).
 
-> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access, with the API origin to use, comes with an invitation from the [waitlist](https://opensms.io/#docs).
+> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup) to get a sandbox API key. The API origin is `https://opensms.io`.
 
 ## What the API does
 
@@ -26,7 +26,7 @@ Every customer endpoint is described by an OpenAPI 3.1 contract, and the [custom
 
 ## Base URL
 
-Every customer endpoint lives under one origin, with paths starting `/v1/`. The examples in these docs write that origin as `$OPENSMS_API`; set it to the API origin from your sandbox invitation.
+Every customer endpoint lives under one origin, with paths starting `/v1/`. The examples in these docs write that origin as `$OPENSMS_API`; set it to `https://opensms.io`.
 
 `GET /healthz` answers `ok` when the process is up, and `GET /readyz` answers `ready` when its database, Redis and other dependencies respond. Neither needs credentials.
 

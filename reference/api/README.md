@@ -6,7 +6,7 @@ The exact contract of the OpenSMS customer API, for developers integrating with 
 
 Contract version `0.1.0` (OpenAPI `3.1.0`): 136 paths, 173 operations, 87 named schemas.
 
-> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access, and the API origin to use as `$OPENSMS_API`, come with an invitation from the [waitlist](https://opensms.io/#docs).
+> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup) to get a sandbox API key. The API origin to use as `$OPENSMS_API` is `https://opensms.io`.
 
 ## Pages
 
@@ -46,7 +46,7 @@ The contract tags only 57 of 173 operations. Tagged operations sit on their tag'
 
 ## Conventions
 
-**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL: the API origin from your sandbox invitation.
+**Base URL.** Customer routes live under `/v1` on the API port; public routes (`/status`, `/healthz`, `/readyz`, `/callbacks/...`) sit at the root. The examples use `$OPENSMS_API` for the base URL: `https://opensms.io`.
 
 **Authentication.** Two bearer credentials exist (`components.securitySchemes`):
 

@@ -27,7 +27,7 @@ const GATE = 'email verification is required for sandbox sending';
 /** The fenced block that follows <!-- test:name --> in a page. */
 function snippet(page, name) {
   const text = readFileSync(join(ROOT, page), 'utf8');
-  const re = new RegExp(`<!-- test:${name} -->\\s*\\n\`\`\`[a-z]*\\n([\\s\\S]*?)\\n\`\`\``);
+  const re = new RegExp(`<!-- test:${name} -->\\s*\\n\`\`\`[a-z]*[^\\n]*\\n([\\s\\S]*?)\\n\`\`\``);
   const m = text.match(re);
   assert.ok(m, `snippet ${name} not found in ${page}`);
   return m[1];

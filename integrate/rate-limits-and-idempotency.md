@@ -53,6 +53,8 @@ Operators can set other values per country or per workspace. Over the limit the 
 2. Retry with the **same** `Idempotency-Key`.
 3. Add jitter when many workers retry at once, and cap concurrency per key below the key limit.
 
+The SDKs do steps 1 and 2 for you; see [retries in the SDKs](#retries-in-the-sdks).
+
 ## Idempotency
 
 Network failures make it impossible to know whether a `POST` reached the server. The `Idempotency-Key` header lets you retry without risk: the first request with a given key does the work and stores its response; later requests with the same key and the same body get the stored response back and change nothing.
@@ -77,20 +79,132 @@ It is optional on `PUT`, `PATCH` and `DELETE /v1/webhooks/{id}`. `POST /v1/otp/v
 - Message and OTP keys are kept for at least 24 hours. Treat every key as single-use forever: never reuse one for a different operation.
 - A send **refused** at admission (any `4xx` from the rules in [sending messages](sending-messages.md#why-a-message-is-refused)) does not use up its key. Fix the cause and retry with the same key.
 
-Replaying a batch upload (real responses: the first call, then the identical retry):
+Replaying a batch upload: run any tab twice and the second call returns the first batch. The SDKs send the `Idempotency-Key` you pass instead of generating one.
 
-```sh
+<!-- tabs label="SDK language" -->
+```sh tab="cURL" title="Terminal"
 curl -s -X POST $OPENSMS_API/v1/messages/batch -H "authorization: Bearer $OPENSMS_API_KEY" \
-  -H 'content-type: application/json' -H 'idempotency-key: idem-demo-batch' \
-  -d '{"items":[{"to":"+254700000001","text":"Reminder: your appointment is tomorrow"}]}'
+  -H 'content-type: application/json' -H 'idempotency-key: reminders-2026-09-25' \
+  -d '{"items":[{"to":"+254712345678","text":"Reminder: your appointment is tomorrow"}]}'
 ```
 
-```json
-{"id":"41014e36-f678-49ae-9132-a6a1c1361308","status":"ready","total":1,"sent":0,"delivered":0,"failed":0,"invalid":0,"duplicates":0,"suppressed":0,"estimated_cost":null,"created_at":"2026-09-24T07:46:26.388001+03:00"}
+```ts tab="TypeScript" logo="typescript" title="batch.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const batch = await opensms.batches.create(
+  { items: [{ to: '+254712345678', text: 'Reminder: your appointment is tomorrow' }] },
+  { idempotencyKey: 'reminders-2026-09-25' },
+);
+
+console.log(batch.id, batch.status);
 ```
 
+```python tab="Python" logo="python" title="batch.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+batch = client.batches.create(
+    items=[{"to": "+254712345678", "text": "Reminder: your appointment is tomorrow"}],
+    idempotency_key="reminders-2026-09-25",
+)
+
+print(batch["id"], batch["status"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+batch, err := client.Batches.Create(context.Background(), opensms.CreateBatchParams{
+	Items: []opensms.BatchItemInput{
+		{To: "+254712345678", Text: "Reminder: your appointment is tomorrow"},
+	},
+}, opensms.WithIdempotencyKey("reminders-2026-09-25"))
+if err != nil {
+	log.Fatal(err)
+}
+log.Println(batch.ID, batch.Status)
+```
+
+```php tab="PHP" logo="php" title="batch.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$batch = $opensms->batches->create([
+    'items' => [['to' => '+254712345678', 'text' => 'Reminder: your appointment is tomorrow']],
+], ['idempotencyKey' => 'reminders-2026-09-25']);
+
+echo $batch['id'], ' ', $batch['status'], PHP_EOL;
+```
+
+```java tab="Java" logo="java" title="Main.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Batch batch = opensms.batches().create(
+    List.of(new BatchItemInput("+254712345678", "Reminder: your appointment is tomorrow")),
+    null,
+    RequestOptions.idempotencyKey("reminders-2026-09-25"));
+
+System.out.println(batch.id + " " + batch.status);
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var batch = await client.Batches.CreateAsync(new CreateBatchParams
+{
+    Items = new[] { new BatchItemInput { To = "+254712345678", Text = "Reminder: your appointment is tomorrow" } },
+}, new RequestOptions { IdempotencyKey = "reminders-2026-09-25" });
+
+Console.WriteLine($"{batch.Id} {batch.Status}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="batch.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+batch = client.batches.create(
+  items: [{ to: "+254712345678", text: "Reminder: your appointment is tomorrow" }],
+  idempotency_key: "reminders-2026-09-25"
+)
+
+puts batch[:id], batch[:status]
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let batch = client
+    .batches()
+    .create_with(
+        &CreateBatch {
+            items: vec![BatchItemInput::new("+254712345678", "Reminder: your appointment is tomorrow")],
+            dedupe: None,
+        },
+        &RequestOptions::idempotency_key("reminders-2026-09-25"),
+    )
+    .await?;
+
+println!("{} {}", batch.id, batch.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let batch = try await opensms.batches.create(
+    .init(items: [.init(to: "+254712345678", text: "Reminder: your appointment is tomorrow")]),
+    idempotencyKey: "reminders-2026-09-25"
+)
+
+print(batch.id, batch.status ?? "")
+```
+<!-- /tabs -->
+
+Real responses, the first call and then the identical retry:
+
 ```json
-{"id": "41014e36-f678-49ae-9132-a6a1c1361308", "sent": 0, "total": 1, "failed": 0, "status": "ready", "invalid": 0, "delivered": 0, "created_at": "2026-09-24T07:46:26.388001+03:00", "duplicates": 0, "suppressed": 0, "estimated_cost": null}
+{"id":"56c82496-116d-419e-8c3f-3aac2465fd96","status":"ready","total":1,"sent":0,"delivered":0,"failed":0,"invalid":0,"duplicates":0,"suppressed":0,"estimated_cost":null,"created_at":"2026-09-24T14:56:25.663733+03:00"}
+{"id": "56c82496-116d-419e-8c3f-3aac2465fd96", "sent": 0, "total": 1, "failed": 0, "status": "ready", "invalid": 0, "delivered": 0, "created_at": "2026-09-24T14:56:25.663733+03:00", "duplicates": 0, "suppressed": 0, "estimated_cost": null}
 ```
 
 Same batch ID, no second batch. The same key with a different recipient:
@@ -113,9 +227,154 @@ Derive the key from the business event, not from the attempt:
 
 A random UUID per request protects only against retries inside one process. A key derived from your data also protects against a crash and restart between sending and recording the result.
 
+## Retries in the SDKs
+
+The [SDKs](sdk.md) do the retry loop above for you. Every client retries `429`, `500`, `502`, `503`, `504`, network errors and timeouts, with exponential backoff and full jitter capped at 8 seconds, and honours `Retry-After`. When `Retry-After` asks for more than 60 seconds the client does not wait: it raises the error with the retry-after value set (see [errors in the SDKs](errors.md#errors-in-the-sdks)).
+
+A retry is only made when repeating the request is safe: `GET`, `PUT`, `PATCH` and `DELETE` always, a `POST` only when it carries an `Idempotency-Key`. Every method that takes a key generates a UUIDv4 once per call and sends it unchanged on every retry of that call. `messages.cancel`, `otp.verify`, sender ID creation (including drafts) and suppression creation and import are never retried.
+
+A generated key protects only the retries inside one call. Pass your own key, derived from the business event, when a crash or a redeploy could run the same send again:
+
+| Language | Retry count (default 2, so 3 attempts) | Your own `Idempotency-Key` |
+| --- | --- | --- |
+| TypeScript | `new Opensms({ apiKey, maxRetries })` | `{ idempotencyKey }` as the last argument |
+| Python | `Opensms(api_key=..., max_retries=...)` | `idempotency_key=` keyword |
+| Go | `opensms.WithMaxRetries(n)` option to `NewClient` | `opensms.WithIdempotencyKey(key)` call option |
+| PHP | `new Client($key, ['maxRetries' => n])` | `['idempotencyKey' => $key]` as the last argument |
+| Java | `OpensmsClient.builder().maxRetries(n)` | `RequestOptions.idempotencyKey(key)` as the last argument |
+| C# | `new OpensmsClientOptions { MaxRetries = n }` | `new RequestOptions { IdempotencyKey = key }` |
+| Ruby | `Opensms::Client.new(api_key: ..., max_retries: n)` | `idempotency_key:` keyword |
+| Rust | `Client::builder(key).max_retries(n)` | the `_with` method variant and `RequestOptions::idempotency_key(key)` |
+| Swift | `OpensmsClient(apiKey: ..., maxRetries: n)` | `idempotencyKey:` argument |
+
+Four retries and a key derived from the order. With cURL, `--retry` repeats on `408`, `429`, `500`, `502`, `503` and `504`, honours `Retry-After`, and resends the same header:
+
+<!-- tabs label="SDK language" -->
+```sh tab="cURL" title="Terminal"
+curl -s --retry 4 -X POST $OPENSMS_API/v1/messages \
+  -H "authorization: Bearer $OPENSMS_API_KEY" -H 'content-type: application/json' \
+  -H 'idempotency-key: order-1042-shipped' \
+  -d '{"to":"+254712345678","text":"Your Acme order #1042 has shipped"}'
+```
+
+```ts tab="TypeScript" logo="typescript" title="send.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY!, maxRetries: 4 });
+
+const message = await opensms.messages.send(
+  { to: '+254712345678', text: 'Your Acme order #1042 has shipped' },
+  { idempotencyKey: 'order-1042-shipped' },
+);
+
+console.log(message.id, message.status);
+```
+
+```python tab="Python" logo="python" title="send.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"], max_retries=4)
+
+message = client.messages.send(
+    to="+254712345678",
+    text="Your Acme order #1042 has shipped",
+    idempotency_key="order-1042-shipped",
+)
+
+print(message["id"], message["status"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"), opensms.WithMaxRetries(4))
+if err != nil {
+	log.Fatal(err)
+}
+
+msg, err := client.Messages.Send(context.Background(), opensms.SendMessageParams{
+	To:   "+254712345678",
+	Text: "Your Acme order #1042 has shipped",
+}, opensms.WithIdempotencyKey("order-1042-shipped"))
+if err != nil {
+	log.Fatal(err)
+}
+log.Println(msg.ID, msg.Status)
+```
+
+```php tab="PHP" logo="php" title="send.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'), ['maxRetries' => 4]);
+
+$message = $opensms->messages->send([
+    'to' => '+254712345678',
+    'text' => 'Your Acme order #1042 has shipped',
+], ['idempotencyKey' => 'order-1042-shipped']);
+
+echo $message['id'], ' ', $message['status'], PHP_EOL;
+```
+
+```java tab="Java" logo="java" title="Main.java"
+OpensmsClient opensms = OpensmsClient.builder()
+    .apiKey(System.getenv("OPENSMS_API_KEY"))
+    .maxRetries(4)
+    .build();
+
+Message message = opensms.messages().send(
+    new SendMessageParams("+254712345678", "Your Acme order #1042 has shipped"),
+    RequestOptions.idempotencyKey("order-1042-shipped"));
+
+System.out.println(message.id + " " + message.status);
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!,
+    new OpensmsClientOptions { MaxRetries = 4 });
+
+var message = await client.Messages.SendAsync(
+    new SendMessageParams { To = "+254712345678", Text = "Your Acme order #1042 has shipped" },
+    new RequestOptions { IdempotencyKey = "order-1042-shipped" });
+
+Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="send.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"), max_retries: 4)
+
+message = client.messages.send(
+  to: "+254712345678",
+  text: "Your Acme order #1042 has shipped",
+  idempotency_key: "order-1042-shipped"
+)
+
+puts message[:id], message[:status]
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::builder(std::env::var("OPENSMS_API_KEY").unwrap())
+    .max_retries(4)
+    .build()?;
+
+let message = client
+    .messages()
+    .send_with(
+        &SendMessage::new("+254712345678", "Your Acme order #1042 has shipped"),
+        &RequestOptions::idempotency_key("order-1042-shipped"),
+    )
+    .await?;
+
+println!("{} {}", message.id, message.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey, maxRetries: 4)
+
+let message = try await opensms.messages.send(
+    .init(to: "+254712345678", text: "Your Acme order #1042 has shipped"),
+    idempotencyKey: "order-1042-shipped"
+)
+
+print(message.id, message.status ?? "")
+```
+<!-- /tabs -->
+
 ## AI assistants (MCP)
 
-Connections from AI assistants have their own limits on top of the ones above: 120 MCP requests a minute and, by default, 10 spending calls a minute per connection (5, 10, 30 or 60, chosen on the consent screen), plus an optional daily spend cap per connection. Their spending tools are idempotent too: a caller key is kept for 24 hours, and without one the same content to the same number from the same connection is sent once within 10 minutes. Not in production yet; see [AI assistants (MCP)](mcp.md#limits).
+Connections from AI assistants have their own limits on top of the ones above: 120 MCP requests a minute and, by default, 10 spending calls a minute per connection (5, 10, 30 or 60, chosen on the consent screen), plus an optional daily spend cap per connection. Their spending tools are idempotent too: a caller key is kept for 24 hours, and without one the same content to the same number from the same connection is sent once within 10 minutes. See [AI assistants (MCP)](mcp.md#limits).
 
 ## Related
 

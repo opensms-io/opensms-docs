@@ -33,6 +33,142 @@ A typed problem with its own `type` URL:
 
 Handle errors in this order: check `status`; if `code` is present, branch on it; otherwise use `detail` for logs and user messages.
 
+## Errors in the SDKs
+
+Every [SDK](sdk.md) turns a problem response into one error type that carries the same fields. A status of `0` means no response arrived (network failure or timeout after the retries ran out).
+
+| Language | Error type | Status | Detail | Code | `X-Request-ID` | `Retry-After` (seconds) | Field errors |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| TypeScript | `OpensmsError` | `status` | `detail` | `code` | `requestId` | `retryAfter` | `errors` |
+| Python | `opensms.OpensmsError` | `status` | `detail` | `code` | `request_id` | `retry_after` | `errors` |
+| Go | `*opensms.Error`, matched with `errors.As` | `Status` | `Detail` | `Code` | `RequestID` | `RetryAfter` (a `time.Duration`) | `Errors` |
+| PHP | `Opensms\OpensmsException` | `getStatus()` | `getDetail()` | `getErrorCode()` | `getRequestId()` | `getRetryAfter()` | `getErrors()` |
+| Java | `io.opensms.OpensmsException` (unchecked) | `getStatus()` | `getDetail()` | `getCode()` | `getRequestId()` | `getRetryAfter()` | `getErrors()` |
+| C# | `Opensms.OpensmsException` | `Status` | `Detail` | `Code` | `RequestId` | `RetryAfter` | `Errors` |
+| Ruby | `Opensms::Error` | `status` | `detail` | `code` | `request_id` | `retry_after` | `errors` |
+| Rust | `opensms::OpensmsError`, in the `Err` of every `Result` | `status` | `detail` | `code` | `request_id` | `retry_after` | `errors` |
+| Swift | `OpensmsError` | `status` | `detail` | `code` | `requestId` | `retryAfter` | `errors` |
+
+Each type also keeps `type`, `title`, `trace_id` (in the language's spelling) and the raw body. The example sends to a number in local format instead of E.164, which the API refuses with `400`:
+
+<!-- tabs label="SDK language" -->
+```sh tab="cURL" title="Terminal"
+curl -s -X POST $OPENSMS_API/v1/messages \
+  -H "authorization: Bearer $OPENSMS_API_KEY" -H 'content-type: application/json' \
+  -H 'idempotency-key: order-1042-shipped' \
+  -d '{"to":"0712345678","text":"Your Acme order #1042 has shipped"}'
+```
+
+```ts tab="TypeScript" logo="typescript" title="errors.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+try {
+  await opensms.messages.send({ to: '0712345678', text: 'Your Acme order #1042 has shipped' });
+} catch (err) {
+  if (!(err instanceof OpensmsError)) throw err;
+  console.log(err.status, err.detail, err.code, err.requestId);
+}
+```
+
+```python tab="Python" logo="python" title="errors.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+try:
+    client.messages.send(to="0712345678", text="Your Acme order #1042 has shipped")
+except OpensmsError as e:
+    print(e.status, e.detail, e.code, e.request_id)
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+_, err = client.Messages.Send(context.Background(), opensms.SendMessageParams{
+	To:   "0712345678",
+	Text: "Your Acme order #1042 has shipped",
+})
+var apiErr *opensms.Error
+if errors.As(err, &apiErr) {
+	log.Println(apiErr.Status, apiErr.Detail, apiErr.Code, apiErr.RequestID)
+}
+```
+
+```php tab="PHP" logo="php" title="errors.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+try {
+    $opensms->messages->send(['to' => '0712345678', 'text' => 'Your Acme order #1042 has shipped']);
+} catch (OpensmsException $e) {
+    echo $e->getStatus(), ' ', $e->getDetail(), ' ', $e->getErrorCode() ?? '-', ' ', $e->getRequestId() ?? '-', PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="Main.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+try {
+    opensms.messages().send(new SendMessageParams("0712345678", "Your Acme order #1042 has shipped"));
+} catch (OpensmsException e) {
+    System.out.println(e.getStatus() + " " + e.getDetail() + " " + e.getCode() + " " + e.getRequestId());
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+try
+{
+    await client.Messages.SendAsync(new SendMessageParams { To = "0712345678", Text = "Your Acme order #1042 has shipped" });
+}
+catch (OpensmsException e)
+{
+    Console.WriteLine($"{e.Status} {e.Detail} {e.Code} {e.RequestId}");
+}
+```
+
+```ruby tab="Ruby" logo="ruby" title="errors.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+begin
+  client.messages.send(to: "0712345678", text: "Your Acme order #1042 has shipped")
+rescue Opensms::Error => e
+  puts "#{e.status} #{e.detail} #{e.code.inspect} #{e.request_id.inspect}"
+end
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+match client
+    .messages()
+    .send(&SendMessage::new("0712345678", "Your Acme order #1042 has shipped"))
+    .await
+{
+    Ok(message) => println!("sent {}", message.id),
+    Err(e) => println!("{} {} {} {}", e.status, e.detail.as_deref().unwrap_or_default(), e.code.as_deref().unwrap_or_default(), e.request_id.as_deref().unwrap_or_default()),
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+do {
+    _ = try await opensms.messages.send(.init(to: "0712345678", text: "Your Acme order #1042 has shipped"))
+} catch let e as OpensmsError {
+    print(e.status, e.detail ?? "", e.code ?? "-", e.requestId ?? "-")
+}
+```
+<!-- /tabs -->
+
+```json
+{"type":"about:blank","title":"Bad Request","status":400,"detail":"to must be an E.164 phone number"}
+```
+
+This problem has no `code` and no `X-Request-ID`, so the SDKs report them as empty (`null`, `None`, `""` or `nil`). Retries are automatic for `429` and `5xx` only; see [rate limits and idempotency](rate-limits-and-idempotency.md#retries-in-the-sdks).
+
 ## Status codes
 
 | Status | Meaning in OpenSMS | Retry? |

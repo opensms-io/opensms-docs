@@ -69,10 +69,110 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/contacts" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.contacts.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.e164);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.contacts.list()
+
+for item in page.items:
+    print(item["id"], item["e164"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.Contacts.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.E164)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->contacts->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['e164'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.contacts().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.e164);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Contacts.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.E164}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.contacts.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:e164]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.contacts().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.e164.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.contacts.list()
+
+for item in page.items {
+    print(item.id, item.e164 ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -148,13 +248,135 @@ Response `201` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/contacts" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-a03db040-2c1a-40de-a683-326876aa95f1' \
   -H 'Content-Type: application/json' \
   -d '{"e164":"+254712345678","name":"Amina W.","attributes":{"tier":"gold"}}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const contact = await opensms.contacts.create({
+  e164: '+254712345678',
+  name: 'Amina W.',
+  attributes: { tier: 'gold' },
+});
+
+console.log(contact.id, contact.e164);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+contact = client.contacts.create(
+    e164="+254712345678",
+    name="Amina W.",
+    attributes={"tier": "gold"},
+)
+
+print(contact["id"], contact["e164"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+contact, err := client.Contacts.Create(ctx, opensms.CreateContactParams{
+	E164:       "+254712345678",
+	Name:       "Amina W.",
+	Attributes: map[string]any{"tier": "gold"},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(contact.ID, contact.E164)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$contact = $opensms->contacts->create([
+    'e164' => '+254712345678',
+    'name' => 'Amina W.',
+    'attributes' => ['tier' => 'gold'],
+]);
+
+echo $contact['id'], ' ', $contact['e164'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new ContactParams()
+    .e164("+254712345678")
+    .name("Amina W.")
+    .attributes(Map.of("tier", "gold"));
+var contact = opensms.contacts().create(params);
+
+System.out.println(contact.id + " " + contact.e164);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var contact = await client.Contacts.CreateAsync(new CreateContactParams
+{
+    E164 = "+254712345678",
+    Name = "Amina W.",
+    Attributes = new Dictionary<string, object?> { ["tier"] = "gold" },
+});
+
+Console.WriteLine($"{contact.Id} {contact.E164}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+contact = client.contacts.create(
+  e164: "+254712345678",
+  name: "Amina W.",
+  attributes: { tier: "gold" }
+)
+
+puts "#{contact[:id]} #{contact[:e164]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let contact = client
+    .contacts()
+    .create(&CreateContact {
+        e164: "+254712345678".into(),
+        name: Some("Amina W.".into()),
+        attributes: Some(serde_json::json!({ "tier": "gold" })),
+    })
+    .await?;
+
+println!("{} {}", contact.id, contact.e164.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let contact = try await opensms.contacts.create(
+    e164: "+254712345678",
+    name: "Amina W.",
+    attributes: ["tier": "gold"]
+)
+
+print(contact.id, contact.e164 ?? "")
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -217,10 +439,97 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/contacts/8127baa8-45fb-4f8e-ac46-9aa9555ed1ee" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const contact = await opensms.contacts.get(
+  '8127baa8-45fb-4f8e-ac46-9aa9555ed1ee',
+);
+
+console.log(contact.id, contact.e164);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+contact = client.contacts.get("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+
+print(contact["id"], contact["e164"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+contact, err := client.Contacts.Get(ctx, "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(contact.ID, contact.E164)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$contact = $opensms->contacts->get('8127baa8-45fb-4f8e-ac46-9aa9555ed1ee');
+
+echo $contact['id'], ' ', $contact['e164'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var contact = opensms.contacts().get("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee");
+
+System.out.println(contact.id + " " + contact.e164);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var contact = await client.Contacts.GetAsync("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee");
+
+Console.WriteLine($"{contact.Id} {contact.E164}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+contact = client.contacts.get("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+
+puts "#{contact[:id]} #{contact[:e164]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let contact = client
+    .contacts()
+    .get("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+    .await?;
+
+println!("{} {}", contact.id, contact.e164.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let contact = try await opensms.contacts.get("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+
+print(contact.id, contact.e164 ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -291,12 +600,126 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PATCH "$OPENSMS_API/v1/contacts/8127baa8-45fb-4f8e-ac46-9aa9555ed1ee" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
   -d '{"name":"Amina Wanjiru"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const contact = await opensms.contacts.update(
+  '8127baa8-45fb-4f8e-ac46-9aa9555ed1ee',
+  { name: 'Amina Wanjiru' },
+);
+
+console.log(contact.id, contact.e164);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+contact = client.contacts.update(
+    "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+    name="Amina Wanjiru",
+)
+
+print(contact["id"], contact["e164"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+contact, err := client.Contacts.Update(
+	ctx,
+	"8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+	opensms.UpdateContactParams{Name: "Amina Wanjiru"},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(contact.ID, contact.E164)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$contact = $opensms->contacts->update('8127baa8-45fb-4f8e-ac46-9aa9555ed1ee', [
+    'name' => 'Amina Wanjiru',
+]);
+
+echo $contact['id'], ' ', $contact['e164'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new ContactParams()
+    .name("Amina Wanjiru");
+var contact = opensms.contacts().update("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee", params);
+
+System.out.println(contact.id + " " + contact.e164);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var contact = await client.Contacts.UpdateAsync(
+    "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+    new UpdateContactParams { Name = "Amina Wanjiru" }
+);
+
+Console.WriteLine($"{contact.Id} {contact.E164}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+contact = client.contacts.update(
+  "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+  name: "Amina Wanjiru"
+)
+
+puts "#{contact[:id]} #{contact[:e164]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let contact = client
+    .contacts()
+    .update(
+        "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+        &UpdateContact {
+            name: Some("Amina Wanjiru".into()),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", contact.id, contact.e164.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let contact = try await opensms.contacts.update(
+    "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+    name: "Amina Wanjiru"
+)
+
+print(contact.id, contact.e164 ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -348,10 +771,78 @@ See docs/contacts-api.md. Session requires X-Workspace-ID and X-Environment; API
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/contacts/8127baa8-45fb-4f8e-ac46-9aa9555ed1ee" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.contacts.delete('8127baa8-45fb-4f8e-ac46-9aa9555ed1ee');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.contacts.delete("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.Contacts.Delete(ctx, "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->contacts->delete('8127baa8-45fb-4f8e-ac46-9aa9555ed1ee');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.contacts().delete("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.Contacts.DeleteAsync("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.contacts.delete("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .contacts()
+    .delete("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.contacts.delete("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee")
+```
+
+<!-- /tabs -->
 
 Response `204`:
 
@@ -405,10 +896,110 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/contact-groups" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.contactGroups.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.name);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.contact_groups.list()
+
+for item in page.items:
+    print(item["id"], item["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.ContactGroups.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Name)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->contactGroups->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['name'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.contactGroups().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.name);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.ContactGroups.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Name}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.contact_groups.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:name]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.contact_groups().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.name.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.contactGroups.list()
+
+for item in page.items {
+    print(item.id, item.name ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -479,13 +1070,125 @@ Response `201` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/contact-groups" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-aaedd9cb-e6be-4147-9ba9-a69ee60d8110' \
   -H 'Content-Type: application/json' \
   -d '{"name":"VIP customers","contact_ids":["8127baa8-45fb-4f8e-ac46-9aa9555ed1ee"]}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const group = await opensms.contactGroups.create({
+  name: 'VIP customers',
+  contactIds: ['8127baa8-45fb-4f8e-ac46-9aa9555ed1ee'],
+});
+
+console.log(group.id, group.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+group = client.contact_groups.create(
+    name="VIP customers",
+    contact_ids=["8127baa8-45fb-4f8e-ac46-9aa9555ed1ee"],
+)
+
+print(group["id"], group["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+group, err := client.ContactGroups.Create(ctx, opensms.CreateContactGroupParams{
+	Name:       "VIP customers",
+	ContactIDs: []string{"8127baa8-45fb-4f8e-ac46-9aa9555ed1ee"},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(group.ID, group.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$group = $opensms->contactGroups->create([
+    'name' => 'VIP customers',
+    'contact_ids' => ['8127baa8-45fb-4f8e-ac46-9aa9555ed1ee'],
+]);
+
+echo $group['id'], ' ', $group['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new ContactGroupParams()
+    .name("VIP customers")
+    .contactIds(List.of("8127baa8-45fb-4f8e-ac46-9aa9555ed1ee"));
+var group = opensms.contactGroups().create(params);
+
+System.out.println(group.id + " " + group.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var group = await client.ContactGroups.CreateAsync(new CreateContactGroupParams
+{
+    Name = "VIP customers",
+    ContactIds = ["8127baa8-45fb-4f8e-ac46-9aa9555ed1ee"],
+});
+
+Console.WriteLine($"{group.Id} {group.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+group = client.contact_groups.create(
+  name: "VIP customers",
+  contact_ids: ["8127baa8-45fb-4f8e-ac46-9aa9555ed1ee"]
+)
+
+puts "#{group[:id]} #{group[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let group = client
+    .contact_groups()
+    .create(&CreateContactGroup {
+        name: "VIP customers".into(),
+        contact_ids: Some(vec!["8127baa8-45fb-4f8e-ac46-9aa9555ed1ee".into()]),
+    })
+    .await?;
+
+println!("{} {}", group.id, group.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let group = try await opensms.contactGroups.create(name: "VIP customers", contactIds: [
+    "8127baa8-45fb-4f8e-ac46-9aa9555ed1ee",
+])
+
+print(group.id, group.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -544,10 +1247,97 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const group = await opensms.contactGroups.get(
+  '9f25ed36-47ed-4dbe-a314-2185362b9162',
+);
+
+console.log(group.id, group.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+group = client.contact_groups.get("9f25ed36-47ed-4dbe-a314-2185362b9162")
+
+print(group["id"], group["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+group, err := client.ContactGroups.Get(ctx, "9f25ed36-47ed-4dbe-a314-2185362b9162")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(group.ID, group.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$group = $opensms->contactGroups->get('9f25ed36-47ed-4dbe-a314-2185362b9162');
+
+echo $group['id'], ' ', $group['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var group = opensms.contactGroups().get("9f25ed36-47ed-4dbe-a314-2185362b9162");
+
+System.out.println(group.id + " " + group.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var group = await client.ContactGroups.GetAsync("9f25ed36-47ed-4dbe-a314-2185362b9162");
+
+Console.WriteLine($"{group.Id} {group.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+group = client.contact_groups.get("9f25ed36-47ed-4dbe-a314-2185362b9162")
+
+puts "#{group[:id]} #{group[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let group = client
+    .contact_groups()
+    .get("9f25ed36-47ed-4dbe-a314-2185362b9162")
+    .await?;
+
+println!("{} {}", group.id, group.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let group = try await opensms.contactGroups.get("9f25ed36-47ed-4dbe-a314-2185362b9162")
+
+print(group.id, group.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -613,12 +1403,126 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PATCH "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
   -d '{"name":"VIP customers (KE)"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const group = await opensms.contactGroups.update(
+  '9f25ed36-47ed-4dbe-a314-2185362b9162',
+  { name: 'VIP customers (KE)' },
+);
+
+console.log(group.id, group.name);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+group = client.contact_groups.update(
+    "9f25ed36-47ed-4dbe-a314-2185362b9162",
+    name="VIP customers (KE)",
+)
+
+print(group["id"], group["name"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+group, err := client.ContactGroups.Update(
+	ctx,
+	"9f25ed36-47ed-4dbe-a314-2185362b9162",
+	opensms.UpdateContactGroupParams{Name: "VIP customers (KE)"},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(group.ID, group.Name)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$group = $opensms->contactGroups->update('9f25ed36-47ed-4dbe-a314-2185362b9162', [
+    'name' => 'VIP customers (KE)',
+]);
+
+echo $group['id'], ' ', $group['name'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new ContactGroupParams()
+    .name("VIP customers (KE)");
+var group = opensms.contactGroups().update("9f25ed36-47ed-4dbe-a314-2185362b9162", params);
+
+System.out.println(group.id + " " + group.name);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var group = await client.ContactGroups.UpdateAsync(
+    "9f25ed36-47ed-4dbe-a314-2185362b9162",
+    new UpdateContactGroupParams { Name = "VIP customers (KE)" }
+);
+
+Console.WriteLine($"{group.Id} {group.Name}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+group = client.contact_groups.update(
+  "9f25ed36-47ed-4dbe-a314-2185362b9162",
+  name: "VIP customers (KE)"
+)
+
+puts "#{group[:id]} #{group[:name]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let group = client
+    .contact_groups()
+    .update(
+        "9f25ed36-47ed-4dbe-a314-2185362b9162",
+        &UpdateContactGroup {
+            name: Some("VIP customers (KE)".into()),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", group.id, group.name.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let group = try await opensms.contactGroups.update(
+    "9f25ed36-47ed-4dbe-a314-2185362b9162",
+    name: "VIP customers (KE)"
+)
+
+print(group.id, group.name ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -667,10 +1571,78 @@ See docs/contacts-api.md. Session requires X-Workspace-ID and X-Environment; API
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.contactGroups.delete('9f25ed36-47ed-4dbe-a314-2185362b9162');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.contact_groups.delete("9f25ed36-47ed-4dbe-a314-2185362b9162")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.ContactGroups.Delete(ctx, "9f25ed36-47ed-4dbe-a314-2185362b9162")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->contactGroups->delete('9f25ed36-47ed-4dbe-a314-2185362b9162');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.contactGroups().delete("9f25ed36-47ed-4dbe-a314-2185362b9162");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.ContactGroups.DeleteAsync("9f25ed36-47ed-4dbe-a314-2185362b9162");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.contact_groups.delete("9f25ed36-47ed-4dbe-a314-2185362b9162")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .contact_groups()
+    .delete("9f25ed36-47ed-4dbe-a314-2185362b9162")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.contactGroups.delete("9f25ed36-47ed-4dbe-a314-2185362b9162")
+```
+
+<!-- /tabs -->
 
 Response `204`:
 
@@ -718,13 +1690,126 @@ Alternative 2: Type: any. Constraints: not `{"required":["text"]}`.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/contact-groups/9f25ed36-47ed-4dbe-a314-2185362b9162/send" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-ddfac12d-7fc0-4a7b-8b2a-b3dad169a382' \
   -H 'Content-Type: application/json' \
   -d '{"text":"Hello from Acme"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const batch = await opensms.contactGroups.send(
+  '9f25ed36-47ed-4dbe-a314-2185362b9162',
+  { text: 'Hello from Acme' },
+);
+
+console.log(batch.id, batch.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+batch = client.contact_groups.send(
+    "9f25ed36-47ed-4dbe-a314-2185362b9162",
+    text="Hello from Acme",
+)
+
+print(batch["id"], batch["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+batch, err := client.ContactGroups.Send(
+	ctx,
+	"9f25ed36-47ed-4dbe-a314-2185362b9162",
+	opensms.GroupSendParams{Text: "Hello from Acme"},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(batch.ID, batch.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$batch = $opensms->contactGroups->send('9f25ed36-47ed-4dbe-a314-2185362b9162', [
+    'text' => 'Hello from Acme',
+]);
+
+echo $batch['id'], ' ', $batch['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new GroupSendParams()
+    .text("Hello from Acme");
+var batch = opensms.contactGroups().send("9f25ed36-47ed-4dbe-a314-2185362b9162", params);
+
+System.out.println(batch.id + " " + batch.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var batch = await client.ContactGroups.SendAsync(
+    "9f25ed36-47ed-4dbe-a314-2185362b9162",
+    new GroupSendParams { Text = "Hello from Acme" }
+);
+
+Console.WriteLine($"{batch.Id} {batch.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+batch = client.contact_groups.send(
+  "9f25ed36-47ed-4dbe-a314-2185362b9162",
+  text: "Hello from Acme"
+)
+
+puts "#{batch[:id]} #{batch[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let batch = client
+    .contact_groups()
+    .send(
+        "9f25ed36-47ed-4dbe-a314-2185362b9162",
+        &SendToGroup {
+            text: Some("Hello from Acme".into()),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", batch.id, batch.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let batch = try await opensms.contactGroups.send("9f25ed36-47ed-4dbe-a314-2185362b9162", .init(
+    text: "Hello from Acme"
+))
+
+print(batch.id, batch.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

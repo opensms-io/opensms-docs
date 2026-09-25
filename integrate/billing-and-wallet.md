@@ -8,9 +8,97 @@ Money is always a decimal string (`"1.000000"`), never a float. Parse it with a 
 
 `GET /v1/wallet` with a key that has `wallet:read` (owner or admin keys only), or any member's session with `X-Workspace-ID` and `X-Environment`. A key returns the wallet of its own environment.
 
-```sh
+<!-- tabs label="SDK language" -->
+```sh tab="cURL" title="Terminal"
 curl -s $OPENSMS_API/v1/wallet -H "authorization: Bearer $OPENSMS_API_KEY"
 ```
+
+```ts tab="TypeScript" logo="typescript" title="wallet.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+for (const wallet of await opensms.wallet.balances()) {
+  console.log(wallet.environment, wallet.currency, wallet.balance, wallet.reserved);
+}
+```
+
+```python tab="Python" logo="python" title="wallet.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+for wallet in client.wallet.balances():
+    print(wallet["environment"], wallet["currency"], wallet["balance"], wallet["reserved"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+balances, err := client.Wallet.Balances(context.Background())
+if err != nil {
+	log.Fatal(err)
+}
+for _, w := range balances {
+	log.Println(w.Environment, w.Currency, w.Balance, w.Reserved)
+}
+```
+
+```php tab="PHP" logo="php" title="wallet.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+foreach ($opensms->wallet->balances() as $wallet) {
+    echo $wallet['environment'], ' ', $wallet['currency'], ' ', $wallet['balance'], ' ', $wallet['reserved'], PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="Main.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+for (WalletBalance wallet : opensms.wallet().balances()) {
+    System.out.println(wallet.environment + " " + wallet.currency + " " + wallet.balance + " " + wallet.reserved);
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+foreach (var wallet in await client.Wallet.BalancesAsync())
+{
+    Console.WriteLine($"{wallet.Environment} {wallet.Currency} {wallet.Balance} {wallet.Reserved}");
+}
+```
+
+```ruby tab="Ruby" logo="ruby" title="wallet.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.wallet.balances.each do |wallet|
+  puts "#{wallet[:environment]} #{wallet[:currency]} #{wallet[:balance]} #{wallet[:reserved]}"
+end
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+for wallet in client.wallet().balances().await? {
+    println!(
+        "{} {} {} {}",
+        wallet.environment.unwrap_or_default(),
+        wallet.currency.unwrap_or_default(),
+        wallet.balance.unwrap_or_default(),
+        wallet.reserved.unwrap_or_default(),
+    );
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+for wallet in try await opensms.wallet.balances() {
+    print(wallet.environment ?? "", wallet.currency ?? "", wallet.balance ?? "", wallet.reserved ?? "")
+}
+```
+<!-- /tabs -->
 
 ```json
 {"data":[{"id":"6dbc48b0-0f7f-4fd5-8dda-e67520577970","currency":"KES","balance":"10000.000000","reserved":"0.000000","environment":"sandbox"}]}
@@ -28,9 +116,95 @@ A key without `wallet:read` gets `403` `"wallet access denied"`.
 
 `GET /v1/wallet/ledger` lists every posting, newest first. `limit` is 1 to 200 (default 50); `before=<id>` pages to older entries.
 
-```sh
+<!-- tabs label="SDK language" -->
+```sh tab="cURL" title="Terminal"
 curl -s "$OPENSMS_API/v1/wallet/ledger?limit=5" -H "authorization: Bearer $OPENSMS_API_KEY"
 ```
+
+```ts tab="TypeScript" logo="typescript" title="ledger.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+for (const entry of await opensms.wallet.ledger({ limit: 5 })) {
+  console.log(entry.id, entry.type, entry.amount, entry.balanceAfter);
+}
+```
+
+```python tab="Python" logo="python" title="ledger.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+for entry in client.wallet.ledger(limit=5):
+    print(entry["id"], entry["type"], entry["amount"], entry["balance_after"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+entries, err := client.Wallet.Ledger(context.Background(), opensms.LedgerParams{Limit: opensms.Int(5)})
+if err != nil {
+	log.Fatal(err)
+}
+for _, e := range entries {
+	log.Println(e.ID, e.Type, e.Amount, e.BalanceAfter)
+}
+```
+
+```php tab="PHP" logo="php" title="ledger.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+foreach ($opensms->wallet->ledger(['limit' => 5]) as $entry) {
+    echo $entry['id'], ' ', $entry['type'], ' ', $entry['amount'], ' ', $entry['balance_after'], PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="Main.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+for (LedgerEntry entry : opensms.wallet().ledger(5, null)) {
+    System.out.println(entry.id + " " + entry.type + " " + entry.amount + " " + entry.balanceAfter);
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+foreach (var entry in await client.Wallet.LedgerAsync(new LedgerParams { Limit = 5 }))
+{
+    Console.WriteLine($"{entry.Id} {entry.Type} {entry.Amount} {entry.BalanceAfter}");
+}
+```
+
+```ruby tab="Ruby" logo="ruby" title="ledger.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.wallet.ledger(limit: 5).each do |entry|
+  puts "#{entry[:id]} #{entry[:type]} #{entry[:amount]} #{entry[:balance_after]}"
+end
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let entries = client
+    .wallet()
+    .ledger(LedgerParams { limit: Some(5), ..Default::default() })
+    .await?;
+for e in entries {
+    println!("{} {} {} {}", e.id, e.r#type.as_deref().unwrap_or_default(), e.amount.as_deref().unwrap_or_default(), e.balance_after.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+for entry in try await opensms.wallet.ledger(limit: 5) {
+    print(entry.id, entry.type ?? "", entry.amount ?? "", entry.balanceAfter ?? "")
+}
+```
+<!-- /tabs -->
 
 ```json
 {"data":[{"id":56,"wallet_id":"6dbc48b0-0f7f-4fd5-8dda-e67520577970","type":"adjustment","amount":"10000.000000","balance_after":"10000.000000","reserved_delta":"0.000000","reserved_after":"0.000000","created_at":"2026-09-24T07:27:19.559329+03:00"}]}
@@ -40,7 +214,7 @@ curl -s "$OPENSMS_API/v1/wallet/ledger?limit=5" -H "authorization: Bearer $OPENS
 
 ## Sandbox wallet
 
-A background job funds a new sandbox wallet with 10,000.00 in the workspace currency (the `adjustment` above) within seconds of the workspace being created, so a read in the first moment can still show `0.000000`. The balance is reset to 10,000.00 daily. Sandbox messages and lookups cost `0`, so it only matters for testing balance displays. Owners, admins and finance members can add practice credit from a browser session:
+A background job funds a new sandbox wallet with 10,000.00 in the workspace currency (the `adjustment` above) within seconds of the workspace being created, so a read in the first moment can still show `0.000000`. The balance is reset to 10,000.00 daily. Sandbox messages and lookups cost `0`, so it only matters for testing balance displays. Owners, admins and finance members can add practice credit from a browser session. Session only: the SDKs authenticate with API keys and do not include this call, so it is shown with cURL.
 
 ```sh
 curl -s -X POST $OPENSMS_API/v1/wallet/sandbox-credits \
@@ -61,9 +235,104 @@ Limits: 0.01 to 10,000.00 per call, 10,000.00 per workspace per UTC day, and a b
 
 `GET /v1/pricing` (key scope `pricing:read`, or any member's session) returns the sell prices that apply to your workspace. Filter with `country=KE` and `product=sms|lookup|number_monthly` (default `sms`).
 
-```sh
+<!-- tabs label="SDK language" -->
+```sh tab="cURL" title="Terminal"
 curl -s "$OPENSMS_API/v1/pricing?country=KE" -H "authorization: Bearer $OPENSMS_API_KEY"
 ```
+
+```ts tab="TypeScript" logo="typescript" title="pricing.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const prices = await opensms.pricing.get({ country: 'KE' });
+for (const entry of prices.entries ?? []) {
+  console.log(entry.minMonthlyVolume, entry.sellAmount, entry.sellCurrency);
+}
+```
+
+```python tab="Python" logo="python" title="pricing.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+prices = client.pricing.get(country="KE")
+for entry in prices["entries"]:
+    print(entry["min_monthly_volume"], entry["sell_amount"], entry["sell_currency"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+prices, err := client.Pricing.Get(context.Background(), opensms.PricingParams{Country: "KE"})
+if err != nil {
+	log.Fatal(err)
+}
+for _, e := range prices.Entries {
+	if e.SellAmount != nil { // null for markups on the provider cost
+		log.Println(e.MinMonthlyVolume, *e.SellAmount, e.SellCurrency)
+	}
+}
+```
+
+```php tab="PHP" logo="php" title="pricing.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$prices = $opensms->pricing->get(['country' => 'KE']);
+foreach ($prices['entries'] as $entry) {
+    echo $entry['min_monthly_volume'], ' ', $entry['sell_amount'], ' ', $entry['sell_currency'], PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="Main.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+PriceList prices = opensms.pricing().get("sms", "KE");
+for (PriceList.Entry entry : prices.entries) {
+    System.out.println(entry.minMonthlyVolume + " " + entry.sellAmount + " " + entry.sellCurrency);
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var prices = await client.Pricing.GetAsync(new PricingParams { Country = "KE" });
+foreach (var entry in prices.Entries ?? new())
+{
+    Console.WriteLine($"{entry.MinMonthlyVolume} {entry.SellAmount} {entry.SellCurrency}");
+}
+```
+
+```ruby tab="Ruby" logo="ruby" title="pricing.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+prices = client.pricing.get(country: "KE")
+prices[:entries].each do |entry|
+  puts "#{entry[:min_monthly_volume]} #{entry[:sell_amount]} #{entry[:sell_currency]}"
+end
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let prices = client
+    .pricing()
+    .get(PricingParams { country: Some("KE".into()), ..Default::default() })
+    .await?;
+for e in prices.entries.unwrap_or_default() {
+    println!("{} {} {}", e.min_monthly_volume.unwrap_or_default(), e.sell_amount.as_deref().unwrap_or_default(), e.sell_currency.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let prices = try await opensms.pricing.get(country: "KE")
+for entry in prices.entries ?? [] {
+    print(entry.minMonthlyVolume ?? 0, entry.sellAmount ?? "", entry.sellCurrency ?? "")
+}
+```
+<!-- /tabs -->
 
 ```json
 {
@@ -121,7 +390,7 @@ Analytics `spend` (`GET /v1/analytics/overview`) counts SMS charges, fees and re
 
 ## Spend cap
 
-An owner can set a monthly limit on live spending (browser session, `X-Workspace-ID`):
+An owner can set a monthly limit on live spending (browser session, `X-Workspace-ID`). Session only: the SDKs authenticate with API keys and do not include this call, so it is shown with cURL.
 
 ```sh
 curl -s -X PUT $OPENSMS_API/v1/settings/spend-cap \
@@ -164,7 +433,7 @@ Initializing a payment never credits the wallet. If a top-up call times out, ret
 
 ## Invoices
 
-`GET /v1/invoices` and `GET /v1/invoices/{id}` are for owners, admins and finance members with a browser session, `X-Workspace-ID` and `X-Environment`. API keys get `401` `"Browser session required."`
+`GET /v1/invoices` and `GET /v1/invoices/{id}` are for owners, admins and finance members with a browser session, `X-Workspace-ID` and `X-Environment`. API keys get `401` `"Browser session required."` Session only: the SDKs authenticate with API keys and do not include this call, so it is shown with cURL.
 
 ```sh
 curl -s $OPENSMS_API/v1/invoices -H "authorization: Bearer $SESSION" -H "x-workspace-id: $WORKSPACE" -H 'x-environment: live'

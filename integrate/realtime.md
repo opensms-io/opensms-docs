@@ -64,12 +64,12 @@ The server pings every 54 seconds and expects a pong within 60; standard WebSock
 
 ## Example: Node
 
-This script needs a key that has `realtime:read`. It subscribes to everything, creates a key through the API to cause an event, and prints what arrives.
+The [SDKs](sdk.md) do not include a WebSocket client, so connect with your language's WebSocket library; this example uses the one built into Node. This script needs a key that has `realtime:read`. It subscribes to everything, creates a key through the API to cause an event, and prints what arrives.
 
 <!-- test:realtime-node -->
 ```js
 // realtime.mjs (Node 22 or newer: global WebSocket)
-const API = process.env.OPENSMS_API; // the API origin from your sandbox invitation
+const API = process.env.OPENSMS_API; // the API origin, https://opensms.io
 const ws = new WebSocket(API.replace(/^http/, 'ws') + '/v1/realtime', {
   headers: { authorization: `Bearer ${process.env.OPENSMS_API_KEY}` },
 });
@@ -104,7 +104,7 @@ Tickets need the API to be served over TLS and the browser origin to be listed i
 
 Two different `403` responses come from how the endpoint protects browsers. Neither is a bug in your client.
 
-**1. Ticket requests.** Tickets are issued only over HTTPS, and only to a browser origin the deployment allows. A ticket request over plain HTTP, or from another origin, is refused:
+**1. Ticket requests.** Tickets are issued only over HTTPS, and only to a browser origin the deployment allows. A ticket request over plain HTTP, or from another origin, is refused. Tickets need a browser session and are not in the SDKs, so this is shown with cURL:
 
 ```sh
 curl -s -X POST $OPENSMS_API/v1/realtime/tickets \

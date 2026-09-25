@@ -13,46 +13,81 @@ import python from 'highlight.js/lib/languages/python';
 import http from 'highlight.js/lib/languages/http';
 import plaintext from 'highlight.js/lib/languages/plaintext';
 import go from 'highlight.js/lib/languages/go';
-import php from 'highlight.js/lib/languages/php';
-import ruby from 'highlight.js/lib/languages/ruby';
-import java from 'highlight.js/lib/languages/java';
 import csharp from 'highlight.js/lib/languages/csharp';
-import swift from 'highlight.js/lib/languages/swift';
+import java from 'highlight.js/lib/languages/java';
 import kotlin from 'highlight.js/lib/languages/kotlin';
 import rust from 'highlight.js/lib/languages/rust';
-import { logo, themedLogo } from './logos.mjs';
+import ruby from 'highlight.js/lib/languages/ruby';
+import php from 'highlight.js/lib/languages/php';
+import swift from 'highlight.js/lib/languages/swift';
+import xml from 'highlight.js/lib/languages/xml';
+import ini from 'highlight.js/lib/languages/ini';
+import { SITE } from './config.mjs';
 
-hljs.registerLanguage('bash', bash);
-hljs.registerLanguage('json', json);
-hljs.registerLanguage('javascript', javascript);
-hljs.registerLanguage('typescript', typescript);
-hljs.registerLanguage('python', python);
-hljs.registerLanguage('http', http);
-hljs.registerLanguage('plaintext', plaintext);
-for (const [name, def] of Object.entries({ go, php, ruby, java, csharp, swift, kotlin, rust })) hljs.registerLanguage(name, def);
+for (const [name, lang] of Object.entries({ bash, json, javascript, typescript, python, http, plaintext, go, csharp, java, kotlin, rust, ruby, php, swift, xml, ini })) hljs.registerLanguage(name, lang);
 
-// Fence info string to [highlight.js language, visible label, badge]. The badge is
-// a vendored SVGL language logo (`lang:<file>`) or an Iconsax icon (`icon:<name>`)
-// for formats with no brand mark. Code blocks are dark in both themes, so the
-// language logos are the dark-surface variants (see logos/README.md).
-const LANG = {
-  curl: ['bash', 'cURL', 'lang:bash'], bash: ['bash', 'Shell', 'lang:bash'], sh: ['bash', 'Shell', 'lang:bash'], shell: ['bash', 'Shell', 'lang:bash'],
-  json: ['json', 'JSON', 'lang:json'],
-  js: ['javascript', 'JavaScript', 'lang:javascript'], javascript: ['javascript', 'JavaScript', 'lang:javascript'],
-  ts: ['typescript', 'TypeScript', 'lang:typescript'], typescript: ['typescript', 'TypeScript', 'lang:typescript'],
-  python: ['python', 'Python', 'lang:python'], py: ['python', 'Python', 'lang:python'],
-  go: ['go', 'Go', 'lang:go'], php: ['php', 'PHP', 'lang:php'], ruby: ['ruby', 'Ruby', 'lang:ruby'],
-  java: ['java', 'Java', 'lang:java'], csharp: ['csharp', 'C#', 'lang:csharp'], cs: ['csharp', 'C#', 'lang:csharp'],
-  swift: ['swift', 'Swift', 'lang:swift'], kotlin: ['kotlin', 'Kotlin', 'lang:kotlin'], rust: ['rust', 'Rust', 'lang:rust'],
-  http: ['http', 'HTTP', 'icon:document-code'], text: ['plaintext', 'Text', 'icon:document-code'],
-  csv: ['plaintext', 'CSV', 'icon:document-code'], '': ['plaintext', 'Text', 'icon:document-code'],
+// Fence language -> [highlight.js language, label, mark]. The mark is a brand logo
+// from ./languages (SVGL files, see its README) for programming languages, or a
+// UI icon from ./icons for shells, data and output.
+const L = (lang, label, mark) => [lang, label, mark];
+export const LANG = {
+  bash: L('bash', 'Shell', 'icon:terminal'), sh: L('bash', 'Shell', 'icon:terminal'), shell: L('bash', 'Shell', 'icon:terminal'),
+  json: L('json', 'JSON', 'icon:code-brackets'), http: L('http', 'HTTP', 'icon:code-brackets'),
+  text: L('plaintext', 'Output', 'icon:document-text'), csv: L('plaintext', 'CSV', 'icon:document-text'), '': L('plaintext', 'Text', 'icon:document-text'),
+  js: L('javascript', 'JavaScript', 'javascript'), javascript: L('javascript', 'JavaScript', 'javascript'),
+  ts: L('typescript', 'TypeScript', 'typescript'), typescript: L('typescript', 'TypeScript', 'typescript'),
+  python: L('python', 'Python', 'python'), py: L('python', 'Python', 'python'),
+  go: L('go', 'Go', 'golang'), csharp: L('csharp', 'C#', 'dotnet'), cs: L('csharp', 'C#', 'dotnet'),
+  java: L('java', 'Java', 'java'), kotlin: L('kotlin', 'Kotlin', 'icon:code-brackets'),
+  rust: L('rust', 'Rust', 'rust'), ruby: L('ruby', 'Ruby', 'ruby'), php: L('php', 'PHP', 'php'), swift: L('swift', 'Swift', 'swift'),
+  xml: L('xml', 'XML', 'icon:code-brackets'), toml: L('ini', 'TOML', 'icon:code-brackets'),
 };
 
-/** Language logos that are wordmarks (they spell the language name). */
-const WORDMARKS = new Set(['lang:go', 'lang:php']);
+// Marks with a separate SVGL variant for dark backgrounds.
+const DARK_VARIANT = new Set(['golang', 'rust', 'php']);
+// Wordmarks (much wider than tall) get a wider box so they stay legible.
+const WIDE = new Set(['golang', 'php']);
+// Languages whose blocks get line numbers once they are long enough to refer to.
+const NUMBERED = new Set(['javascript', 'typescript', 'python', 'go', 'csharp', 'java', 'kotlin', 'rust', 'ruby', 'php', 'swift']);
+const NUMBER_FROM = 6;
 
-/** Languages that can share a tabbed code block (see docs_code_groups). */
-const TAB_LANGS = new Set(['curl', 'bash', 'sh', 'shell', 'js', 'javascript', 'ts', 'typescript', 'python', 'py', 'go', 'php', 'ruby', 'java', 'csharp', 'cs', 'swift', 'kotlin', 'rust']);
+/**
+ * A language mark as HTML. `surface` is 'dark' (code headers and tab bars, dark
+ * in both themes) or 'theme' (follows the page theme, for light surfaces).
+ */
+export function langMark(mark, icon, { size = 16, surface = 'dark', cls = 'lang-mark' } = {}) {
+  if (!mark) return '';
+  if (mark.startsWith('icon:')) return icon(mark.slice(5), size, cls);
+  const wide = WIDE.has(mark);
+  const w = wide ? Math.round(size * 1.6) : size;
+  const img = (file, extra = '') => `<img class="${cls}${wide ? ' is-wide' : ''}${extra}" src="${SITE.base}languages/${file}.svg" width="${w}" height="${size}" alt="" decoding="async">`;
+  if (!DARK_VARIANT.has(mark)) return img(mark);
+  if (surface === 'dark') return img(`${mark}_dark`);
+  return img(mark, ' when-light') + img(`${mark}_dark`, ' when-dark');
+}
+
+/** key="value" or key=value pairs after the language in a fence info string. */
+function fenceAttrs(info) {
+  const attrs = {};
+  for (const m of info.matchAll(/(\w+)=(?:"([^"]*)"|(\S+))/g)) attrs[m[1]] = m[2] ?? m[3];
+  if (/(^|\s)nolines(\s|$)/.test(info)) attrs.nolines = true;
+  return attrs;
+}
+
+/** Split highlighted HTML into lines, closing and reopening spans across line breaks. */
+function splitLines(html) {
+  const lines = [];
+  const open = [];
+  let cur = '';
+  for (const m of html.matchAll(/(<span[^>]*>)|(<\/span>)|(\n)|([^<\n]+|<)/g)) {
+    if (m[1]) { open.push(m[1]); cur += m[1]; } else if (m[2]) { open.pop(); cur += m[2]; } else if (m[3]) {
+      lines.push(cur + '</span>'.repeat(open.length));
+      cur = open.join('');
+    } else cur += m[4];
+  }
+  lines.push(cur);
+  return lines;
+}
 
 /** GitHub-style heading id, identical to scripts/gen-reference.mjs anchor(). */
 export const slugify = (text) => text.toLowerCase().replace(/[^\p{L}\p{N} _-]/gu, '').replace(/ /g, '-');
@@ -97,28 +132,74 @@ export function createRenderer({ icon }) {
     }
   });
 
+  // Language tabs: consecutive fenced blocks after <!-- tabs label="..." --> become one
+  // tabbed group, closed by <!-- /tabs --> (or by the first thing that is not a code
+  // block or an HTML comment such as a test marker). Each block names its tab with
+  // tab="..." (default: its language label), may set logo="..." (default: its
+  // language mark) and title="..." (a file name, shown next to Copy). A tab's key,
+  // which the page remembers across groups and visits, is its language mark
+  // ("typescript", "golang") or, for shells and data, its label ("curl").
+  // Without script every panel shows, stacked, each with its own header.
+  md.core.ruler.push('docs_tabs', (state) => {
+    const env = state.env;
+    const tokens = state.tokens;
+    let group = null;
+    let autoClosed = false;
+    const isComment = (t) => t.type === 'html_block' && /^<!--[\s\S]*-->\s*$/.test(t.content);
+    const close = (t) => {
+      if (group.items.length < 2) env.warnings?.push(`tab group "${group.label}" has fewer than two code blocks`);
+      if (t) t.type = 'code_tabs_close';
+      group = null;
+    };
+    // Close the open group with a new token inserted at position i.
+    const closeBefore = (i) => {
+      const end = new state.Token('code_tabs_close', '', 0);
+      end.block = true;
+      tokens.splice(i, 0, end);
+      close(null);
+    };
+    for (let i = 0; i < tokens.length; i += 1) {
+      const t = tokens[i];
+      if (t.type === 'html_block' && /^<!--\s*tabs\b/.test(t.content)) {
+        if (group) { closeBefore(i); i += 1; }
+        autoClosed = false;
+        env.tabGroups = (env.tabGroups ?? 0) + 1;
+        const label = t.content.match(/label="([^"]*)"/)?.[1] ?? 'Code example';
+        group = { id: `tabs-${env.tabGroups}`, label, items: [] };
+        t.type = 'code_tabs_open';
+        t.meta = group;
+      } else if (t.type === 'html_block' && /^<!--\s*\/tabs\s*-->/.test(t.content)) {
+        if (group) close(t);
+        else {
+          if (!autoClosed) env.warnings?.push('<!-- /tabs --> without <!-- tabs -->');
+          t.type = 'code_tabs_stray';
+        }
+        autoClosed = false;
+      } else if (group && t.type === 'fence') {
+        const info = (t.info || '').trim();
+        const name = info.split(/\s+/)[0].toLowerCase();
+        const attrs = fenceAttrs(info);
+        const [, label, mark] = LANG[name] ?? ['plaintext', name, 'icon:document-text'];
+        const tabLabel = attrs.tab ?? label;
+        const logo = attrs.logo ?? mark;
+        const key = attrs.key ?? (logo.startsWith('icon:') ? tabLabel : logo).toLowerCase().replace(/[^a-z0-9#+]+/g, '-').replace(/#/g, 'sharp').replace(/\+/g, 'plus');
+        const item = { index: group.items.length, group: group.id, key, label: tabLabel, mark: logo, title: attrs.title ?? '' };
+        group.items.push(item);
+        t.meta = { ...(t.meta ?? {}), tab: item };
+      } else if (group && !isComment(t)) {
+        // Anything else ends the group; its <!-- /tabs -->, if any, is then ignored.
+        closeBefore(i);
+        autoClosed = true;
+        i += 1;
+      }
+    }
+    if (group) closeBefore(tokens.length);
+    state.tokens = tokens.filter((t) => t.type !== 'code_tabs_stray');
+  });
+
   // Drop HTML comments (generator banners, test markers) from the output.
   md.core.ruler.push('docs_comments', (state) => {
     state.tokens = state.tokens.filter((t) => !(t.type === 'html_block' && /^<!--[\s\S]*-->\s*$/.test(t.content)));
-  });
-
-  // Code tabs: two or more fenced blocks in a row, each in a different programming
-  // language (or shell), become one tabbed block. Request and response pairs
-  // (shell then JSON, code then text output) are never grouped.
-  md.core.ruler.push('docs_code_groups', (state) => {
-    const tokens = state.tokens;
-    const lang = (t) => (t.info || '').trim().split(/\s+/)[0].toLowerCase();
-    for (let i = 0; i < tokens.length; i += 1) {
-      if (tokens[i].type !== 'fence' || !TAB_LANGS.has(lang(tokens[i]))) continue;
-      let j = i;
-      while (tokens[j + 1]?.type === 'fence' && TAB_LANGS.has(lang(tokens[j + 1]))) j += 1;
-      const run = tokens.slice(i, j + 1);
-      const labels = run.map((t) => (LANG[lang(t)] ?? [])[1]);
-      if (run.length > 1 && new Set(labels).size === run.length) {
-        run.forEach((t, n) => { t.meta = { ...t.meta, group: { n, size: run.length, tabs: run.map(lang) } }; });
-      }
-      i = j;
-    }
   });
 
   // Callouts: a blockquote that opens with a bold label.
@@ -138,31 +219,27 @@ export function createRenderer({ icon }) {
 
   const rules = md.renderer.rules;
 
-  // A page can give headings a leading mark (config.mjs `marks`): an AI assistant
-  // logo (`ai:<name>`) or an Iconsax icon (`icon:<name>`), keyed by heading text.
-  const headingMark = (spec, size) => {
-    const [kind, name] = spec.split(':');
-    return kind === 'ai' ? themedLogo('ai', name, size) : icon(name, size);
+  // One dark shell: the tab strip (logo and name per language) with the file name
+  // of the active tab and a single Copy button, then the panels. With script only
+  // the active panel is displayed, so the group follows its height (docs.css).
+  rules.code_tabs_open = (tokens, idx) => {
+    const g = tokens[idx].meta;
+    const tabs = g.items.map((it) => `<button type="button" role="tab" class="code-tab" id="${g.id}-t${it.index}" aria-controls="${g.id}-p${it.index}" aria-selected="${it.index === 0}" tabindex="${it.index === 0 ? 0 : -1}" data-tab-key="${escapeHtml(it.key)}"${it.title ? ` data-title="${escapeHtml(it.title)}" title="${escapeHtml(it.title)}"` : ''}>${langMark(it.mark, icon, { size: 16 })}<span${WIDE.has(it.mark) ? ' class="vh"' : ''}>${escapeHtml(it.label)}</span></button>`).join('');
+    // The file name only fits beside a short strip; with more tabs it would crowd them.
+    const first = g.items.length <= 4 ? g.items[0]?.title ?? '' : '';
+    return `<div class="code-tabs" data-tabs>`
+      + `<div class="code-tabs-bar"><div class="code-tabs-list" role="tablist" aria-label="${escapeHtml(g.label)}">${tabs}</div>`
+      + (g.items.length <= 4 ? `<span class="code-tabs-file" aria-hidden="true">${escapeHtml(first)}</span>` : '')
+      + `<button type="button" class="code-copy" data-copy-tabs aria-label="Copy code">${icon('clipboard-close', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
+      + `<div class="code-tabs-panels">\n`;
   };
+  rules.code_tabs_close = () => '</div></div>\n';
 
-  rules.heading_open = (tokens, idx, opts, env) => {
+  rules.heading_open = (tokens, idx) => {
     const t = tokens[idx];
     const inline = tokens[idx + 1];
     const text = inline?.children?.length === 1 && inline.children[0].type === 'text' ? inline.children[0].content : '';
-    const mark = env.marks?.[inlineText(inline)];
-    if (mark) (env.marksUsed ??= new Set()).add(inlineText(inline));
-    const cls = [METHOD.test(text) && 'op', mark && 'has-mark'].filter(Boolean).join(' ');
-    return `<${t.tag} id="${t.attrGet('id')}"${cls ? ` class="${cls}"` : ''}>${mark ? `<span class="h-mark">${headingMark(mark, t.tag === 'h2' ? 22 : 20)}</span>` : ''}`;
-  };
-
-  // `<div data-client-grid></div>` in a page becomes a grid of cards, one per
-  // heading marked with an AI assistant logo, each linking to its section.
-  rules.html_block = (tokens, idx, opts, env) => {
-    const content = tokens[idx].content;
-    if (!/^<div data-client-grid><\/div>\s*$/.test(content)) return content;
-    const cards = (env.headings ?? []).filter((h) => env.marks?.[h.text]?.startsWith('ai:') || env.marks?.[h.text] === 'icon:ai-chatbot');
-    if (!cards.length) env.warnings?.push('client grid with no marked headings');
-    return `<nav class="client-grid" aria-label="Choose your assistant">${cards.map((h) => `<a class="client-card" href="#${h.id}"><span class="client-logo">${headingMark(env.marks[h.text], 28)}</span><span class="client-name">${escapeHtml(h.text)}</span></a>`).join('')}</nav>\n`;
+    return `<${t.tag} id="${t.attrGet('id')}"${METHOD.test(text) ? ' class="op"' : ''}>`;
   };
   rules.heading_close = (tokens, idx, opts, env) => {
     const open = tokens[idx - 2];
@@ -247,43 +324,28 @@ export function createRenderer({ icon }) {
     return defaultTd(tokens, idx, opts, env, self);
   };
 
-  const codeLang = (label, badge) => {
-    const [kind, name] = badge.split(':');
-    const mark = kind === 'lang' ? logo('lang', name, 16) : icon(name, 16, 'code-lang-icon');
-    // Go and PHP logos are wordmarks that already spell the name, so the label is
-    // kept for screen readers only.
-    const text = WORDMARKS.has(badge) ? `<span class="sr-only">${escapeHtml(label)}</span>` : `<span>${escapeHtml(label)}</span>`;
-    return `<span class="code-lang">${mark}${text}</span>`;
-  };
-
   rules.fence = (tokens, idx, opts, env) => {
     const t = tokens[idx];
-    const info = (t.info || '').trim().split(/\s+/)[0].toLowerCase();
-    const [lang, label, badge] = LANG[info] ?? ['plaintext', info || 'Text', 'icon:document-code'];
-    if (!LANG[info]) env.warnings?.push(`unknown code language "${info}"`);
+    const info = (t.info || '').trim();
+    const name = info.split(/\s+/)[0].toLowerCase();
+    const attrs = fenceAttrs(info);
+    const [lang, label, mark] = LANG[name] ?? ['plaintext', name || 'Text', 'icon:document-text'];
+    if (!LANG[name]) env.warnings?.push(`unknown code language "${name}"`);
     const code = t.content.replace(/\n$/, '');
-    const html = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
+    let html = hljs.highlight(code, { language: lang, ignoreIllegals: true }).value;
+    const lines = code.split('\n').length;
+    // Never inside a tab group: the gutter would come and go as the reader switches
+    // between cURL and an SDK, moving the code sideways.
+    const numbered = !attrs.nolines && !t.meta?.tab && (attrs.lines === 'true' || (NUMBERED.has(lang) && lines >= NUMBER_FROM));
+    if (numbered) html = splitLines(html).map((l) => `<span class="ln">${l}</span>`).join('\n');
     env.codeBlocks = (env.codeBlocks ?? 0) + 1;
-    const g = t.meta?.group;
-    let before = '';
-    let after = '';
-    let panel = '';
-    if (g) {
-      if (g.n === 0) env.codeGroups = (env.codeGroups ?? 0) + 1;
-      const id = `code-${env.codeGroups}`;
-      if (g.n === 0) {
-        const tabs = g.tabs.map((l, n) => {
-          const [, tl, tb] = LANG[l];
-          return `<button type="button" role="tab" class="code-tab" id="${id}-tab-${n}" aria-controls="${id}-panel-${n}" aria-selected="${n === 0}" tabindex="${n === 0 ? 0 : -1}" data-code-tab="${escapeHtml(tl)}">${codeLang(tl, tb)}</button>`;
-        }).join('');
-        before = `<div class="code-group" data-code-group><div class="code-tabs" role="tablist" aria-label="Language">${tabs}</div>`;
-      }
-      if (g.n === g.size - 1) after = '</div>';
-      panel = ` role="tabpanel" id="${id}-panel-${g.n}" aria-labelledby="${id}-tab-${g.n}" data-code-panel="${escapeHtml(label)}"${g.n === 0 ? '' : ' hidden'}`;
-    }
-    return `${before}<div class="code"${panel}><div class="code-head">${codeLang(label, badge)}`
-      + `<button type="button" class="code-copy" data-copy aria-label="Copy code">${icon('copy', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
-      + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>${after}\n`;
+    const file = attrs.title ? `<span class="code-sep" aria-hidden="true">/</span><span class="code-file">${escapeHtml(attrs.title)}</span>` : '';
+    const block = `<div class="code${numbered ? ' has-lines' : ''}"><div class="code-head"><span class="code-meta">${langMark(attrs.logo ?? mark, icon)}<span class="code-lang">${escapeHtml(label)}</span>${file}</span>`
+      + `<button type="button" class="code-copy" data-copy aria-label="Copy code${attrs.title ? `: ${escapeHtml(attrs.title)}` : ''}">${icon('clipboard-close', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
+      + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>`;
+    const tab = t.meta?.tab;
+    if (!tab) return `${block}\n`;
+    return `<div class="code-panel${tab.index === 0 ? ' is-active' : ''}" role="tabpanel" id="${tab.group}-p${tab.index}" aria-labelledby="${tab.group}-t${tab.index}" data-tab-key="${escapeHtml(tab.key)}">${block.replace('<pre>', '<pre tabindex="0">')}</div>\n`;
   };
   rules.code_block = rules.fence;
 
@@ -305,7 +367,7 @@ export function createRenderer({ icon }) {
     const tag = `<img src="${escapeHtml(img.src)}" alt="${escapeHtml(alt)}" width="${img.width}" height="${img.height}" loading="lazy" decoding="async">`;
     if (!img.webp?.length) return tag;
     const srcset = img.webp.map((v) => `${escapeHtml(v.src)} ${v.width}w`).join(', ');
-    return `<picture><source type="image/webp" srcset="${srcset}" sizes="(max-width: 800px) 100vw, 760px">${tag}</picture>`;
+    return `<picture><source type="image/webp" srcset="${srcset}" sizes="(max-width: 800px) calc(100vw - 32px), 780px">${tag}</picture>`;
   };
 
   // A paragraph holding only an image becomes a figure with a caption.

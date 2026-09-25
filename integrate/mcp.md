@@ -154,7 +154,7 @@ An assistant can only be given these seven scopes. They are the same scopes as [
 
 If an assistant does not ask for scopes, it gets `messages:read messages:write pricing:read sender-ids:read`. You can untick any of them on the consent screen, but you can never add one the assistant did not ask for, and at least one must stay ticked.
 
-Everything else is refused before the consent screen appears (`invalid_scope`): managing keys, topping up or changing the wallet, webhooks, numbers, compliance, sender ID applications, contacts, templates, analytics, realtime and the `*` wildcard. An assistant cannot create an API key, move money or change where delivery reports go.
+Everything else is refused before the consent screen appears (`invalid_scope`): managing keys, topping up or changing the wallet, webhooks, numbers, compliance, sender ID applications, contacts, templates, analytics, realtime and the `*` wildcard. An assistant cannot create an API key, move money or change where delivery reports go. Two standard OAuth scopes that some assistants add on their own, `offline_access` and `openid`, are silently ignored rather than refused: refresh tokens are always issued, and there is no OpenID sign-in.
 
 There is no separate OTP scope: sending and checking a passcode both use `messages:write`, exactly as the [OTP API](otp.md) does.
 

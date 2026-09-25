@@ -1,18 +1,22 @@
 # Quickstart: your first sandbox message
 
-This guide takes you from nothing to a sandbox message in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status. It is for developers trying OpenSMS for the first time. The outputs shown are real API responses (secrets are shortened).
+This guide takes you from nothing to a sandbox message in about five minutes: create an account, verify your email, mint a sandbox API key, send a message and check its status. It is for developers trying OpenSMS for the first time.
 
-You need `curl`, and optionally Node 18 or newer, or Python 3.9 or newer with `requests`.
+> **About the example output.** Every response on this page was returned by a running OpenSMS API (secrets are shortened). The workspace used for them had not verified its owner's email, and an unverified workspace cannot send, so steps 4 and 5 show the `403` refusal and an empty message list. No successful send is reproduced here. The `201` response is described field by field in the API reference: the [`POST /v1/messages` responses](../reference/api/messages.md#post-v1messages) and the [Message schema](../reference/api/schemas.md#message).
 
-> **Pre-launch.** OpenSMS is not publicly available yet. Sandbox access comes with an invitation from the [waitlist](https://opensms.io/#docs), and the invitation gives you the API origin to use below.
+You need `curl`. From step 4 on, every example also has a tab for each [official SDK](../integrate/sdk.md): install the one for your language to follow along in code.
+
+> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup), or [sign in](https://opensms.io/login) if you already have one. The API origin to use below is `https://opensms.io`.
 
 ```sh
-export OPENSMS_API=<the API origin from your sandbox invitation>
+export OPENSMS_API=https://opensms.io
 ```
 
 ## 1. Create an account and workspace
 
 `POST /v1/auth/signup` creates your user, a sandbox workspace in which you are the owner, and a session.
+
+Steps 1 to 3 use a session, not an API key, so they are not in the SDKs and are shown with cURL only.
 
 ```sh
 curl -s -X POST $OPENSMS_API/v1/auth/signup \
@@ -108,18 +112,130 @@ You can also create keys in the console under **Developer > API keys**:
 
 `POST /v1/messages` with the key. `Idempotency-Key` is required: reuse the same value when you retry the same send, so a network retry never sends twice.
 
+<!-- tabs label="Send a message" -->
 <!-- test:quickstart-curl -->
-```sh
+```sh tab="cURL" title="Terminal"
 curl -s -X POST $OPENSMS_API/v1/messages \
   -H "authorization: Bearer $OPENSMS_API_KEY" \
   -H 'content-type: application/json' \
   -H 'idempotency-key: quickstart-001' \
-  -d '{"to":"+254700000001","text":"Hello from the opensms sandbox"}'
+  -d '{"to":"+254700000001","text":"Hello from the OpenSMS sandbox"}'
 ```
 
-With a verified email this returns `201 Created` and the message object, with `status` `queued` and `price` `0`. See [sending messages](../integrate/sending-messages.md) for every field.
+```ts tab="TypeScript" logo="typescript" title="send.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
 
-If the owner's email is not verified yet, the same call is refused:
+const message = await opensms.messages.send(
+  { to: '+254700000001', text: 'Hello from the OpenSMS sandbox' },
+  { idempotencyKey: 'quickstart-001' },
+);
+
+console.log(message.id, message.status);
+```
+
+```python tab="Python" logo="python" title="send.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+message = client.messages.send(
+    to="+254700000001",
+    text="Hello from the OpenSMS sandbox",
+    idempotency_key="quickstart-001",
+)
+
+print(message["id"], message["status"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+msg, err := client.Messages.Send(context.Background(), opensms.SendMessageParams{
+	To:   "+254700000001",
+	Text: "Hello from the OpenSMS sandbox",
+}, opensms.WithIdempotencyKey("quickstart-001"))
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(msg.ID, msg.Status)
+```
+
+```php tab="PHP" logo="php" title="send.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$message = $opensms->messages->send(
+    ['to' => '+254700000001', 'text' => 'Hello from the OpenSMS sandbox'],
+    ['idempotencyKey' => 'quickstart-001'],
+);
+
+echo $message['id'], ' ', $message['status'], PHP_EOL;
+```
+
+```java tab="Java" logo="java" title="Send.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Message message = opensms.messages().send(
+    new SendMessageParams("+254700000001", "Hello from the OpenSMS sandbox"),
+    RequestOptions.idempotencyKey("quickstart-001"));
+
+System.out.println(message.id + " " + message.status);
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var message = await client.Messages.SendAsync(
+    new SendMessageParams { To = "+254700000001", Text = "Hello from the OpenSMS sandbox" },
+    new RequestOptions { IdempotencyKey = "quickstart-001" });
+
+Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="send.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+message = client.messages.send(
+  to: "+254700000001",
+  text: "Hello from the OpenSMS sandbox",
+  idempotency_key: "quickstart-001"
+)
+
+puts "#{message[:id]} #{message[:status]}"
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let message = client
+    .messages()
+    .send_with(
+        &SendMessage::new("+254700000001", "Hello from the OpenSMS sandbox"),
+        &RequestOptions::idempotency_key("quickstart-001"),
+    )
+    .await?;
+
+println!("{} {}", message.id, message.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let message = try await opensms.messages.send(
+    .init(to: "+254700000001", text: "Hello from the OpenSMS sandbox"),
+    idempotencyKey: "quickstart-001"
+)
+
+print(message.id, message.status ?? "")
+```
+<!-- /tabs -->
+
+The SDK clients (0.1.1 and later) call `https://opensms.io` by default; the [SDK guide](../integrate/sdk.md#client-setup) shows how to point them at another origin.
+
+With a verified email this returns `201 Created` and the message object, with `status` `queued` and `price` `0`. That response was not captured for this page (see the note at the top); its fields are in the [Message schema](../reference/api/schemas.md#message), and [sending messages](../integrate/sending-messages.md#response) explains each one.
+
+If the owner's email is not verified yet, the same call is refused (the SDKs raise their error type with `status` 403 and this `detail`):
 
 ```json
 {"type":"about:blank","title":"Forbidden","status":403,"detail":"email verification is required for sandbox sending"}
@@ -127,14 +243,16 @@ If the owner's email is not verified yet, the same call is refused:
 
 The response also carries an `X-Request-Id` header. It identifies the recorded rejection; quote it to support.
 
-### The same call from Node
+### Without an SDK: Node
+
+The same send over plain HTTP, with no dependency, then a read of the message it created.
 
 <!-- test:quickstart-node -->
-```js
+```js title="send.mjs"
 // send.mjs: send one sandbox message and read it back (Node 18 or newer).
 import { randomUUID } from 'node:crypto';
 
-const API = process.env.OPENSMS_API; // the API origin from your sandbox invitation
+const API = process.env.OPENSMS_API; // the API origin, https://opensms.io
 const KEY = process.env.OPENSMS_API_KEY; // sk_test_...
 
 async function opensms(method, path, { body, idempotencyKey } = {}) {
@@ -149,7 +267,7 @@ async function opensms(method, path, { body, idempotencyKey } = {}) {
 
 try {
   const message = await opensms('POST', '/v1/messages', {
-    body: { to: '+254700000001', text: 'Hello from the opensms sandbox' },
+    body: { to: '+254700000001', text: 'Hello from the OpenSMS sandbox' },
     idempotencyKey: randomUUID(),
   });
   console.log('accepted', message.id, message.status);
@@ -168,22 +286,24 @@ $ OPENSMS_API_KEY=sk_test_OHtA3aYT... node send.mjs
 opensms error 403 {"type":"about:blank","title":"Forbidden","status":403,"detail":"email verification is required for sandbox sending"}
 ```
 
-### The same call from Python
+### Without an SDK: Python
+
+The same over plain HTTP with `requests` (Python 3.9 or newer).
 
 <!-- test:quickstart-python -->
-```python
+```python title="send.py"
 # send.py: send one sandbox message and read it back (Python 3.9+, requests).
 import os, sys, uuid
 import requests
 
-API = os.environ["OPENSMS_API"]  # the API origin from your sandbox invitation
+API = os.environ["OPENSMS_API"]  # the API origin, https://opensms.io
 KEY = os.environ["OPENSMS_API_KEY"]  # sk_test_...
 session = requests.Session()
 session.headers["Authorization"] = f"Bearer {KEY}"
 
 res = session.post(
     f"{API}/v1/messages",
-    json={"to": "+254700000001", "text": "Hello from the opensms sandbox"},
+    json={"to": "+254700000001", "text": "Hello from the OpenSMS sandbox"},
     headers={"Idempotency-Key": str(uuid.uuid4())},
     timeout=10,
 )
@@ -209,10 +329,105 @@ In production code, derive the idempotency key from your own operation (for exam
 
 Read one message with `GET /v1/messages/{id}`, or list recent ones:
 
+<!-- tabs label="List messages" -->
 <!-- test:quickstart-list -->
-```sh
+```sh tab="cURL" title="Terminal"
 curl -s "$OPENSMS_API/v1/messages?limit=5" -H "authorization: Bearer $OPENSMS_API_KEY"
 ```
+
+```ts tab="TypeScript" logo="typescript" title="recent-messages.ts"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.messages.list({ limit: 5 });
+
+for (const message of page.items) console.log(message.id, message.status);
+```
+
+```python tab="Python" logo="python" title="recent_messages.py"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.messages.list(limit=5)
+
+for message in page.items:
+    print(message["id"], message["status"])
+```
+
+```go tab="Go" logo="golang" title="main.go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+
+page, err := client.Messages.List(context.Background(), opensms.ListMessagesParams{Limit: 5})
+if err != nil {
+	log.Fatal(err)
+}
+for _, msg := range page.Items {
+	fmt.Println(msg.ID, msg.Status)
+}
+```
+
+```php tab="PHP" logo="php" title="recent-messages.php"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->messages->list(['limit' => 5]);
+
+foreach ($page->items as $message) {
+    echo $message['id'], ' ', $message['status'], PHP_EOL;
+}
+```
+
+```java tab="Java" logo="java" title="RecentMessages.java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+Page<Message> page = opensms.messages().list(new MessageListParams().limit(5));
+
+for (Message message : page.items) {
+    System.out.println(message.id + " " + message.status);
+}
+```
+
+```csharp tab="C#" logo="dotnet" title="Program.cs"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.Messages.ListAsync(new MessageListParams { Limit = 5 });
+
+foreach (var message in page.Items)
+    Console.WriteLine($"{message.Id} {message.Status}");
+```
+
+```ruby tab="Ruby" logo="ruby" title="recent_messages.rb"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.messages.list(limit: 5)
+
+page.items.each { |message| puts "#{message[:id]} #{message[:status]}" }
+```
+
+```rust tab="Rust" logo="rust" title="src/main.rs"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .messages()
+    .list(ListMessages { limit: Some(5), ..Default::default() })
+    .await?;
+
+for message in &page.items {
+    println!("{} {}", message.id, message.status.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift" logo="swift" title="main.swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.messages.list(.init(limit: 5))
+
+for message in page.items {
+    print(message.id, message.status ?? "")
+}
+```
+<!-- /tabs -->
 
 ```json
 {"items":[],"next_cursor":null}

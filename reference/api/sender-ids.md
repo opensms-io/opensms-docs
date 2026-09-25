@@ -65,10 +65,105 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/check?value=ACMECO&country=KE" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const check = await opensms.senderIds.check({ value: 'ACMECO', country: 'KE' });
+
+console.log(check.available, check.reason);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+check = client.sender_ids.check(value="ACMECO", country="KE")
+
+print(check["available"], check["reason"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+check, err := client.SenderIDs.Check(ctx, opensms.CheckSenderIDParams{
+	Value:   "ACMECO",
+	Country: "KE",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(check.Available, check.Reason)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$check = $opensms->senderIds->check(['value' => 'ACMECO', 'country' => 'KE']);
+
+echo $check['available'], ' ', $check['reason'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var check = opensms.senderIds().check("ACMECO", "KE");
+
+System.out.println(check.available + " " + check.reason);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var check = await client.SenderIds.CheckAsync(new SenderIdCheckParams
+{
+    Value = "ACMECO",
+    Country = "KE",
+});
+
+Console.WriteLine($"{check.Available} {check.Reason}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+check = client.sender_ids.check(value: "ACMECO", country: "KE")
+
+puts "#{check[:available]} #{check[:reason]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let check = client
+    .sender_ids()
+    .check(&CheckSenderId {
+        value: "ACMECO".into(),
+        country: Some("KE".into()),
+    })
+    .await?;
+
+println!("{} {}", check.available.unwrap_or_default(), check.reason.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let check = try await opensms.senderIds.check(value: "ACMECO", country: "KE")
+
+print(check.available ?? false, check.reason ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -111,10 +206,113 @@ Operation ID: `listSenderIdDrafts`. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sender-id-drafts" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.senderIds.listDrafts();
+
+for (const item of page.items) {
+  console.log(item.id, item.value);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.sender_ids.list_drafts()
+
+for item in page.items:
+    print(item["id"], item["value"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.SenderIDs.ListDrafts(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Value)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->senderIds->listDrafts();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['value'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.senderIds().listDrafts();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.value);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.SenderIds.ListDraftsAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Value}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.sender_ids.list_drafts()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:value]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client
+    .sender_ids()
+    .list_drafts(ListParams::default())
+    .await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.value.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.senderIds.listDrafts()
+
+for item in page.items {
+    print(item.id, item.value ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -186,7 +384,8 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/sender-id-drafts" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
@@ -198,6 +397,146 @@ curl -s -X POST "$OPENSMS_API/v1/sender-id-drafts" \
   "sample_message": "Your ACME order 1042 has shipped."
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const draft = await opensms.senderIds.createDraft({
+  value: 'ACMECO',
+  kind: 'alphanumeric',
+  countries: ['KE'],
+  useCase: 'transactional',
+  sampleMessage: 'Your ACME order 1042 has shipped.',
+});
+
+console.log(draft.id, draft.version);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+draft = client.sender_ids.create_draft(
+    value="ACMECO",
+    kind="alphanumeric",
+    countries=["KE"],
+    use_case="transactional",
+    sample_message="Your ACME order 1042 has shipped.",
+)
+
+print(draft["id"], draft["version"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+draft, err := client.SenderIDs.CreateDraft(ctx, opensms.SenderIDDraftParams{
+	Value:         "ACMECO",
+	Kind:          "alphanumeric",
+	Countries:     []string{"KE"},
+	UseCase:       "transactional",
+	SampleMessage: "Your ACME order 1042 has shipped.",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(draft.ID, draft.Version)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$draft = $opensms->senderIds->createDraft([
+    'value' => 'ACMECO',
+    'kind' => 'alphanumeric',
+    'countries' => ['KE'],
+    'use_case' => 'transactional',
+    'sample_message' => 'Your ACME order 1042 has shipped.',
+]);
+
+echo $draft['id'], ' ', $draft['version'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new SenderIdDraftParams()
+    .value("ACMECO")
+    .kind("alphanumeric")
+    .countries(List.of("KE"))
+    .useCase("transactional")
+    .sampleMessage("Your ACME order 1042 has shipped.");
+var draft = opensms.senderIds().createDraft(params);
+
+System.out.println(draft.id + " " + draft.version);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var draft = await client.SenderIds.CreateDraftAsync(new CreateSenderIdDraftParams
+{
+    Value = "ACMECO",
+    Kind = "alphanumeric",
+    Countries = ["KE"],
+    UseCase = "transactional",
+    SampleMessage = "Your ACME order 1042 has shipped.",
+});
+
+Console.WriteLine($"{draft.Id} {draft.Version}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+draft = client.sender_ids.create_draft(
+  value: "ACMECO",
+  kind: "alphanumeric",
+  countries: ["KE"],
+  use_case: "transactional",
+  sample_message: "Your ACME order 1042 has shipped."
+)
+
+puts "#{draft[:id]} #{draft[:version]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let draft = client
+    .sender_ids()
+    .create_draft(&CreateSenderIdDraft {
+        value: Some("ACMECO".into()),
+        kind: Some("alphanumeric".into()),
+        countries: Some(vec!["KE".into()]),
+        use_case: Some("transactional".into()),
+        sample_message: Some("Your ACME order 1042 has shipped.".into()),
+        ..Default::default()
+    })
+    .await?;
+
+println!("{} {}", draft.id, draft.version.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let draft = try await opensms.senderIds.createDraft(.init(
+    value: "ACMECO",
+    kind: "alphanumeric",
+    countries: ["KE"],
+    useCase: "transactional",
+    sampleMessage: "Your ACME order 1042 has shipped."
+))
+
+print(draft.id, draft.version ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -248,10 +587,99 @@ Operation ID: `getSenderIdDraft`. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sender-id-drafts/4efae51b-735b-4fea-83d7-7ecc1870a58f" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const draft = await opensms.senderIds.getDraft(
+  '4efae51b-735b-4fea-83d7-7ecc1870a58f',
+);
+
+console.log(draft.id, draft.version);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+draft = client.sender_ids.get_draft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+
+print(draft["id"], draft["version"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+draft, err := client.SenderIDs.GetDraft(ctx, "4efae51b-735b-4fea-83d7-7ecc1870a58f")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(draft.ID, draft.Version)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$draft = $opensms->senderIds->getDraft('4efae51b-735b-4fea-83d7-7ecc1870a58f');
+
+echo $draft['id'], ' ', $draft['version'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var draft = opensms.senderIds().getDraft("4efae51b-735b-4fea-83d7-7ecc1870a58f");
+
+System.out.println(draft.id + " " + draft.version);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var draft = await client.SenderIds.GetDraftAsync(
+    "4efae51b-735b-4fea-83d7-7ecc1870a58f"
+);
+
+Console.WriteLine($"{draft.Id} {draft.Version}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+draft = client.sender_ids.get_draft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+
+puts "#{draft[:id]} #{draft[:version]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let draft = client
+    .sender_ids()
+    .get_draft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+    .await?;
+
+println!("{} {}", draft.id, draft.version.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let draft = try await opensms.senderIds.getDraft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+
+print(draft.id, draft.version ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -319,12 +747,138 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PATCH "$OPENSMS_API/v1/sender-id-drafts/4efae51b-735b-4fea-83d7-7ecc1870a58f" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
   -d '{"version":1,"sample_message":"Your ACME code is 123456."}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const draft = await opensms.senderIds.updateDraft(
+  '4efae51b-735b-4fea-83d7-7ecc1870a58f',
+  { version: 1, sampleMessage: 'Your ACME code is 123456.' },
+);
+
+console.log(draft.id, draft.version);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+draft = client.sender_ids.update_draft(
+    "4efae51b-735b-4fea-83d7-7ecc1870a58f",
+    version=1,
+    sample_message="Your ACME code is 123456.",
+)
+
+print(draft["id"], draft["version"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+draft, err := client.SenderIDs.UpdateDraft(
+	ctx,
+	"4efae51b-735b-4fea-83d7-7ecc1870a58f",
+	opensms.UpdateSenderIDDraftParams{
+		Version:       1,
+		SampleMessage: "Your ACME code is 123456.",
+	},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(draft.ID, draft.Version)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$draft = $opensms->senderIds->updateDraft('4efae51b-735b-4fea-83d7-7ecc1870a58f', [
+    'version' => 1,
+    'sample_message' => 'Your ACME code is 123456.',
+]);
+
+echo $draft['id'], ' ', $draft['version'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new SenderIdDraftParams()
+    .version(1)
+    .sampleMessage("Your ACME code is 123456.");
+var draft = opensms.senderIds().updateDraft("4efae51b-735b-4fea-83d7-7ecc1870a58f", params);
+
+System.out.println(draft.id + " " + draft.version);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var draft = await client.SenderIds.UpdateDraftAsync(
+    "4efae51b-735b-4fea-83d7-7ecc1870a58f",
+    new UpdateSenderIdDraftParams
+    {
+        Version = 1,
+        SampleMessage = "Your ACME code is 123456.",
+    }
+);
+
+Console.WriteLine($"{draft.Id} {draft.Version}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+draft = client.sender_ids.update_draft(
+  "4efae51b-735b-4fea-83d7-7ecc1870a58f",
+  version: 1,
+  sample_message: "Your ACME code is 123456."
+)
+
+puts "#{draft[:id]} #{draft[:version]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let draft = client
+    .sender_ids()
+    .update_draft(
+        "4efae51b-735b-4fea-83d7-7ecc1870a58f",
+        &UpdateSenderIdDraft {
+            version: 1,
+            sample_message: Some("Your ACME code is 123456.".into()),
+            ..Default::default()
+        },
+    )
+    .await?;
+
+println!("{} {}", draft.id, draft.version.unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let draft = try await opensms.senderIds.updateDraft("4efae51b-735b-4fea-83d7-7ecc1870a58f", .init(
+    version: 1,
+    sampleMessage: "Your ACME code is 123456."
+))
+
+print(draft.id, draft.version ?? 0)
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -375,10 +929,78 @@ Operation ID: `deleteSenderIdDraft`. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/sender-id-drafts/4efae51b-735b-4fea-83d7-7ecc1870a58f" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.senderIds.deleteDraft('4efae51b-735b-4fea-83d7-7ecc1870a58f');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.sender_ids.delete_draft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.SenderIDs.DeleteDraft(ctx, "4efae51b-735b-4fea-83d7-7ecc1870a58f")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->senderIds->deleteDraft('4efae51b-735b-4fea-83d7-7ecc1870a58f');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.senderIds().deleteDraft("4efae51b-735b-4fea-83d7-7ecc1870a58f");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.SenderIds.DeleteDraftAsync("4efae51b-735b-4fea-83d7-7ecc1870a58f");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.sender_ids.delete_draft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .sender_ids()
+    .delete_draft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.senderIds.deleteDraft("4efae51b-735b-4fea-83d7-7ecc1870a58f")
+```
+
+<!-- /tabs -->
 
 Response `204`:
 
@@ -415,10 +1037,102 @@ Operation ID: `quoteSenderIdRegistration`. Tag: _none in contract_.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/quote?countries=KE" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const quote = await opensms.senderIds.quote({ countries: ['KE'] });
+
+console.log(quote.quoteId);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+quote = client.sender_ids.quote(countries=["KE"])
+
+print(quote["quote_id"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+quote, err := client.SenderIDs.Quote(ctx, opensms.QuoteSenderIDParams{
+	Countries: []string{"KE"},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(quote.QuoteID)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$quote = $opensms->senderIds->quote(['countries' => ['KE']]);
+
+echo $quote['quote_id'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var quote = opensms.senderIds().quote(List.of("KE"));
+
+System.out.println(quote.quoteId);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var quote = await client.SenderIds.QuoteAsync(new SenderIdQuoteParams
+{
+    Countries = ["KE"],
+});
+
+Console.WriteLine(quote.QuoteId);
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+quote = client.sender_ids.quote(countries: ["KE"])
+
+puts quote[:quote_id]
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let quote = client
+    .sender_ids()
+    .quote(&QuoteSenderId {
+        countries: vec!["KE".into()],
+    })
+    .await?;
+
+println!("{}", quote.quote_id.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let quote = try await opensms.senderIds.quote(countries: ["KE"])
+
+print(quote.quoteId ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -470,10 +1184,110 @@ Browser sessions require explicit X-Workspace-ID and X-Environment. API keys rem
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sender-ids" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const page = await opensms.senderIds.list();
+
+for (const item of page.items) {
+  console.log(item.id, item.value);
+}
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+page = client.sender_ids.list()
+
+for item in page.items:
+    print(item["id"], item["value"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+page, err := client.SenderIDs.List(ctx, opensms.ListParams{})
+if err != nil {
+	log.Fatal(err)
+}
+for _, item := range page.Items {
+	fmt.Println(item.ID, item.Value)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$page = $opensms->senderIds->list();
+
+foreach ($page->items as $item) {
+    echo $item['id'], ' ', $item['value'], PHP_EOL;
+}
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var page = opensms.senderIds().list();
+
+for (var item : page.items) {
+    System.out.println(item.id + " " + item.value);
+}
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var page = await client.SenderIds.ListAsync();
+
+foreach (var item in page.Items)
+{
+    Console.WriteLine($"{item.Id} {item.Value}");
+}
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+page = client.sender_ids.list()
+
+page.items.each do |item|
+  puts "#{item[:id]} #{item[:value]}"
+end
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let page = client.sender_ids().list(ListParams::default()).await?;
+
+for item in &page.items {
+    println!("{} {}", item.id, item.value.as_deref().unwrap_or_default());
+}
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let page = try await opensms.senderIds.list()
+
+for item in page.items {
+    print(item.id, item.value ?? "")
+}
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -561,7 +1375,8 @@ Response `201` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/sender-ids" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-ed1a4605-9721-4980-b935-cad8bb529166' \
@@ -579,6 +1394,191 @@ curl -s -X POST "$OPENSMS_API/v1/sender-ids" \
   ]
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const sender = await opensms.senderIds.create({
+  value: 'ACMECO',
+  kind: 'alphanumeric',
+  countries: ['KE'],
+  useCase: 'transactional',
+  sampleMessage: 'Your ACME order 1042 has shipped.',
+  documents: [
+    'fe68810d-6209-404f-b2fd-ec86384334ae',
+    'fb775984-e074-472b-b754-f878871526ed',
+    'b4c07473-8519-4c26-8c39-48ec384bf3f8',
+  ],
+});
+
+console.log(sender.id, sender.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+sender = client.sender_ids.create(
+    value="ACMECO",
+    kind="alphanumeric",
+    countries=["KE"],
+    use_case="transactional",
+    sample_message="Your ACME order 1042 has shipped.",
+    documents=[
+        "fe68810d-6209-404f-b2fd-ec86384334ae",
+        "fb775984-e074-472b-b754-f878871526ed",
+        "b4c07473-8519-4c26-8c39-48ec384bf3f8",
+    ],
+)
+
+print(sender["id"], sender["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+sender, err := client.SenderIDs.Create(ctx, opensms.CreateSenderIDParams{
+	Value:         "ACMECO",
+	Kind:          "alphanumeric",
+	Countries:     []string{"KE"},
+	UseCase:       "transactional",
+	SampleMessage: "Your ACME order 1042 has shipped.",
+	Documents: []string{
+		"fe68810d-6209-404f-b2fd-ec86384334ae",
+		"fb775984-e074-472b-b754-f878871526ed",
+		"b4c07473-8519-4c26-8c39-48ec384bf3f8",
+	},
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(sender.ID, sender.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$sender = $opensms->senderIds->create([
+    'value' => 'ACMECO',
+    'kind' => 'alphanumeric',
+    'countries' => ['KE'],
+    'use_case' => 'transactional',
+    'sample_message' => 'Your ACME order 1042 has shipped.',
+    'documents' => [
+        'fe68810d-6209-404f-b2fd-ec86384334ae',
+        'fb775984-e074-472b-b754-f878871526ed',
+        'b4c07473-8519-4c26-8c39-48ec384bf3f8',
+    ],
+]);
+
+echo $sender['id'], ' ', $sender['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new SenderIdCreateParams(
+        "ACMECO",
+        "alphanumeric",
+        List.of("KE"),
+        List.of(
+            "fe68810d-6209-404f-b2fd-ec86384334ae",
+            "fb775984-e074-472b-b754-f878871526ed",
+            "b4c07473-8519-4c26-8c39-48ec384bf3f8"))
+    .useCase("transactional")
+    .sampleMessage("Your ACME order 1042 has shipped.");
+var sender = opensms.senderIds().create(params);
+
+System.out.println(sender.id + " " + sender.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var sender = await client.SenderIds.CreateAsync(new CreateSenderIdParams
+{
+    Value = "ACMECO",
+    Kind = "alphanumeric",
+    Countries = ["KE"],
+    UseCase = "transactional",
+    SampleMessage = "Your ACME order 1042 has shipped.",
+    Documents =
+    [
+        "fe68810d-6209-404f-b2fd-ec86384334ae",
+        "fb775984-e074-472b-b754-f878871526ed",
+        "b4c07473-8519-4c26-8c39-48ec384bf3f8",
+    ],
+});
+
+Console.WriteLine($"{sender.Id} {sender.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+sender = client.sender_ids.create(
+  value: "ACMECO",
+  kind: "alphanumeric",
+  countries: ["KE"],
+  use_case: "transactional",
+  sample_message: "Your ACME order 1042 has shipped.",
+  documents: [
+    "fe68810d-6209-404f-b2fd-ec86384334ae",
+    "fb775984-e074-472b-b754-f878871526ed",
+    "b4c07473-8519-4c26-8c39-48ec384bf3f8"
+  ]
+)
+
+puts "#{sender[:id]} #{sender[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let sender = client
+    .sender_ids()
+    .create(&CreateSenderId {
+        value: "ACMECO".into(),
+        kind: "alphanumeric".into(),
+        countries: vec!["KE".into()],
+        use_case: Some("transactional".into()),
+        sample_message: Some("Your ACME order 1042 has shipped.".into()),
+        documents: vec![
+            "fe68810d-6209-404f-b2fd-ec86384334ae".into(),
+            "fb775984-e074-472b-b754-f878871526ed".into(),
+            "b4c07473-8519-4c26-8c39-48ec384bf3f8".into(),
+        ],
+        ..Default::default()
+    })
+    .await?;
+
+println!("{} {}", sender.id, sender.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let sender = try await opensms.senderIds.create(.init(
+    value: "ACMECO",
+    kind: "alphanumeric",
+    countries: ["KE"],
+    documents: [
+        "fe68810d-6209-404f-b2fd-ec86384334ae",
+        "fb775984-e074-472b-b754-f878871526ed",
+        "b4c07473-8519-4c26-8c39-48ec384bf3f8",
+    ],
+    useCase: "transactional",
+    sampleMessage: "Your ACME order 1042 has shipped."
+))
+
+print(sender.id, sender.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `201` (`application/json`):
 
@@ -688,10 +1688,97 @@ Response `200` fields:
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/sender-ids/222ff8e6-1629-48a9-9181-ee110d2e6ad5" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const sender = await opensms.senderIds.get(
+  '222ff8e6-1629-48a9-9181-ee110d2e6ad5',
+);
+
+console.log(sender.value, sender.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+sender = client.sender_ids.get("222ff8e6-1629-48a9-9181-ee110d2e6ad5")
+
+print(sender["value"], sender["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+sender, err := client.SenderIDs.Get(ctx, "222ff8e6-1629-48a9-9181-ee110d2e6ad5")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(sender.Value, sender.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$sender = $opensms->senderIds->get('222ff8e6-1629-48a9-9181-ee110d2e6ad5');
+
+echo $sender['value'], ' ', $sender['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var sender = opensms.senderIds().get("222ff8e6-1629-48a9-9181-ee110d2e6ad5");
+
+System.out.println(sender.value + " " + sender.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var sender = await client.SenderIds.GetAsync("222ff8e6-1629-48a9-9181-ee110d2e6ad5");
+
+Console.WriteLine($"{sender.Value} {sender.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+sender = client.sender_ids.get("222ff8e6-1629-48a9-9181-ee110d2e6ad5")
+
+puts "#{sender[:value]} #{sender[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let sender = client
+    .sender_ids()
+    .get("222ff8e6-1629-48a9-9181-ee110d2e6ad5")
+    .await?;
+
+println!("{} {}", sender.value.as_deref().unwrap_or_default(), sender.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let sender = try await opensms.senderIds.get("222ff8e6-1629-48a9-9181-ee110d2e6ad5")
+
+print(sender.value ?? "", sender.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -791,7 +1878,8 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X PATCH "$OPENSMS_API/v1/sender-ids/888d3b7a-6356-411f-a5d2-6fb29c47e517" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Content-Type: application/json' \
@@ -806,6 +1894,187 @@ curl -s -X PATCH "$OPENSMS_API/v1/sender-ids/888d3b7a-6356-411f-a5d2-6fb29c47e51
   ]
 }'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const sender = await opensms.senderIds.update(
+  '888d3b7a-6356-411f-a5d2-6fb29c47e517',
+  {
+    useCase: 'otp',
+    sampleMessage: 'Your ACME code is 123456.',
+    countries: ['KE'],
+    documents: [
+      'fe68810d-6209-404f-b2fd-ec86384334ae',
+      'fb775984-e074-472b-b754-f878871526ed',
+      'b4c07473-8519-4c26-8c39-48ec384bf3f8',
+    ],
+  },
+);
+
+console.log(sender.id, sender.status);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+sender = client.sender_ids.update(
+    "888d3b7a-6356-411f-a5d2-6fb29c47e517",
+    use_case="otp",
+    sample_message="Your ACME code is 123456.",
+    countries=["KE"],
+    documents=[
+        "fe68810d-6209-404f-b2fd-ec86384334ae",
+        "fb775984-e074-472b-b754-f878871526ed",
+        "b4c07473-8519-4c26-8c39-48ec384bf3f8",
+    ],
+)
+
+print(sender["id"], sender["status"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+sender, err := client.SenderIDs.Update(
+	ctx,
+	"888d3b7a-6356-411f-a5d2-6fb29c47e517",
+	opensms.UpdateSenderIDParams{
+		UseCase:       "otp",
+		SampleMessage: "Your ACME code is 123456.",
+		Countries:     []string{"KE"},
+		Documents: []string{
+			"fe68810d-6209-404f-b2fd-ec86384334ae",
+			"fb775984-e074-472b-b754-f878871526ed",
+			"b4c07473-8519-4c26-8c39-48ec384bf3f8",
+		},
+	},
+)
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(sender.ID, sender.Status)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$sender = $opensms->senderIds->update('888d3b7a-6356-411f-a5d2-6fb29c47e517', [
+    'use_case' => 'otp',
+    'sample_message' => 'Your ACME code is 123456.',
+    'countries' => ['KE'],
+    'documents' => [
+        'fe68810d-6209-404f-b2fd-ec86384334ae',
+        'fb775984-e074-472b-b754-f878871526ed',
+        'b4c07473-8519-4c26-8c39-48ec384bf3f8',
+    ],
+]);
+
+echo $sender['id'], ' ', $sender['status'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var params = new SenderIdUpdateParams(
+        "otp",
+        List.of("KE"),
+        List.of(
+            "fe68810d-6209-404f-b2fd-ec86384334ae",
+            "fb775984-e074-472b-b754-f878871526ed",
+            "b4c07473-8519-4c26-8c39-48ec384bf3f8"))
+    .sampleMessage("Your ACME code is 123456.");
+var sender = opensms.senderIds().update("888d3b7a-6356-411f-a5d2-6fb29c47e517", params);
+
+System.out.println(sender.id + " " + sender.status);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var sender = await client.SenderIds.UpdateAsync(
+    "888d3b7a-6356-411f-a5d2-6fb29c47e517",
+    new UpdateSenderIdParams
+    {
+        UseCase = "otp",
+        SampleMessage = "Your ACME code is 123456.",
+        Countries = ["KE"],
+        Documents =
+        [
+            "fe68810d-6209-404f-b2fd-ec86384334ae",
+            "fb775984-e074-472b-b754-f878871526ed",
+            "b4c07473-8519-4c26-8c39-48ec384bf3f8",
+        ],
+    }
+);
+
+Console.WriteLine($"{sender.Id} {sender.Status}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+sender = client.sender_ids.update(
+  "888d3b7a-6356-411f-a5d2-6fb29c47e517",
+  use_case: "otp",
+  sample_message: "Your ACME code is 123456.",
+  countries: ["KE"],
+  documents: [
+    "fe68810d-6209-404f-b2fd-ec86384334ae",
+    "fb775984-e074-472b-b754-f878871526ed",
+    "b4c07473-8519-4c26-8c39-48ec384bf3f8"
+  ]
+)
+
+puts "#{sender[:id]} #{sender[:status]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let sender = client
+    .sender_ids()
+    .update(
+        "888d3b7a-6356-411f-a5d2-6fb29c47e517",
+        &UpdateSenderId {
+            use_case: "otp".into(),
+            sample_message: Some("Your ACME code is 123456.".into()),
+            countries: vec!["KE".into()],
+            documents: vec![
+                "fe68810d-6209-404f-b2fd-ec86384334ae".into(),
+                "fb775984-e074-472b-b754-f878871526ed".into(),
+                "b4c07473-8519-4c26-8c39-48ec384bf3f8".into(),
+            ],
+        },
+    )
+    .await?;
+
+println!("{} {}", sender.id, sender.status.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let sender = try await opensms.senderIds.update("888d3b7a-6356-411f-a5d2-6fb29c47e517", .init(
+    useCase: "otp",
+    countries: ["KE"],
+    documents: [
+        "fe68810d-6209-404f-b2fd-ec86384334ae",
+        "fb775984-e074-472b-b754-f878871526ed",
+        "b4c07473-8519-4c26-8c39-48ec384bf3f8",
+    ],
+    sampleMessage: "Your ACME code is 123456."
+))
+
+print(sender.id, sender.status ?? "")
+```
+
+<!-- /tabs -->
 
 Response `409` (`application/problem+json`):
 
@@ -875,10 +2144,78 @@ Owner/admin only.
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X DELETE "$OPENSMS_API/v1/sender-ids/888d3b7a-6356-411f-a5d2-6fb29c47e517" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+await opensms.senderIds.delete('888d3b7a-6356-411f-a5d2-6fb29c47e517');
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+client.sender_ids.delete("888d3b7a-6356-411f-a5d2-6fb29c47e517")
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+err = client.SenderIDs.Delete(ctx, "888d3b7a-6356-411f-a5d2-6fb29c47e517")
+if err != nil {
+	log.Fatal(err)
+}
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$opensms->senderIds->delete('888d3b7a-6356-411f-a5d2-6fb29c47e517');
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+opensms.senderIds().delete("888d3b7a-6356-411f-a5d2-6fb29c47e517");
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+await client.SenderIds.DeleteAsync("888d3b7a-6356-411f-a5d2-6fb29c47e517");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+client.sender_ids.delete("888d3b7a-6356-411f-a5d2-6fb29c47e517")
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+client
+    .sender_ids()
+    .delete("888d3b7a-6356-411f-a5d2-6fb29c47e517")
+    .await?;
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+try await opensms.senderIds.delete("888d3b7a-6356-411f-a5d2-6fb29c47e517")
+```
+
+<!-- /tabs -->
 
 Response `204`:
 

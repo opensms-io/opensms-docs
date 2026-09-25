@@ -54,13 +54,105 @@ Unknown fields are rejected (`additionalProperties: false`).
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X POST "$OPENSMS_API/v1/lookup" \
   -H 'Authorization: Bearer sk_test_VG0...' \
   -H 'Idempotency-Key: docs-5c1cbee2-1a87-4d4f-b81b-2881489a394b' \
   -H 'Content-Type: application/json' \
   -d '{"to":"+254712345678"}'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const lookup = await opensms.lookups.create({ to: '+254712345678' });
+
+console.log(lookup.id, lookup.state);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+lookup = client.lookups.create(to="+254712345678")
+
+print(lookup["id"], lookup["state"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+lookup, err := client.Lookups.Create(ctx, opensms.CreateLookupParams{
+	To: "+254712345678",
+})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(lookup.ID, lookup.State)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$lookup = $opensms->lookups->create(['to' => '+254712345678']);
+
+echo $lookup['id'], ' ', $lookup['state'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var lookup = opensms.lookups().create("+254712345678");
+
+System.out.println(lookup.id + " " + lookup.state);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var lookup = await client.Lookups.CreateAsync(new CreateLookupParams
+{
+    To = "+254712345678",
+});
+
+Console.WriteLine($"{lookup.Id} {lookup.State}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+lookup = client.lookups.create(to: "+254712345678")
+
+puts "#{lookup[:id]} #{lookup[:state]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let lookup = client
+    .lookups()
+    .create(&CreateLookup {
+        to: "+254712345678".into(),
+    })
+    .await?;
+
+println!("{} {}", lookup.id, lookup.state.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let lookup = try await opensms.lookups.create(to: "+254712345678")
+
+print(lookup.id, lookup.state ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 
@@ -115,10 +207,97 @@ Requires lookup:read API key scope or current workspace membership session. Work
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/lookup/f8842eae-4d54-4433-b91c-7a19c741ac60" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const lookup = await opensms.lookups.get(
+  'f8842eae-4d54-4433-b91c-7a19c741ac60',
+);
+
+console.log(lookup.id, lookup.state);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+lookup = client.lookups.get("f8842eae-4d54-4433-b91c-7a19c741ac60")
+
+print(lookup["id"], lookup["state"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+lookup, err := client.Lookups.Get(ctx, "f8842eae-4d54-4433-b91c-7a19c741ac60")
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(lookup.ID, lookup.State)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$lookup = $opensms->lookups->get('f8842eae-4d54-4433-b91c-7a19c741ac60');
+
+echo $lookup['id'], ' ', $lookup['state'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var lookup = opensms.lookups().get("f8842eae-4d54-4433-b91c-7a19c741ac60");
+
+System.out.println(lookup.id + " " + lookup.state);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var lookup = await client.Lookups.GetAsync("f8842eae-4d54-4433-b91c-7a19c741ac60");
+
+Console.WriteLine($"{lookup.Id} {lookup.State}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+lookup = client.lookups.get("f8842eae-4d54-4433-b91c-7a19c741ac60")
+
+puts "#{lookup[:id]} #{lookup[:state]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let lookup = client
+    .lookups()
+    .get("f8842eae-4d54-4433-b91c-7a19c741ac60")
+    .await?;
+
+println!("{} {}", lookup.id, lookup.state.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let lookup = try await opensms.lookups.get("f8842eae-4d54-4433-b91c-7a19c741ac60")
+
+print(lookup.id, lookup.state ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

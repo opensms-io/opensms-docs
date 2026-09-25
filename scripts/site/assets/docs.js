@@ -67,58 +67,6 @@
     ta.remove();
   }
 
-  /* ---------- code tabs ---------- */
-  // One choice of language for every tabbed block on the page, remembered per
-  // browser. Blocks without that language keep their current tab.
-  var TAB_KEY = 'opensms-code-lang';
-  function selectTab(group, label, focus) {
-    var tabs = group.querySelectorAll('[data-code-tab]');
-    var found = false;
-    for (var i = 0; i < tabs.length; i++) if (tabs[i].getAttribute('data-code-tab') === label) found = true;
-    if (!found) return false;
-    for (var j = 0; j < tabs.length; j++) {
-      var on = tabs[j].getAttribute('data-code-tab') === label;
-      tabs[j].setAttribute('aria-selected', String(on));
-      tabs[j].tabIndex = on ? 0 : -1;
-      var panel = doc.getElementById(tabs[j].getAttribute('aria-controls'));
-      if (panel) panel.hidden = !on;
-      if (on && focus) tabs[j].focus();
-      if (on) {
-        // On phones the tab row scrolls sideways: bring the chosen tab into view
-        // (clear of the copy button on the right).
-        var list = tabs[j].parentNode;
-        var left = tabs[j].offsetLeft - list.offsetLeft;
-        if (list.scrollWidth > list.clientWidth && (left < list.scrollLeft || left + tabs[j].offsetWidth > list.scrollLeft + list.clientWidth - 96)) list.scrollLeft = Math.max(0, left - 8);
-      }
-    }
-    return true;
-  }
-  function selectEverywhere(label, anchor) {
-    var top = anchor ? anchor.getBoundingClientRect().top : 0;
-    var groups = doc.querySelectorAll('[data-code-group]');
-    for (var i = 0; i < groups.length; i++) selectTab(groups[i], label, false);
-    // Keep the block the reader clicked where it was when others above change height.
-    if (anchor) window.scrollBy(0, anchor.getBoundingClientRect().top - top);
-    try { localStorage.setItem(TAB_KEY, label); } catch (e) { /* storage unavailable */ }
-  }
-  (function () {
-    var saved = null;
-    try { saved = localStorage.getItem(TAB_KEY); } catch (e) { /* storage unavailable */ }
-    if (!saved) return;
-    var groups = doc.querySelectorAll('[data-code-group]');
-    for (var i = 0; i < groups.length; i++) selectTab(groups[i], saved, false);
-  })();
-  doc.addEventListener('keydown', function (ev) {
-    var tab = ev.target.closest && ev.target.closest('[data-code-tab]');
-    if (!tab || !/^(ArrowLeft|ArrowRight|Home|End)$/.test(ev.key)) return;
-    var tabs = Array.prototype.slice.call(tab.parentNode.querySelectorAll('[data-code-tab]'));
-    var i = tabs.indexOf(tab);
-    var next = ev.key === 'Home' ? 0 : ev.key === 'End' ? tabs.length - 1 : (i + (ev.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length;
-    ev.preventDefault();
-    selectTab(tab.closest('[data-code-group]'), tabs[next].getAttribute('data-code-tab'), true);
-    selectEverywhere(tabs[next].getAttribute('data-code-tab'), tab.closest('[data-code-group]'));
-  });
-
   /* ---------- search ---------- */
   var dialog = doc.getElementById('search');
   var input = doc.getElementById('search-input');
@@ -136,7 +84,7 @@
         index = data;
         index.entries.forEach(function (e) {
           e.lt = (data.pages[e[0]].t + ' ' + (e[1] || '')).toLowerCase();
-          e.lx = (e[3] || '').toLowerCase();
+          e.lx = ((e[3] || '') + (e[4] ? ' ' + e[4] : '')).toLowerCase();
         });
         return index;
       });
@@ -201,50 +149,78 @@
         var inTitle = e.lt.indexOf(t);
         var inText = e.lx.indexOf(t);
         if (inTitle < 0 && inText < 0) return;
-        if (inTitle >= 0) score += (inTitle === 0 || e.lt.charAt(inTitle - 1) === ' ' || e.lt.charAt(inTitle - 1) === '/') ? 12 : 6;
+        if (inTitle >= 0) score += (inTitle === 0 || !/[a-z0-9]/.test(e.lt.charAt(inTitle - 1))) ? 12 : 6;
         if (inText >= 0) score += 1 + Math.min(3, e.lx.split(t).length - 1) * 0.5;
       }
       if (!e[1]) score += 4; // the page itself ranks above its sections
       var page = index.pages[e[0]];
       if (e.lt.indexOf(q.toLowerCase()) >= 0) score += 10;
+      // These are developer docs: on an equal match the developer guides lead, then
+      // the API reference (it lists, guides explain), then the web app guides.
+      if (page.r) score -= 5;
+      if (page.w) score -= 6;
       results.push({ e: e, page: page, score: score });
     });
     results.sort(function (a, b) { return b.score - a.score; });
-    results = results.slice(0, 24);
+    // At most five hits per page, so one long page cannot crowd out the others.
+    var perPage = {};
+    results = results.filter(function (r) { perPage[r.e[0]] = (perPage[r.e[0]] || 0) + 1; return perPage[r.e[0]] <= 5; }).slice(0, 24);
     // Group by section, sections ordered by their best result.
     var order = [];
+    results.forEach(function (r) { if (!r.page.w && order.indexOf(r.page.s) < 0) order.push(r.page.s); });
+    // The web app guides always come last.
     results.forEach(function (r) { if (order.indexOf(r.page.s) < 0) order.push(r.page.s); });
     return results.slice().sort(function (a, b) { return order.indexOf(a.page.s) - order.indexOf(b.page.s); });
   }
 
+  var status = doc.getElementById('search-status');
+  function svg(name, size, cls) {
+    return '<svg class="i' + (cls ? ' ' + cls : '') + '" width="' + size + '" height="' + size + '" aria-hidden="true"><use href="#i-' + name + '"/></svg>';
+  }
+  var METHOD = /^(GET|POST|PUT|PATCH|DELETE) (\/\S*)$/;
+  function titleHtml(text, terms) {
+    var m = text.match(METHOD);
+    if (m) return '<span class="sr-op"><span class="sr-method m-' + m[1].toLowerCase() + '">' + m[1] + '</span><span class="sr-path">' + highlight(m[2], terms) + '</span></span>';
+    return highlight(text, terms);
+  }
+  function setStatus(text) { if (status) status.textContent = text; }
+
   function render(q) {
     selected = -1;
+    input.removeAttribute('aria-activedescendant');
     var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
-    if (!terms.length) { list.innerHTML = ''; if (empty) empty.hidden = false; return; }
+    if (!terms.length) { list.innerHTML = ''; if (empty) empty.hidden = false; setStatus(''); return; }
     if (empty) empty.hidden = true;
     var results = search(q);
     if (!results.length) {
-      list.innerHTML = '<li class="search-none">No results for “' + esc(q) + '”. Try an endpoint such as <code>/v1/messages</code> or a word like webhook.</li>';
+      list.innerHTML = '<li class="search-none" role="presentation"><span class="sr-icon">' + svg('search', 20) + '</span><span class="search-none-title">No results for \u201c' + esc(q) + '\u201d</span><span>Try an endpoint such as <code>/v1/messages</code>, or a word like <em>webhook</em> or <em>sender ID</em>.</span></li>';
+      setStatus('No results');
       return;
     }
+    var counts = {};
+    results.forEach(function (r) { counts[r.page.s] = (counts[r.page.s] || 0) + 1; });
     var html = '';
     var lastSection = null;
     results.forEach(function (r, i) {
       if (r.page.s !== lastSection) {
-        html += '<li class="sr-group" role="presentation">' + esc(r.page.s) + '</li>';
+        html += '<li class="sr-group" role="presentation"><span>' + esc(r.page.s) + '</span><span class="sr-count">' + counts[r.page.s] + '</span></li>';
         lastSection = r.page.s;
       }
       var href = r.page.u + (r.e[2] ? '#' + r.e[2] : '');
-      var title = r.e[1] ? highlight(r.e[1], terms) + ' <span class="sr-page">/ ' + esc(r.page.t) + '</span>' : highlight(r.page.t, terms);
+      var sep = '<span class="sr-crumb-sep" aria-hidden="true">' + svg('arrow-right4', 11) + '</span>';
+      var crumb = esc(r.page.s) + (r.e[1] ? sep + esc(r.page.t) : '');
+      var text = snippet(r.e[3] || '', terms);
       html += '<li class="sr-item" role="option" id="sr-' + i + '" aria-selected="false"><a href="' + href + '" tabindex="-1">'
-        + '<span class="sr-title">' + title + '</span>'
-        + '<span class="sr-text">' + highlight(snippet(r.e[3] || '', terms), terms) + '</span>'
-        + '<span class="sr-go">' + chevron + '</span></a></li>';
+        + '<span class="sr-icon">' + svg(r.page.i || 'document-text', 18) + '</span>'
+        + '<span class="sr-main"><span class="sr-title">' + titleHtml(r.e[1] || r.page.t, terms) + '</span>'
+        + '<span class="sr-crumb">' + crumb + '</span>'
+        + (text ? '<span class="sr-text">' + highlight(text, terms) + '</span>' : '') + '</span>'
+        + '<span class="sr-go">' + svg('arrow-right4', 16) + '</span></a></li>';
     });
     list.innerHTML = html;
+    setStatus(results.length + (results.length === 1 ? ' result' : ' results'));
     move(0);
   }
-  var chevron = '<svg class="i" width="16" height="16" aria-hidden="true"><use href="#i-arrow-right4"/></svg>';
 
   function move(to) {
     var items = list.querySelectorAll('.sr-item');
@@ -276,6 +252,148 @@
     list.addEventListener('click', function (ev) { if (ev.target.closest('a')) closeSearch(); });
   }
 
+  /* ---------- code edge fades ---------- */
+  // Scrollbars on code are hidden, so each side that has more to scroll gets a
+  // soft fade (docs.css .fx-*), removed once that edge is reached. A block that
+  // overflows becomes focusable, so the arrow keys can scroll it.
+  function updateEdges(pre) {
+    var x = pre.scrollWidth - pre.clientWidth, y = pre.scrollHeight - pre.clientHeight;
+    if (!pre.clientWidth) return; // not displayed
+    pre.classList.toggle('fx-l', x > 1 && pre.scrollLeft > 1);
+    pre.classList.toggle('fx-r', x > 1 && pre.scrollLeft < x - 1);
+    pre.classList.toggle('fx-t', y > 1 && pre.scrollTop > 1);
+    pre.classList.toggle('fx-b', y > 1 && pre.scrollTop < y - 1);
+    if ((x > 1 || y > 1) && !pre.hasAttribute('tabindex')) pre.setAttribute('tabindex', '0');
+  }
+  var pres = Array.prototype.slice.call(doc.querySelectorAll('.code pre'));
+  pres.forEach(function (pre) {
+    pre.addEventListener('scroll', function () { updateEdges(pre); }, { passive: true });
+    updateEdges(pre);
+  });
+  if (pres.length && 'ResizeObserver' in window) {
+    var edgeRo = new ResizeObserver(function (entries) { entries.forEach(function (en) { updateEdges(en.target); }); });
+    pres.forEach(function (pre) { edgeRo.observe(pre); });
+  }
+
+  /* ---------- language tabs ---------- */
+  // ARIA tabs with automatic activation: click, or arrow keys, Home and End on the
+  // strip. The chosen language is remembered (localStorage) and applied to every
+  // group on every page; a group without it keeps its first tab, or a close
+  // relative (JavaScript for TypeScript). Switching keeps the clicked tab where it
+  // was on screen, so groups above it never push the page around.
+  var LANG_KEY = 'opensms-docs-lang';
+  var RELATED = { typescript: ['javascript'], javascript: ['typescript'], curl: ['shell', 'http'], shell: ['curl'] };
+  var groups = Array.prototype.slice.call(doc.querySelectorAll('[data-tabs]'));
+  function storedLang() { try { return localStorage.getItem(LANG_KEY); } catch (e) { return null; } }
+  function storeLang(key) { try { localStorage.setItem(LANG_KEY, key); } catch (e) { /* storage blocked */ } }
+  function tabsOf(group) { return Array.prototype.slice.call(group.querySelectorAll('[role="tab"]')); }
+  function tabFor(group, key) {
+    var tabs = tabsOf(group);
+    var want = [key].concat(RELATED[key] || []);
+    for (var i = 0; i < want.length; i += 1) {
+      for (var j = 0; j < tabs.length; j += 1) if (tabs[j].getAttribute('data-tab-key') === want[i]) return tabs[j];
+    }
+    return null;
+  }
+  function updateFades(list) {
+    var max = list.scrollWidth - list.clientWidth;
+    list.classList.toggle('fade-start', max > 1 && list.scrollLeft > 1);
+    list.classList.toggle('fade-end', max > 1 && list.scrollLeft < max - 1);
+  }
+  function revealTab(tab) {
+    var list = tab.parentNode;
+    var l = tab.offsetLeft - list.offsetLeft, r = l + tab.offsetWidth, pad = 24;
+    if (l - pad < list.scrollLeft) list.scrollLeft = Math.max(0, l - pad);
+    else if (r + pad > list.scrollLeft + list.clientWidth) list.scrollLeft = r + pad - list.clientWidth;
+  }
+  var reduceMotion = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : { matches: true };
+  function activate(group, tab, animate) {
+    var panels = group.querySelector('.code-tabs-panels');
+    var from = animate && panels && !reduceMotion.matches ? panels.offsetHeight : 0;
+    var shown = null;
+    tabsOf(group).forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      var panel = doc.getElementById(t.getAttribute('aria-controls'));
+      if (panel) { panel.classList.toggle('is-active', on); panel.setAttribute('aria-hidden', String(!on)); if (on) shown = panel; }
+    });
+    var file = group.querySelector('.code-tabs-file');
+    if (file) file.textContent = tab.getAttribute('data-title') || '';
+    revealTab(tab);
+    if (shown) { var pre = shown.querySelector('pre'); if (pre) updateEdges(pre); }
+    // The clicked group eases to its new height; the others change at once.
+    if (from) {
+      var to = panels.offsetHeight;
+      if (Math.abs(to - from) > 1) {
+        panels.classList.remove('is-resizing');
+        panels.style.height = from + 'px';
+        void panels.offsetHeight;
+        panels.classList.add('is-resizing');
+        panels.style.height = to + 'px';
+        var done = function (ev) {
+          if (ev && ev.target !== panels) return;
+          panels.removeEventListener('transitionend', done);
+          panels.classList.remove('is-resizing');
+          panels.style.height = '';
+        };
+        panels.addEventListener('transitionend', done);
+        setTimeout(done, 400);
+      }
+    }
+  }
+  function applyLang(key, except) {
+    groups.forEach(function (group) {
+      if (group === except) return;
+      var tab = tabFor(group, key);
+      if (tab && tab.getAttribute('aria-selected') !== 'true') activate(group, tab);
+    });
+  }
+  function choose(tab, focus) {
+    var group = tab.closest('[data-tabs]');
+    var key = tab.getAttribute('data-tab-key');
+    var before = tab.getBoundingClientRect().top;
+    activate(group, tab, true);
+    applyLang(key, group);
+    storeLang(key);
+    var shift = tab.getBoundingClientRect().top - before;
+    if (shift) window.scrollBy(0, shift);
+    if (focus) tab.focus({ preventScroll: true });
+  }
+  groups.forEach(function (group) {
+    var list = group.querySelector('[role="tablist"]');
+    tabsOf(group).forEach(function (t) {
+      var panel = doc.getElementById(t.getAttribute('aria-controls'));
+      if (panel) panel.setAttribute('aria-hidden', String(t.getAttribute('aria-selected') !== 'true'));
+    });
+    list.addEventListener('click', function (ev) {
+      var tab = ev.target.closest('[role="tab"]');
+      if (tab) choose(tab, false);
+    });
+    list.addEventListener('keydown', function (ev) {
+      var tabs = tabsOf(group);
+      var at = tabs.indexOf(doc.activeElement);
+      if (at < 0) return;
+      var to = ev.key === 'ArrowRight' ? at + 1 : ev.key === 'ArrowLeft' ? at - 1 : ev.key === 'Home' ? 0 : ev.key === 'End' ? tabs.length - 1 : null;
+      if (to === null) return;
+      ev.preventDefault();
+      choose(tabs[(to + tabs.length) % tabs.length], true);
+    });
+    list.addEventListener('scroll', function () { updateFades(list); }, { passive: true });
+    updateFades(list);
+  });
+  var remembered = storedLang();
+  if (remembered) applyLang(remembered, null);
+  // The head boot script showed the remembered tab by CSS for the first paint; the
+  // tabs now carry that state themselves.
+  root.removeAttribute('data-lang');
+  // Another browser tab chose a language: follow it.
+  window.addEventListener('storage', function (ev) { if (ev.key === LANG_KEY && ev.newValue) applyLang(ev.newValue, null); });
+  if (groups.length && 'ResizeObserver' in window) {
+    var ro = new ResizeObserver(function (entries) { entries.forEach(function (en) { updateFades(en.target); }); });
+    groups.forEach(function (group) { ro.observe(group.querySelector('[role="tablist"]')); });
+  }
+
   /* ---------- events ---------- */
   doc.addEventListener('click', function (ev) {
     var t = ev.target;
@@ -285,8 +403,12 @@
     if (t.closest('[data-drawer-open]')) { setDrawer(true); return; }
     if (t.closest('[data-drawer-close]')) { setDrawer(false); return; }
     if (sidebar && doc.body.classList.contains('drawer-open') && t.closest('#sidebar a')) { setDrawer(false); }
-    var codeTab = t.closest('[data-code-tab]');
-    if (codeTab) { selectEverywhere(codeTab.getAttribute('data-code-tab'), codeTab.closest('[data-code-group]')); return; }
+    var tabsCopy = t.closest('[data-copy-tabs]');
+    if (tabsCopy) {
+      var active = tabsCopy.closest('[data-tabs]').querySelector('.code-panel.is-active code');
+      if (active) copyText(active.innerText.replace(/\n$/, ''), tabsCopy);
+      return;
+    }
     var copyBtn = t.closest('[data-copy]');
     if (copyBtn) {
       var code = copyBtn.closest('.code').querySelector('code');

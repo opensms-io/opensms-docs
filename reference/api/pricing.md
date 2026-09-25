@@ -42,10 +42,98 @@ Effective sell prices per country, carrier and volume tier for the calling works
 
 **Example**
 
-```bash
+<!-- tabs label="Request example" -->
+```bash tab="cURL"
 curl -s -X GET "$OPENSMS_API/v1/pricing?country=KE" \
   -H 'Authorization: Bearer sk_test_VG0...'
 ```
+
+```ts tab="TypeScript"
+const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
+
+const prices = await opensms.pricing.get({ country: 'KE' });
+
+console.log(prices.currency, prices.product);
+```
+
+```python tab="Python"
+client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
+
+prices = client.pricing.get(country="KE")
+
+print(prices["currency"], prices["product"])
+```
+
+```go tab="Go"
+client, err := opensms.NewClient(os.Getenv("OPENSMS_API_KEY"))
+if err != nil {
+	log.Fatal(err)
+}
+ctx := context.Background()
+
+prices, err := client.Pricing.Get(ctx, opensms.PricingParams{Country: "KE"})
+if err != nil {
+	log.Fatal(err)
+}
+fmt.Println(prices.Currency, prices.Product)
+```
+
+```php tab="PHP"
+$opensms = new Client(getenv('OPENSMS_API_KEY'));
+
+$prices = $opensms->pricing->get(['country' => 'KE']);
+
+echo $prices['currency'], ' ', $prices['product'], PHP_EOL;
+```
+
+```java tab="Java"
+OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
+
+var prices = opensms.pricing().get(null, "KE");
+
+System.out.println(prices.currency + " " + prices.product);
+```
+
+```csharp tab="C#"
+using var client = new OpensmsClient(Environment.GetEnvironmentVariable("OPENSMS_API_KEY")!);
+
+var prices = await client.Pricing.GetAsync(new PricingParams { Country = "KE" });
+
+Console.WriteLine($"{prices.Currency} {prices.Product}");
+```
+
+```ruby tab="Ruby"
+client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
+
+prices = client.pricing.get(country: "KE")
+
+puts "#{prices[:currency]} #{prices[:product]}"
+```
+
+```rust tab="Rust"
+let client = Client::new(std::env::var("OPENSMS_API_KEY").unwrap())?;
+
+let prices = client
+    .pricing()
+    .get(PricingParams {
+        country: Some("KE".into()),
+        ..Default::default()
+    })
+    .await?;
+
+println!("{} {}", prices.currency.as_deref().unwrap_or_default(), prices.product.as_deref().unwrap_or_default());
+```
+
+```swift tab="Swift"
+let apiKey = ProcessInfo.processInfo.environment["OPENSMS_API_KEY"] ?? ""
+let opensms = try OpensmsClient(apiKey: apiKey)
+
+let prices = try await opensms.pricing.get(country: "KE")
+
+print(prices.currency ?? "", prices.product ?? "")
+```
+
+<!-- /tabs -->
 
 Response `200` (`application/json`):
 

@@ -5592,9 +5592,10 @@
           "Content-Type": "application/json"
         },
         "body": {
-          "keyword": "STOP",
+          "match": "keyword",
+          "pattern": "STOP",
           "action": "auto_reply",
-          "reply_text": "You are unsubscribed."
+          "target": "You are unsubscribed."
         }
       },
       "response": {
@@ -6514,9 +6515,10 @@
           "Content-Type": "application/json"
         },
         "body": {
-          "keyword": "STOP",
+          "match": "keyword",
+          "pattern": "STOP",
           "action": "auto_reply",
-          "reply_text": "You are unsubscribed."
+          "target": "You are unsubscribed."
         }
       },
       "response": {
