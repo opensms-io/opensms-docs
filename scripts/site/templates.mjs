@@ -11,7 +11,7 @@ const MARK = (h = 26, cls = '') => `<svg class="mark${cls ? ` ${cls}` : ''}" vie
 // (so controls that need the script are hidden without it) and keeps the one
 // theme-color meta in step with the theme actually shown.
 export const THEME_COLOR = { light: '#F4F4F6', dark: '#0B0A14' };
-const THEME_BOOT = `(function(){var d=document.documentElement;d.className=d.className.replace(/\\bno-js\\b/,'js');try{var m=document.cookie.match(/(?:^|; )opensms-theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('opensms-theme');if(t==='dark'){d.setAttribute('data-theme','dark');var c=document.querySelector('meta[name=theme-color]');if(c)c.setAttribute('content','${THEME_COLOR.dark}');}var l=localStorage.getItem('opensms-docs-lang');if(l&&/^[a-z0-9-]+$/.test(l))d.setAttribute('data-lang',l);}catch(e){}})();`;
+const THEME_BOOT = `(function(){var d=document.documentElement;d.className=d.className.replace(/\\bno-js\\b/,'js');try{var m=document.cookie.match(/(?:^|; )opensms-theme=(dark|light)/);var t=m?m[1]:localStorage.getItem('opensms-theme');if(!t&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)t='dark';if(t==='dark'){d.setAttribute('data-theme','dark');var c=document.querySelector('meta[name=theme-color]');if(c)c.setAttribute('content','${THEME_COLOR.dark}');}var l=localStorage.getItem('opensms-docs-lang');if(l&&/^[a-z0-9-]+$/.test(l))d.setAttribute('data-lang',l);}catch(e){}})();`;
 
 export const abs = (path) => `${SITE.origin}${path}`;
 
