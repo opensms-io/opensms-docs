@@ -300,78 +300,89 @@ ${searchDialog({ icons })}`;
 }
 
 export function homePage({ icons, pagesByPath, sections, headHtml, stats }) {
+  // Four equal cards, each with the pages people open most in that section.
+  const PICKS = {
+    integrate: ['integrate/sending-messages.md', 'integrate/delivery-reports-and-webhooks.md', 'integrate/otp.md', 'integrate/mcp.md'],
+    'api-reference': ['reference/api/messages.md', 'reference/api/otp.md', 'reference/api/webhooks.md', 'reference/api/wallet.md'],
+    'web-app': ['console/signing-up-and-signing-in.md', 'console/messages.md', 'console/api-keys.md', 'console/billing.md'],
+  };
   const card = (s) => {
-    const pages = s.pages.map((p) => pagesByPath.get(p.path));
-    const first = pages[0];
-    const picks = pages.slice(s.id === 'api-reference' || s.id === 'web-app' ? 1 : 0, (s.id === 'sdks' ? 1 : 5) + (s.id === 'api-reference' || s.id === 'web-app' ? 1 : 0));
+    const first = pagesByPath.get(s.pages[0].path);
+    const picks = (PICKS[s.id] ?? []).map((path) => pagesByPath.get(path)).filter(Boolean);
+    const count = s.id === 'sdks' ? '9 languages' : `${s.pages.length} pages`;
+    const body = s.id === 'sdks'
+      ? `<ul class="card-langs">${SDK_LANGS.map(([l, id, mark]) => `<li><a href="${first.url}#sdk-${id}">${langMark(mark, (...a) => icons.icon(...a), { size: 16, surface: 'theme' })}${l}<span class="sr-only"> SDK</span></a></li>`).join('')}</ul>`
+      : `<ul class="card-list">${picks.map((p) => `<li><a href="${p.url}">${esc(p.navLabel)}${icons.icon('arrow-right4', 14)}</a></li>`).join('')}</ul>`;
     return `<article class="card card-${s.id}">
-  <a class="card-link" href="${first.url}" aria-label="${esc(s.title)}"><span class="sr-only">${esc(s.title)}</span></a>
   <div class="card-top">
-    <span class="card-icon">${icons.icon(s.icon, 22)}</span>
-    <span class="card-count">${s.pages.length === 1 ? '9 languages' : `${s.pages.length} pages`}</span>
+    <span class="card-icon">${icons.icon(s.icon, 20)}</span>
+    <div>
+      <h3 class="card-title"><a href="${first.url}">${esc(s.title)}</a></h3>
+      <p class="card-count">${count}</p>
+    </div>
   </div>
-  <h2 class="card-title">${esc(s.title)}</h2>
   <p class="card-blurb">${esc(s.blurb)}</p>
-  ${s.id === 'sdks' ? `<ul class="card-langs">${SDK_LANGS.map(([l, id, mark]) => `<li><a href="${first.url}#sdk-${id}">${langMark(mark, (...a) => icons.icon(...a), { size: 15, surface: 'theme' })}${l}<span class="sr-only"> SDK</span></a></li>`).join('')}</ul>` : ''}
-  <ul class="card-list">${picks.map((p) => `<li><a href="${p.url}">${esc(p.navLabel)}${icons.icon('arrow-right4', 14)}</a></li>`).join('')}</ul>
+  ${body}
+  <a class="card-more" href="${first.url}">${s.id === 'sdks' ? 'Read the SDK guide' : `See all ${s.pages.length} pages`}${icons.icon('arrow-right4', 14)}</a>
 </article>`;
   };
   const quick = pagesByPath.get('getting-started/quickstart.md');
+  const overview = pagesByPath.get('getting-started/overview.md');
+  const browse = sections.filter((s) => s.id !== 'get-started');
   const body = `${header({ icons, activeSection: null })}
 ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
 <main id="content" class="home">
   <section class="hero">
-    <svg class="hero-curves" viewBox="0 0 736 920" aria-hidden="true" focusable="false"><g fill="none" stroke="var(--curve)" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="var(--curve)"/></svg>
     <div class="hero-copy">
       <p class="eyebrow">${icons.icon('ai-book', 15)}OpenSMS documentation</p>
-      <h1>Build with<br> OpenSMS</h1>
-      <p class="hero-lead">How to send SMS with OpenSMS: a five-minute quickstart, task guides, official SDKs, the full API reference and step-by-step guides for the web app.</p>
+      <h1>OpenSMS docs</h1>
+      <p class="hero-lead">Send a sandbox message in about five minutes, then use the guides, SDKs and API reference to go live.</p>
       <button type="button" class="hero-search" data-search-open>${icons.icon('search', 20)}<span>Search the docs</span> <kbd class="kbd-cmd" aria-hidden="true">Ctrl K</kbd></button>
       <div class="hero-ctas">
         <a class="cta-btn cta-lg" href="${quick.url}">${icons.icon('flash', 17)}Start the quickstart</a>
-        <a class="ghost-btn" href="${SITE.base}reference/api/">${icons.icon('document-code', 17)}Browse the API</a>
+        <a class="ghost-btn" href="${overview.url}">${icons.icon('info-circle', 17)}What OpenSMS is</a>
       </div>
     </div>
-    <div class="hero-demo" aria-label="Example request">
-      <div class="demo-pill demo-pill-a"><span class="demo-dot" aria-hidden="true"></span><span>POST /v1/messages</span></div>
+    <figure class="hero-demo">
       <div class="code demo-code">
-        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span> <span class="code-sep" aria-hidden="true">/</span> <span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clip-board', 16, 'when-idle')}${icons.icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
+        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span> <span class="code-sep" aria-hidden="true">/</span> <span class="code-file">POST /v1/messages</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clip-board', 16, 'when-idle')}${icons.icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
 <pre><code class="hljs language-bash">${stats.demoHtml}</code></pre>
       </div>
-      <div class="demo-pill demo-pill-b"><span class="mono">sk_test_</span> keys are free in sandbox</div>
-    </div>
+      <figcaption>Your first request. <span class="mono">sk_test_</span> keys are free in sandbox.</figcaption>
+    </figure>
   </section>
 
-  <section class="home-sections" aria-labelledby="sections-title">
+  <section class="home-block home-path" aria-labelledby="path-title">
     <div class="home-head">
-      <p class="label">Explore</p>
-      <h2 id="sections-title">Docs by section</h2>
-    </div>
-    <div class="cards">
-${sections.map(card).join('\n')}
-    </div>
-  </section>
-
-  <section class="home-path" aria-labelledby="path-title">
-    <div class="home-head">
-      <p class="label">Getting started</p>
-      <h2 id="path-title">From first message to live traffic</h2>
+      <h2 id="path-title">Start here</h2>
+      <p>Four pages take you from a test message to live traffic.</p>
     </div>
     <ol class="steps">
-      ${stats.steps.map((st, i) => `<li><a href="${st.url}"><span class="step-top"><span class="step-icon">${icons.icon(st.icon, 20)}</span><span class="step-n">0${i + 1}</span></span> <span class="step-title">${esc(st.title)}${icons.icon('arrow-right4', 16)}</span> <span class="step-text">${esc(st.text)}</span></a></li>`).join('')}
+      ${stats.steps.map((st, i) => `<li><a href="${st.url}"><span class="step-top"><span class="step-icon">${icons.icon(st.icon, 20)}</span><span class="step-n">Step ${i + 1}</span></span> <span class="step-title">${esc(st.title)}</span> <span class="step-text">${esc(st.text)}</span></a></li>`).join('')}
     </ol>
   </section>
 
-  <section class="home-ai" aria-labelledby="ai-title">
-    <div>
-      <p class="label">For AI tools and agents</p>
-      <h2 id="ai-title">Every page is also Markdown</h2>
-      <p>Point your assistant at <a href="${SITE.base}llms.txt"><code>/docs/llms.txt</code></a> for an index of every page, or <a href="${SITE.base}llms-full.txt"><code>/docs/llms-full.txt</code></a> for the full text in one file. Any page is available as Markdown by adding <code>.md</code> to its path.</p>
+  <section class="home-block home-sections" aria-labelledby="sections-title">
+    <div class="home-head">
+      <h2 id="sections-title">Browse the docs</h2>
+      <p>Guides for building, the full API, the SDKs and the web app.</p>
     </div>
-    <div class="ai-links">
-      <a class="chip" href="${SITE.base}llms.txt">${icons.icon('clipboard-close', 15)}llms.txt</a>
-      <a class="chip" href="${SITE.base}llms-full.txt">${icons.icon('clipboard-close', 15)}llms-full.txt</a>
-      <a class="chip" href="${SITE.repo}" rel="noopener">${icons.icon('github', 15)}Source on GitHub</a>
+    <div class="cards">
+${browse.map(card).join('\n')}
+    </div>
+  </section>
+
+  <section class="home-block home-ai" aria-labelledby="ai-title">
+    <div class="ai-box">
+      <div>
+        <h2 id="ai-title">Every page is also Markdown</h2>
+        <p>Point your assistant at <a href="${SITE.base}llms.txt"><code>/docs/llms.txt</code></a> for an index, or <a href="${SITE.base}llms-full.txt"><code>/docs/llms-full.txt</code></a> for the full text in one file. Add <code>.md</code> to any page path to get its Markdown.</p>
+      </div>
+      <div class="ai-links">
+        <a class="chip" href="${SITE.base}llms.txt">${icons.icon('clipboard-close', 15)}llms.txt</a>
+        <a class="chip" href="${SITE.base}llms-full.txt">${icons.icon('clipboard-close', 15)}llms-full.txt</a>
+        <a class="chip" href="${SITE.repo}" rel="noopener">${icons.icon('github', 15)}Source on GitHub</a>
+      </div>
     </div>
   </section>
 </main>
