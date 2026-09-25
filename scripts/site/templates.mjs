@@ -191,9 +191,11 @@ const FOOTER_SOCIAL = [
   ['TikTok', 'tiktok', 'https://www.tiktok.com/@opensms60'],
 ];
 const FOOTER_REVIEWS = [
+  ['Product Hunt', 'https://www.producthunt.com/products/opensms'],
   ['Trustpilot', 'https://www.trustpilot.com/review/opensms.io'],
   ['G2', 'https://www.g2.com/products/opensms/reviews'],
   ['Google', 'https://www.google.com/maps/place/opensms.io/data=!4m2!3m1!1s0x0:0x65ae4635bbad2a10'],
+  ['SaaSHub', 'https://www.saashub.com/opensms'],
 ];
 
 function footer({ icons }) {
@@ -213,7 +215,7 @@ function footer({ icons }) {
   </div>
   <div class="footer-bottom">
     <div class="footer-group"><span class="footer-label" id="footer-follow">Follow</span><ul class="footer-social" aria-labelledby="footer-follow">${social}</ul></div>
-    <div class="footer-group"><span class="footer-label" id="footer-reviews">Reviews</span><ul class="footer-social" aria-labelledby="footer-reviews">${reviews}</ul></div>
+    <div class="footer-group"><span class="footer-label" id="footer-reviews">Listed on</span><ul class="footer-social" aria-labelledby="footer-reviews">${reviews}</ul></div>
   </div>
 </footer>`;
 }
