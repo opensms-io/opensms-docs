@@ -8,7 +8,7 @@ OpenSMS runs a hosted Model Context Protocol (MCP) server, so an AI assistant su
 
 | Setting | Value |
 |---|---|
-| Server URL | `https://mcp.opensms.io/mcp` |
+| Server URL | `https://opensms.io/mcp` |
 | Transport | Streamable HTTP, `POST` only, stateless |
 | Sign-in | OAuth 2.1 with PKCE and dynamic client registration. You never paste an API key into an assistant. |
 | What one connection can reach | Exactly one workspace and one environment (sandbox or live), chosen by you on the consent screen |
@@ -29,7 +29,7 @@ Pick your client. Each one registers itself with OpenSMS the first time it conne
 Works in Claude on the web and in the desktop apps. On a Team or Enterprise plan an organization owner adds the connector first, then each member connects.
 
 1. Open **Customize > Connectors**, select **+**, then **Add custom connector**.
-2. Name it `OpenSMS` and paste the server URL `https://mcp.opensms.io/mcp`. Leave **Advanced settings** empty: OpenSMS registers Claude automatically, there is no client ID or secret to enter.
+2. Name it `OpenSMS` and paste the server URL `https://opensms.io/mcp`. Leave **Advanced settings** empty: OpenSMS registers Claude automatically, there is no client ID or secret to enter.
 3. Select **Add**, then **Connect**. The OpenSMS consent screen opens.
 4. In a chat, turn on the OpenSMS tools from the tools menu.
 
@@ -40,7 +40,7 @@ Claude is a verified app: the consent screen shows its logo and a **Verified by 
 Custom MCP apps need ChatGPT's **Developer mode**, which OpenAI offers on paid plans.
 
 1. Turn on **Developer mode** in ChatGPT's settings (under **Security and login** at the time of writing).
-2. Create a developer-mode app, give it the name `OpenSMS` and the server URL `https://mcp.opensms.io/mcp`, and choose OAuth as the authentication.
+2. Create a developer-mode app, give it the name `OpenSMS` and the server URL `https://opensms.io/mcp`, and choose OAuth as the authentication.
 3. ChatGPT opens the OpenSMS consent screen. Approve, then pick the OpenSMS app from the **Developer mode** tool in the composer.
 
 OpenAI moves these menus often; if a label differs, follow OpenAI's [developer mode guide](https://developers.openai.com/api/docs/guides/developer-mode) and use the same URL.
@@ -50,7 +50,7 @@ OpenAI moves these menus often; if a label differs, follow OpenAI's [developer m
 Add the server once, then sign in from inside Claude Code:
 
 ```sh
-claude mcp add --transport http opensms https://mcp.opensms.io/mcp
+claude mcp add --transport http opensms https://opensms.io/mcp
 ```
 
 Then run `/mcp` in a Claude Code session, select `opensms` and follow the browser sign-in. Claude Code signs in through a local callback on your computer, so the consent screen shows it as an app running on this device rather than as a verified app (see [Verified and unverified apps](#verified-and-unverified-apps)). Steps from the [Claude Code MCP docs](https://code.claude.com/docs/en/mcp).
@@ -63,7 +63,7 @@ Add OpenSMS to `~/.cursor/mcp.json` (every project) or `.cursor/mcp.json` (one p
 {
   "mcpServers": {
     "opensms": {
-      "url": "https://mcp.opensms.io/mcp"
+      "url": "https://opensms.io/mcp"
     }
   }
 }
@@ -80,7 +80,7 @@ Add the server to `.vscode/mcp.json` in your workspace, or run **MCP: Add Server
   "servers": {
     "opensms": {
       "type": "http",
-      "url": "https://mcp.opensms.io/mcp"
+      "url": "https://opensms.io/mcp"
     }
   }
 }
@@ -96,7 +96,7 @@ Add OpenSMS to Windsurf's `mcp_config.json` (open it from the MCP settings in Ca
 {
   "mcpServers": {
     "opensms": {
-      "serverUrl": "https://mcp.opensms.io/mcp"
+      "serverUrl": "https://opensms.io/mcp"
     }
   }
 }
@@ -112,7 +112,7 @@ Add a context server to your Zed `settings.json` without an `Authorization` head
 {
   "context_servers": {
     "opensms": {
-      "url": "https://mcp.opensms.io/mcp"
+      "url": "https://opensms.io/mcp"
     }
   }
 }
@@ -122,7 +122,7 @@ Format from [Zed's MCP docs](https://zed.dev/docs/ai/mcp).
 
 ### Any other MCP client
 
-Any client that supports remote MCP servers over Streamable HTTP with OAuth works. Give it the server URL `https://mcp.opensms.io/mcp` and no headers. The client discovers everything else from the server's [metadata documents](#for-client-authors), registers itself, and sends you through the consent screen. Clients that only support local (stdio) servers cannot connect.
+Any client that supports remote MCP servers over Streamable HTTP with OAuth works. Give it the server URL `https://opensms.io/mcp` and no headers. The client discovers everything else from the server's [metadata documents](#for-client-authors), registers itself, and sends you through the consent screen. Clients that only support local (stdio) servers cannot connect.
 
 If your client can only send a fixed `Authorization` header, it cannot use OpenSMS through MCP: the server accepts only the OAuth access tokens it issues, never API keys. Call the [REST API](sending-messages.md) with an API key instead.
 
@@ -554,7 +554,7 @@ An unverified app whose name contains a verified app's name or "OpenSMS" is show
 - **Rotating refresh tokens** with reuse detection, as above.
 - **Rate limits on sign-in endpoints**: registration, authorization, token and revocation are all limited per IP address and per client. Hosted assistants that call from a published shared network (such as Anthropic's) are counted per network with a larger budget, so one busy assistant cannot lock out the rest, and the per-client and overall limits still apply.
 - **Audit trail.** Approvals, denials, token issues, revocations and every spending tool call are written to the workspace audit log. The connection's activity log records each tool call's outcome, but never message text, phone numbers or OTP codes.
-- **No cookies on the MCP host.** `mcp.opensms.io` never reads the web app's session cookie, so another site cannot ride your signed-in session.
+- **No cookies on the MCP endpoints.** `/mcp` and `/oauth/` strip and never read the web app's session cookie, so another site cannot ride your signed-in session.
 
 ## Troubleshooting
 
@@ -573,29 +573,29 @@ An unverified app whose name contains a verified app's name or "OpenSMS" is show
 
 ## For client authors
 
-The server follows the MCP authorization spec (protocol versions `2025-06-18` and `2025-11-25` and later) with these endpoints on `https://mcp.opensms.io`:
+The server follows the MCP authorization spec (protocol versions `2025-06-18` and `2025-11-25` and later) with these endpoints on `https://opensms.io`:
 
 | Endpoint | Purpose |
 |---|---|
 | `GET /.well-known/oauth-protected-resource/mcp` (and `/.well-known/oauth-protected-resource`) | Protected resource metadata (RFC 9728) |
 | `GET /.well-known/oauth-authorization-server` | Authorization server metadata (RFC 8414) |
 | `POST /oauth/register` | Dynamic client registration (RFC 7591). Public clients only: `token_endpoint_auth_method` is always `none`. |
-| `GET /oauth/authorize` | Authorization code with PKCE `S256`. `resource` must be `https://mcp.opensms.io/mcp` if sent. |
+| `GET /oauth/authorize` | Authorization code with PKCE `S256`. `resource` must be `https://opensms.io/mcp` if sent. |
 | `POST /oauth/token` | `authorization_code` and `refresh_token` grants |
 | `POST /oauth/revoke` | Token revocation (RFC 7009) |
 | `POST /mcp` | MCP over Streamable HTTP, stateless, JSON responses. An authenticated `GET` or `DELETE` returns `405`; without a valid token they get the same `401` challenge as `POST`, because authentication runs first. A request with an `Origin` header other than OpenSMS's own gets `403` (`forbidden_origin`): clients call this endpoint server to server, not from a web page. |
 
-An unauthenticated `POST /mcp` returns `401` with a `WWW-Authenticate: Bearer resource_metadata="https://mcp.opensms.io/.well-known/oauth-protected-resource/mcp"` header, which is where a client starts discovery. Redirect URIs must be `https`, or loopback `http` redirects as in RFC 8252 section 7.3 (the port may differ between registration and sign-in). Custom schemes are accepted only for exact addresses on the verified list. The authorization response includes `iss`. Client ID metadata documents are planned but not supported yet.
+An unauthenticated `POST /mcp` returns `401` with a `WWW-Authenticate: Bearer resource_metadata="https://opensms.io/.well-known/oauth-protected-resource/mcp"` header, which is where a client starts discovery. Redirect URIs must be `https`, or loopback `http` redirects as in RFC 8252 section 7.3 (the port may differ between registration and sign-in). Custom schemes are accepted only for exact addresses on the verified list. The authorization response includes `iss`. Client ID metadata documents are planned but not supported yet.
 
 The server is stateless and answers with JSON, never a stream. `initialize` declares the `tools`, `resources` and `prompts` capabilities without `listChanged`, because it never sends list-changed notifications: the lists are fixed for the life of a token, and a different set of permissions is a new connection.
 
-These are the real responses from the test run, with the test server's origin written as `https://mcp.opensms.io`.
+These are the real responses from the test run, with the test server's origin written as `https://opensms.io`.
 
 Protected resource metadata (`GET /.well-known/oauth-protected-resource/mcp`):
 
 ```json
-{"resource": "https://mcp.opensms.io/mcp",
- "authorization_servers": ["https://mcp.opensms.io"],
+{"resource": "https://opensms.io/mcp",
+ "authorization_servers": ["https://opensms.io"],
  "bearer_methods_supported": ["header"],
  "resource_name": "OpenSMS",
  "resource_documentation": "https://docs.opensms.io/integrate/mcp",
@@ -605,11 +605,11 @@ Protected resource metadata (`GET /.well-known/oauth-protected-resource/mcp`):
 Authorization server metadata (`GET /.well-known/oauth-authorization-server`):
 
 ```json
-{"issuer": "https://mcp.opensms.io",
- "authorization_endpoint": "https://mcp.opensms.io/oauth/authorize",
- "token_endpoint": "https://mcp.opensms.io/oauth/token",
- "registration_endpoint": "https://mcp.opensms.io/oauth/register",
- "revocation_endpoint": "https://mcp.opensms.io/oauth/revoke",
+{"issuer": "https://opensms.io",
+ "authorization_endpoint": "https://opensms.io/oauth/authorize",
+ "token_endpoint": "https://opensms.io/oauth/token",
+ "registration_endpoint": "https://opensms.io/oauth/register",
+ "revocation_endpoint": "https://opensms.io/oauth/revoke",
  "response_types_supported": ["code"],
  "response_modes_supported": ["query"],
  "grant_types_supported": ["authorization_code", "refresh_token"],
@@ -641,7 +641,7 @@ A request without a token, or with a revoked one, gets the challenge. After a re
 
 ```http
 HTTP/1.1 401 Unauthorized
-WWW-Authenticate: Bearer error="invalid_token", resource_metadata="https://mcp.opensms.io/.well-known/oauth-protected-resource/mcp", scope="messages:read messages:write pricing:read sender-ids:read"
+WWW-Authenticate: Bearer error="invalid_token", resource_metadata="https://opensms.io/.well-known/oauth-protected-resource/mcp", scope="messages:read messages:write pricing:read sender-ids:read"
 ```
 
 ## Related

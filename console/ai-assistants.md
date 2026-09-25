@@ -14,7 +14,7 @@ You can let an AI assistant such as Claude, ChatGPT, Cursor or VS Code send mess
 
 Open **AI assistants** in the left-hand menu, under **Developer** (`/app/ai-assistants`).
 
-1. At the top of the page is the server address, `https://mcp.opensms.io/mcp`, with a **Copy** button.
+1. At the top of the page is the server address, `https://opensms.io/mcp`, with a **Copy** button.
 2. Choose your assistant from the tiles: Claude, ChatGPT, Claude Code, Cursor, VS Code, Windsurf, Zed or Other. The steps below the tiles change to match, and the page address remembers your choice (for example `?client=cursor`), so you can send the link to a colleague.
 3. Follow the numbered steps. Where the assistant uses a settings file, the page shows it in a code block with its own **Copy** button.
 4. When the assistant opens the OpenSMS consent screen in your browser, carry on with [the consent screen](#the-consent-screen) below.
