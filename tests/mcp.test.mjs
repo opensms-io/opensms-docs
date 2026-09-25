@@ -43,11 +43,12 @@ const docTools = Object.fromEntries(table(MCP, 'Tool').map((r) => [nameOf(r[0]),
 /** Prompt name to the scopes the docs say it needs. */
 const docPrompts = Object.fromEntries(table(MCP, 'Prompt').map((r) => [nameOf(r[0]), scopesOf(r[1])]));
 
-test('banners say built but not deployed, not still being built', () => {
+test('pages describe the live server, with no deployment banner', () => {
   for (const [name, text] of [['mcp.md', MCP], ['ai-assistants.md', CONSOLE]]) {
     assert.doesNotMatch(text, /still being built/i, name);
     assert.doesNotMatch(text, /planned design|agreed design/i, name);
-    assert.match(text, /\*\*Not deployed yet\.\*\*/, name);
+    assert.doesNotMatch(text, /Not deployed yet/i, name);
+    assert.doesNotMatch(text, /mcp\.opensms\.io/, name);
   }
   assert.doesNotMatch(MCP, /Example results are not shown yet/);
 });

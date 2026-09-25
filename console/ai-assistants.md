@@ -2,24 +2,26 @@
 
 You can let an AI assistant such as Claude, ChatGPT, Cursor or VS Code send messages and check delivery for your workspace. This guide covers the three places in the web app that control it: the **AI assistants** page with setup steps for each assistant, the consent screen you see when an assistant asks for access, and **Connected AI apps** in Settings, where you see what each assistant did, change its limits or disconnect it. It is for anyone who connects an assistant, and for owners and admins who keep an eye on them.
 
-> **Not deployed yet.** AI assistant access is built and tested, but it is not switched on at opensms.io yet, so these pages are not in the web app you use today. The screens below are the ones that will ship. The developer reference is [AI assistants (MCP)](../integrate/mcp.md).
-
 ## Before you start
 
 - **Try it in sandbox first.** A sandbox connection uses simulated delivery and sandbox credit, so nothing reaches a real phone.
-- **Live needs an owner or admin with two-factor login.** Connecting an assistant to live traffic asks for a code from your authenticator app. Turn on [two-factor authentication](settings.md#security) before you start.
+- **Live needs an owner or admin with two-factor login, in a workspace that [has gone live](../getting-started/going-live.md).** Connecting an assistant to live traffic asks for a code from your authenticator app. Turn on [two-factor authentication](settings.md#security) before you start.
 - **Nothing to copy from API keys.** You never paste an API key into an assistant. The assistant asks OpenSMS for access, and you approve it in your browser.
 
 ## Connect an assistant
 
 Open **AI assistants** in the left-hand menu, under **Developer** (`/app/ai-assistants`).
 
-1. At the top of the page is the server address, `https://opensms.io/mcp`, with a **Copy** button.
-2. Choose your assistant from the tiles: Claude, ChatGPT, Claude Code, Cursor, VS Code, Windsurf, Zed or Other. The steps below the tiles change to match, and the page address remembers your choice (for example `?client=cursor`), so you can send the link to a colleague.
+1. At the top of the page is the server URL, `https://opensms.io/mcp`, with a **Copy** button.
+2. Under **Set up your assistant**, choose your assistant: Claude, ChatGPT, Claude Code, Cursor, VS Code, Windsurf, Zed or Other. The steps below change to match, and the page address remembers your choice (for example `?client=cursor`), so you can send the link to a colleague.
 3. Follow the numbered steps. Where the assistant uses a settings file, the page shows it in a code block with its own **Copy** button.
 4. When the assistant opens the OpenSMS consent screen in your browser, carry on with [the consent screen](#the-consent-screen) below.
 
-The page also lists what an assistant can do (one card per tool) and three ways you stay in control: you choose the permissions, you can set a daily spending limit, and you can disconnect at any time.
+Below the steps the page has three more sections:
+
+- **What it can do.** The tools, grouped by task: Send SMS, Verification codes, Delivery status, Number lookup and Account. Tools that spend wallet credit are tagged **Uses credit**.
+- **What it cannot do.** For example, it never sees a verification code, cannot create API keys or top up the wallet, and cannot reach another workspace or move between Sandbox and Live.
+- **Permissions and environment.** What you choose on the consent screen: Sandbox or Live, the permissions, and the limits (daily spend cap, send rate, disconnecting). A link goes to **Connected AI apps**.
 
 The same steps, with the exact settings for each assistant, are in the [developer guide](../integrate/mcp.md#connect-your-assistant).
 
@@ -35,7 +37,7 @@ From top to bottom:
 4. **Workspace.** Pick the workspace the assistant may use. Each connection is for one workspace only.
 5. **Environment.** **Sandbox** ("Simulated. No real SMS.") or **Live** ("Real SMS, spends credit."). Live is greyed out with the reason when you cannot choose it: "Only owners and admins can connect live" or "This workspace is not live yet".
 6. **This app will be able to.** One row per permission the assistant asked for, grouped under **View** and **Send and spend**, each with a short description and a risk label (Low, Medium or High; sending is High in live). Untick anything you do not want to allow. At least one must stay ticked, and you can never add a permission the assistant did not ask for.
-7. **Limits.** A **daily spend cap** in your workspace currency (leave it empty for no cap) and a **send rate** of 5, 10, 30 or 60 messages a minute (10 by default). This section is open by default for Live. The cap only stops sends on a **Live** connection: sandbox messages are free, so a sandbox send is never refused by the cap (the assistant can still read the cap and today's spend, which stays at 0, with `get_balance`).
+7. **Limits.** A **daily spend cap** in your workspace currency (leave it empty for no cap) and a **send rate** of 5, 10, 30 or 60 paid calls a minute (sends, verification codes and lookups; 10 by default). This section is open by default for Live. The cap only stops sends on a **Live** connection: sandbox messages are free, so a sandbox send is never refused by the cap (the assistant can still read the cap and today's spend, which stays at 0, with `get_balance`).
 8. **Authenticator code** (Live only). The 6-digit code from your authenticator app. Five wrong codes in 10 minutes lock the check for a while.
 9. **Replaces your current connection.** If this assistant is already connected to the same workspace and environment, a note says the new connection replaces it.
 10. **Buttons.** **Cancel** tells the assistant you said no. **Allow access** approves and sends you back to the assistant.

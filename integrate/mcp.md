@@ -2,8 +2,6 @@
 
 OpenSMS runs a hosted Model Context Protocol (MCP) server, so an AI assistant such as Claude, ChatGPT, Cursor or VS Code can send SMS, run one-time passcodes, look up numbers and read delivery status for you. This page is for developers and workspace owners connecting an assistant: how to connect each client, what an assistant is allowed to do, the limits that keep it safe, and the full reference for every tool, resource and prompt.
 
-> **Not deployed yet.** The MCP server is built and tested end to end, but it is not live at `mcp.opensms.io` yet, so the URL below does not answer today. The examples on this page are real responses from a sandbox test run of that build (a Kenyan workspace), with the test server's addresses written as the hosted ones. Until the deploy, [send with an API key](sending-messages.md).
-
 ## At a glance
 
 | Setting | Value |
