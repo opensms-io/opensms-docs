@@ -230,7 +230,7 @@ export function createRenderer({ icon }) {
     return `<div class="code-tabs" data-tabs>`
       + `<div class="code-tabs-bar"><div class="code-tabs-list" role="tablist" aria-label="${escapeHtml(g.label)}">${tabs}</div>`
       + (g.items.length <= 4 ? `<span class="code-tabs-file" aria-hidden="true">${escapeHtml(first)}</span>` : '')
-      + `<button type="button" class="code-copy" data-copy-tabs aria-label="Copy code">${icon('clipboard-close', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
+      + `<button type="button" class="code-copy" data-copy-tabs aria-label="Copy code">${icon('clip-board', 16, 'when-idle')}${icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
       + `<div class="code-tabs-panels">\n`;
   };
   rules.code_tabs_close = () => '</div></div>\n';
@@ -341,7 +341,7 @@ export function createRenderer({ icon }) {
     env.codeBlocks = (env.codeBlocks ?? 0) + 1;
     const file = attrs.title ? `<span class="code-sep" aria-hidden="true">/</span><span class="code-file">${escapeHtml(attrs.title)}</span>` : '';
     const block = `<div class="code${numbered ? ' has-lines' : ''}"><div class="code-head"><span class="code-meta">${langMark(attrs.logo ?? mark, icon)}<span class="code-lang">${escapeHtml(label)}</span>${file}</span>`
-      + `<button type="button" class="code-copy" data-copy aria-label="Copy code${attrs.title ? `: ${escapeHtml(attrs.title)}` : ''}">${icon('clipboard-close', 16, 'when-idle')}${icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
+      + `<button type="button" class="code-copy" data-copy aria-label="Copy code${attrs.title ? `: ${escapeHtml(attrs.title)}` : ''}">${icon('clip-board', 16, 'when-idle')}${icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>`
       + `<pre><code class="hljs language-${lang}">${html}</code></pre></div>`;
     const tab = t.meta?.tab;
     if (!tab) return `${block}\n`;
