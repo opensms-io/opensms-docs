@@ -240,7 +240,7 @@ ${sidebar({ icons, pagesByPath, current: page.path })}
         <span class="dot-sep" aria-hidden="true">/</span>
         <span>${page.minutes} min read</span>
         <span class="doc-actions">
-          <button type="button" class="chip" data-copy-page="${page.mdUrl}">${icons.icon('clipboard-close', 15, 'when-idle')}${icons.icon('copy-success', 15, 'when-done')}<span>Copy as Markdown</span></button>
+          <button type="button" class="chip" data-copy-page="${page.mdUrl}">${icons.icon('clip-board', 15, 'when-idle')}${icons.icon('clipboard-tick', 15, 'when-done')}<span>Copy as Markdown</span></button>
           <a class="chip" href="${page.mdUrl}">${icons.icon('clipboard-close', 15)}<span>View .md</span></a>
         </span>
       </div>
@@ -301,7 +301,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <div class="hero-demo" aria-label="Example request">
       <div class="demo-pill demo-pill-a"><span class="demo-dot" aria-hidden="true"></span><span>POST /v1/messages</span></div>
       <div class="code demo-code">
-        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span><span class="code-sep" aria-hidden="true">/</span><span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clipboard-close', 16, 'when-idle')}${icons.icon('copy-success', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
+        <div class="code-head"><span class="code-meta">${icons.icon('terminal', 16, 'lang-mark')}<span class="code-lang">Shell</span><span class="code-sep" aria-hidden="true">/</span><span class="code-file">Terminal</span></span><button type="button" class="code-copy" data-copy aria-label="Copy code">${icons.icon('clip-board', 16, 'when-idle')}${icons.icon('clipboard-tick', 16, 'when-done')}<span class="code-copy-text">Copy</span></button></div>
 <pre><code class="hljs language-bash">${stats.demoHtml}</code></pre>
       </div>
       <div class="demo-pill demo-pill-b"><span class="mono">sk_test_</span> keys are free in sandbox</div>
