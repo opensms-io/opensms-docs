@@ -318,13 +318,34 @@ kbd { font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--mu
 .toc-mobile[open] .toc-chev { transform: rotate(180deg); }
 .toc-mobile nav { padding: 0 16px 14px; }
 
-/* ---------- footer (landing) ---------- */
-.site-footer { max-width: 1180px; margin: 0 auto; padding: 22px var(--gutter) 34px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; font-size: 13.5px; color: var(--muted); }
+/* ---------- footer (landing) ----------
+   Same columns and links as the landing footer (landing/src/chrome/site-footer.html):
+   brand block beside four link columns, then the social and review profiles. */
+.site-footer { max-width: 1180px; margin: 0 auto; padding: 56px var(--gutter) 34px; border-top: 1px solid var(--line); font-size: 14px; color: var(--muted); }
 .is-doc .site-footer { max-width: none; margin: 0; }
-.footer-brand { display: inline-flex; align-items: center; gap: 10px; }
-.footer-links { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: center; }
-.footer-links a { color: var(--ink); }
-.footer-links a:hover { color: var(--brand-text); }
+.footer-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 48px clamp(32px, 6vw, 96px); }
+.footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; min-width: 0; }
+.footer-tagline { margin: 0; max-width: 19rem; font-size: 14.5px; line-height: 1.6; color: var(--ink-2); }
+.footer-copy { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+.footer-brand .back-link { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+.footer-nav { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 32px 24px; }
+.footer-heading { margin: 0 0 16px; font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.footer-col ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.footer-col a { font-size: 14.5px; font-weight: 500; line-height: 1.4; color: var(--ink); }
+.footer-col a:hover, .footer-brand .back-link:hover { color: var(--brand-text); }
+.footer-bottom { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 32px; }
+.footer-group { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; min-width: 0; }
+.footer-label { font: 500 11px/1.4 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.footer-social { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.footer-icon { width: 38px; height: 38px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); display: flex; align-items: center; justify-content: center; }
+.footer-review { display: inline-flex; align-items: center; height: 38px; padding: 0 15px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); font-size: 13.5px; font-weight: 600; color: var(--ink); white-space: nowrap; }
+.footer-icon:hover, .footer-review:hover { border-color: var(--brand-text); color: var(--brand-text); }
+@media (max-width: 960px) { .footer-top { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 639px) {
+  .site-footer { padding-top: 48px; }
+  .footer-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .footer-bottom { flex-direction: column; align-items: flex-start; margin-top: 48px; }
+}
 /* "Back to opensms.io": a chevron and a label, in the footer and the drawer foot. */
 .back-link { display: inline-flex; align-items: center; gap: 6px; }
 .back-link .i { flex: none; color: var(--brand-text); transition: transform .15s ease; }

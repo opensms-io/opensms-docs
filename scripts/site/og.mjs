@@ -22,7 +22,7 @@ const HERE = new URL('./og/', import.meta.url);
 
 // Bump when the card design changes, so every cached card is re-rendered even
 // if nothing else in the key moved.
-const TEMPLATE_VERSION = 'og-v6-landing-card';
+const TEMPLATE_VERSION = 'og-v7-landing-card';
 
 const C = { bg: '#F4F4F6', surface: '#FFFFFF', ink: '#101116', ink2: '#4A4D55', muted: '#6B6E76', line: '#D6D4E3', indigo: '#29158E', relay: '#4B34D6', curve: '#E3E0F2', pill2: '#C7BFF4' };
 
@@ -91,8 +91,8 @@ function heroArt() {
     h('div', { display: 'flex', flexDirection: 'column', fontSize: 27, fontWeight: 600, letterSpacing: -0.6, lineHeight: 1.2, color }, ...lines.map((l) => h('div', { display: 'flex' }, l))),
     iconLeft ? null : icon);
   return [
-    pill(C.indigo, '#FFFFFF', ['Send once,', 'any carrier'], img(smile, 52, 52), true, { left: 770, top: 176 }),
-    pill(C.pill2, C.ink, ['We pick the', 'cheapest route'], h('div', { display: 'flex', width: 56, height: 56, borderRadius: 999, background: C.surface, alignItems: 'center', justifyContent: 'center' }, img(mark(C.indigo), 25, 32)), false, { left: 812, top: 318 }),
+    pill(C.indigo, '#FFFFFF', ['Send through', 'one API'], img(smile, 52, 52), true, { left: 770, top: 176 }),
+    pill(C.pill2, C.ink, ['Routes ranked by', 'health and price'], h('div', { display: 'flex', width: 56, height: 56, borderRadius: 999, background: C.surface, alignItems: 'center', justifyContent: 'center' }, img(mark(C.indigo), 25, 32)), false, { left: 812, top: 318 }),
   ];
 }
 

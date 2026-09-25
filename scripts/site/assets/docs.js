@@ -207,13 +207,13 @@
         lastSection = r.page.s;
       }
       var href = r.page.u + (r.e[2] ? '#' + r.e[2] : '');
-      var sep = '<span class="sr-crumb-sep" aria-hidden="true">' + svg('arrow-right4', 11) + '</span>';
+      var sep = ' <span class="sr-crumb-sep" aria-hidden="true">' + svg('arrow-right4', 11) + '</span> ';
       var crumb = esc(r.page.s) + (r.e[1] ? sep + esc(r.page.t) : '');
       var text = snippet(r.e[3] || '', terms);
       html += '<li class="sr-item" role="option" id="sr-' + i + '" aria-selected="false"><a href="' + href + '" tabindex="-1">'
         + '<span class="sr-icon">' + svg(r.page.i || 'document-text', 18) + '</span>'
         + '<span class="sr-main"><span class="sr-title">' + titleHtml(r.e[1] || r.page.t, terms) + '</span>'
-        + '<span class="sr-crumb">' + crumb + '</span>'
+        + ' <span class="sr-crumb">' + crumb + '</span>'
         + (text ? '<span class="sr-text">' + highlight(text, terms) + '</span>' : '') + '</span>'
         + '<span class="sr-go">' + svg('arrow-right4', 16) + '</span></a></li>';
     });

@@ -1,6 +1,6 @@
 # Sending messages
 
-This page covers everything about outbound SMS through the API: single sends, scheduling and cancellation, batches, sender IDs, encoding and segments, the status lifecycle and delivery attempts. It is for developers building the sending side of an integration. Authentication is covered in [authentication](authentication.md); status notifications in [delivery reports and webhooks](delivery-reports-and-webhooks.md).
+This page covers outbound SMS through the API: single sends, scheduling and cancellation, batches, sender IDs, encoding and segments, the status lifecycle and delivery attempts. It is for developers building the sending side of an integration. Authentication is covered in [authentication](authentication.md); status notifications in [delivery reports and webhooks](delivery-reports-and-webhooks.md).
 
 ## Send one message
 

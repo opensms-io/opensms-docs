@@ -1,6 +1,6 @@
 # Going live
 
-This page walks through everything between a working sandbox integration and real messages reaching handsets: identity checks, legal acceptance, funding, a sender ID and live keys. It is for the developer or workspace owner preparing a production launch. Several steps are done by OpenSMS operators, not by you; each step says who acts.
+Going live takes eleven steps between a working sandbox integration and real messages reaching handsets: identity checks, legal acceptance, funding, a sender ID and live keys. It is for the developer or workspace owner preparing a production launch. Several steps are done by OpenSMS operators, not by you; each step says who acts.
 
 The server enforces every requirement again when the workspace is activated, so the order below is the order that works.
 
