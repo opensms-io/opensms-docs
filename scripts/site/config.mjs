@@ -53,7 +53,7 @@ export const SECTIONS = [
         // Leading marks for headings (see markdown.mjs): assistant logos on the setup
         // steps, Iconsax icons on the main sections and tools.
         marks: {
-          'Connect your assistant': 'icon:ai-cloud-connected',
+          'Connect your assistant': 'icon:ai-enhance',
           Claude: 'ai:claude', ChatGPT: 'ai:openai', 'Claude Code': 'ai:claude', Cursor: 'ai:cursor',
           'VS Code': 'ai:vscode', Windsurf: 'ai:windsurf', Zed: 'ai:zed', 'Any other MCP client': 'icon:ai-chatbot',
           'What happens when you connect': 'icon:security-user',
@@ -148,7 +148,7 @@ export const SECTIONS = [
       {
         path: 'console/ai-assistants.md', label: 'AI assistants',
         marks: {
-          'Before you start': 'icon:lamp-on', 'Connect an assistant': 'icon:ai-cloud-connected',
+          'Before you start': 'icon:lamp-on', 'Connect an assistant': 'icon:ai-enhance',
           'The consent screen': 'icon:security-user', 'Unverified apps': 'icon:danger', 'Connected AI apps': 'icon:ai-chatbot',
         },
       },
