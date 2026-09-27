@@ -458,7 +458,7 @@ for sender in page.items {
 {"items":[{"id":"222ff8e6-1629-48a9-9181-ee110d2e6ad5","value":"OPENSMS","kind":"alphanumeric","countries":[],"use_case":"transactional","status":"approved","restricted":false,"created_at":"2026-09-24T07:08:21.163602+03:00"}],"next_cursor":null}
 ```
 
-When you omit `sender_id`, the server uses, in order: the workspace's approved default sender; the approved default sender of a healthy route for the destination; in the sandbox only, the platform sender `OPENSMS`. If none applies the send fails with `422` `"no approved default sender_id is configured"`. A `sender_id` that is not approved for your workspace fails with `422` `"sender_id is not approved for this workspace"`.
+When you omit `sender_id`, the server uses, in order: the workspace's approved default sender; the approved default sender of a healthy route for the destination; in the sandbox only, the platform sender `OPENSMS`. If none applies the send fails with `422` `"no approved default sender_id is configured for this destination. Pass sender_id, or contact support to enable the shared sender in this market"`. Accounts verified as individuals always send this way: they cannot register their own sender ID, so leave `sender_id` out and the shared sender for the market is used (see [Account types](../console/account-types.md)). A `sender_id` that is not approved for your workspace fails with `422` `"sender_id is not approved for this workspace"`.
 
 Requesting your own sender ID is part of [going live](../getting-started/going-live.md#10-get-a-sender-id-approved).
 
@@ -1283,12 +1283,13 @@ Admission checks run in this order. The status and `detail` are exactly what the
 | `400` | `invalid traffic_type`, `metadata must be a JSON object`, `invalid JSON` | Bad field or unknown field. |
 | `400` | `Idempotency-Key is required and must be at most 255 characters` | Missing header. |
 | `401` | `missing or invalid API key`, `insufficient scope`, `missing bearer credential` | Credential problems. |
+| `403` | `this traffic type is not available for this account. Individual accounts can send OTP and transactional messages; verify a business to send marketing messages` | The account may not send this `traffic_type`, usually marketing on an account verified as an individual. |
 | `403` | `email verification is required for sandbox sending` | Sandbox, owner email unverified. |
 | `403` | `workspace is not approved for live sending` | Live key, workspace not `live`. |
 | `403` | `live onboarding requirements are incomplete` | Live, a required onboarding step was reopened. |
 | `403` | `live sending is paused pending payment review` | Live, payment review hold. |
 | `409` | `Idempotency-Key was already used with a different request` | Key reuse with a new body. |
-| `422` | `no approved default sender_id is configured`, `sender_id is not approved for this workspace` | Sender ID. |
+| `422` | `no approved default sender_id is configured for this destination. ...`, `sender_id is not approved for this workspace` | Sender ID. |
 | `422` | `destination is suppressed` | The number is on your or the platform suppression list. |
 | `422` | `destination is on the do-not-disturb registry` | Marketing to a DND number. |
 | `422` | `content rejected by compliance rule <id>` | A `reject` content rule matched. |

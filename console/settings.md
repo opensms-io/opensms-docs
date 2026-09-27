@@ -28,10 +28,12 @@ Open **Settings** at the bottom of the left-hand menu (`/app/settings`), or choo
    | Field | What it does |
    | --- | --- |
    | Workspace name | The name shown in the switcher and to your team. |
-   | Monthly spend cap | The most the workspace may spend in a month, in your currency. Leave it blank for no cap. You are warned as you approach it and sending stops when you reach it (see [Notifications](notifications.md)). At most two decimal places. |
+   | Monthly spend cap | The most the workspace may spend in a month, in your currency. Leave it blank for no cap. You are warned as you approach it and sending stops when you reach it (see [Notifications](notifications.md)). At most two decimal places. On an account verified as an individual, OpenSMS sets a monthly limit: your cap must be at or below it and cannot be blank. A higher value is refused with "This account's monthly spend limit is ..." (see [Account types](account-types.md)). |
    | Data retention (days) | How long message and delivery records are kept before they are deleted, from 1 to 400 days. A new workspace keeps 30 days. |
 
 2. Click **Save changes**. You see "Workspace settings saved."
+
+The same card shows the workspace's account type. For an individual account it also lists the monthly spend limit and the message types you can send, with an **Upgrade to a business** link.
 
 If a value is out of range the server's message appears, for example "days must be an integer between 1 and 400.":
 

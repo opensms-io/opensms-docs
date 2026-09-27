@@ -12,6 +12,7 @@ export const OVERRIDES = {
   'reference/api/notifications.md': 'The signed-in user\'s notification inbox and preferences: list notifications, mark them read, and read or update preferences. Session tokens only.',
   'console/README.md': 'Task-by-task guides to the OpenSMS web app: signing in, setting up a workspace, sending messages, managing sender IDs and keys, paying and going live.',
   'console/billing.md': 'OpenSMS is prepaid. The Billing page shows your wallet balance, lets you add credits and lists every movement, plus payments and invoices once you are live.',
+  'console/account-types.md': 'Verify as a person, a registered business name or a company. What each needs in Kenya, individual account limits, and upgrading without downtime.',
   'console/compliance-and-verification.md': 'Keep your messaging legal: manage the numbers you must not message, read quiet hours and content rules, and verify your business before going live.',
   'console/contacts-and-groups.md': 'Contacts is your address book inside OpenSMS: names, phone numbers and tags. Groups are saved lists of contacts you can message in a single step.',
   'console/go-live.md': 'Every workspace starts in sandbox. The Go live page is the checklist for sending real messages to real phones and the button to ask for a review.',

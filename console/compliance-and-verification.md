@@ -72,7 +72,7 @@ For Kenya the API returned the stop keywords STOP, UNSUBSCRIBE and END, and four
 
 ## Business verification
 
-Business verification (sometimes called KYC, "know your customer") is how OpenSMS confirms your business is real. It is needed once, before your workspace can send real messages. Sandbox sending works without it, and the page says review typically takes 1 to 2 business days.
+Business verification (sometimes called KYC, "know your customer") is how OpenSMS confirms who is sending. It is needed once, before your workspace can send real messages. You do not need a company: you can verify as an individual or as a registered business name. [Account types](account-types.md) compares the options, including what to do if you have no proof of address. Sandbox sending works without it, and the page says review typically takes 1 to 2 business days.
 
 **Who can do this:** the workspace owner only. The server refuses anyone else with "workspace owner access required".
 

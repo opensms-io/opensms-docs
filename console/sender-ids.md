@@ -36,6 +36,8 @@ On the detail page each market's filing has its own status too (**PENDING**, **S
 
 ## Apply for a sender ID
 
+Your own sender ID needs a registered business name or a company. If the workspace is verified as an individual, the application explains that individual accounts send from the shared sender ID and offers an upgrade instead (see [Account types](account-types.md)); the server refuses the application with "Individual accounts send from the shared sender ID. Register a business name or company profile to apply for your own sender ID."
+
 Click **Apply for a new sender ID** (or **Continue application** on a draft). The application opens as a full-screen, seven-step page at `/app/sender-ids/new`. The step counter is in the bottom-right corner, and **Back to dashboard** at the top right leaves the wizard.
 
 From step 2 on, **Save for later** stores everything you have entered as a draft ("Application draft saved. You can continue it from Sender IDs."). Each **Continue** also saves the draft.

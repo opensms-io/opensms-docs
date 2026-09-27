@@ -119,6 +119,16 @@ Other refusals you may see: `422 all active owners and finance members must enab
 
 The full sandbox-to-live path was not completed locally, for two reasons. The file scanner is disabled (`scanner.status: "disabled"` at `GET /admin/v1/operations/file-scanning`), so no uploaded document ever becomes `clean` and approvable. And a live wallet cannot be funded because payments are disabled. The KYC and live-status gates above were each exercised up to the point where they refused.
 
+## Individual accounts, identity changes and limits
+
+Workspaces that verify through business profiles can be one of three types: an individual (a person with no company), a registered business name (sole proprietor) or a company. The profile review queue shows each profile's type, and its checklist lists exactly the evidence that type needs. For an individual that is a national ID or passport and a tax registration such as a KRA PIN certificate, plus the tax PIN itself; there is no address proof or director.
+
+**Explanations instead of documents.** A company can explain a missing proof of address instead of uploading it. The explanation appears on the checklist row with its text. Accept it, or reject it with a reason the customer sees (`POST /admin/v1/business-profiles/{profile}/revisions/{revision}/waivers/{waiver}/decision` with `decision` `accepted` or `rejected`). The profile cannot be approved while an explanation is pending or rejected.
+
+**Limits.** Approving KYC for a workspace whose primary profile is an individual applies the individual limits in the same step: a monthly spend ceiling (the owner's cap is lowered to it), a lower API key request rate and OTP and transactional traffic only. Approval is refused with "configure an individual spend ceiling for this workspace currency before approving an individual" until the server is configured with a ceiling for that currency (`OPENSMS_INDIVIDUAL_SPEND_CEILINGS`, for example `KES=20000`). The **Limits** panel on the workspace shows the current values; ops and superadmin can change them with a reason (`PUT /admin/v1/workspaces/{id}/limits`). Later reviews keep your changes.
+
+**Identity changes.** When a verified workspace picks a different approved profile, for example an individual who has registered a business name, it files an identity change instead of switching. Sending continues under the current identity meanwhile. The request appears in the identity changes queue and on the workspace. **Approve** swaps the identity in one step, keeps KYC approved and live status unchanged, and applies the new type's limits. **Reject** needs a reason and leaves the current identity in place. Approval is refused if the workspace's identity has changed since the request, or if the new profile's approval or evidence is no longer current. A switch from a business back to an individual is refused before it reaches you.
+
 ## Messages and ledger
 
 At the bottom of the detail page, the **Messages** and **Ledger** tabs page through the workspace's messages and wallet ledger (`GET /admin/v1/workspaces/{id}/messages` and `/ledger`, each `{items, next_cursor}`).

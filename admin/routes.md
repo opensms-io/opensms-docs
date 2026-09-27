@@ -81,6 +81,16 @@ PATCH /admin/v1/routes/afe6127a-89d9-487e-b83a-c9e61030b929
 
 Finance operators get `403 route configuration requires ops access` on this call.
 
+## Set up the shared sender for individual accounts
+
+Customers verified as individuals cannot register their own sender ID, so they send from the default sender of the route that carries each message. Until a route in a market has a registered shared default sender, their live sends there fail with `422` `"no approved default sender_id is configured for this destination. ..."`.
+
+1. Create the shared sender once (superadmin): `POST /admin/v1/platform-senders` with `value`, `kind`, `use_case` and a `reason`. It is created approved and its name is reserved as a platform restriction, so no customer can register it.
+2. Register it with the carrier outside OpenSMS, then record the outcome for each market and provider (ops or superadmin): `POST /admin/v1/platform-senders/{id}/registrations` with `country_iso2`, `provider_id`, `status` (`pending`, `submitted`, `approved` or `rejected`), an optional `provider_reference` and a `reason`. Each call adds a new revision; earlier outcomes stay as history.
+3. [Edit the route](#edit-a-route) and choose the shared sender as its **Default sender ID**. The list only offers it once its registration for that country and provider is `approved`, and the database refuses the change otherwise.
+
+`GET /admin/v1/platform-senders` lists every shared sender with its latest registration per market and provider, and the routes that use it as their default. Registering a sender with a carrier can cost money; get approval before submitting one.
+
 ## Pin or release route health during an incident
 
 Automatic health comes from delivery results. When you know better (a provider has told you about an outage, for example), pin the health:

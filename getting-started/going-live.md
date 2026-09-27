@@ -4,6 +4,8 @@ Going live takes eleven steps between a working sandbox integration and real mes
 
 The server enforces every requirement again when the workspace is activated, so the order below is the order that works.
 
+You do not need a company to go live. A developer with no registered business can verify as an individual with a national ID or passport and a KRA PIN, then send from the shared sender ID with a few limits. [Account types](../console/account-types.md) explains the options and how to upgrade later without downtime.
+
 Most calls on this page need a console session with `X-Workspace-ID`, not an API key, so they are not in the SDKs and are shown with cURL only. The two an API key can make, a card or mobile money top-up (step 5) and a sender ID fee quote (step 10), are shown for every SDK.
 
 ![The console's Go live page, showing the five required checks, the sandbox workspace status and the Request to go live button](../assets/screens/developer/go-live.png)

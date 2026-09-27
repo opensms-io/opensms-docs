@@ -157,6 +157,7 @@ export const SECTIONS = [
       { path: 'console/billing.md' },
       { path: 'console/go-live.md' },
       { path: 'console/compliance-and-verification.md' },
+      { path: 'console/account-types.md' },
       { path: 'console/notifications.md' },
       { path: 'console/settings.md' },
       { path: 'console/status-page.md', label: 'Status page' },
