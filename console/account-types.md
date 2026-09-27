@@ -65,7 +65,7 @@ Once an individual profile is approved and the workspace goes live, you can send
 | Shared sender ID | Messages go out from the shared OpenSMS sender ID for the destination market. Leave the sender blank when you send. |
 | Monthly spend limit | OpenSMS sets a maximum monthly spend for the account. You can set your own lower cap in [Settings](settings.md), but not above the limit and not blank. |
 | API request rate | Your API keys have a lower request rate. |
-| No marketing messages | OTP and transactional messages are allowed. Marketing messages are refused with "this traffic type is not available for this account". |
+| No marketing messages | OTP and transactional messages are allowed. On the compose screen and group sends, marketing is shown as unavailable; an API request for it is refused with "this traffic type is not available for this account". |
 
 **Settings > Workspace** shows your account type and these limits. If you need more, [upgrade to a business](#upgrade-to-a-business) or contact support; OpenSMS can adjust the limits for a workspace.
 
