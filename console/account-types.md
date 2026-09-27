@@ -23,7 +23,7 @@ Every document is a PDF, PNG or JPEG of up to 10 MiB. OpenSMS checks each file f
 | Item | What to upload |
 | --- | --- |
 | National ID or passport | A clear copy of the front and back of your national ID, or the photo page of your passport. |
-| KRA PIN certificate | Download it free from iTax. Your KRA PIN also goes in the **Tax PIN** field, for example `A123456789B`. |
+| KRA PIN certificate | Download it free from iTax. Your PIN also goes in the **KRA PIN** field: A or P, nine digits, then a letter, for example `A123456789B`. |
 
 No utility bill or proof of address is needed.
 
@@ -52,9 +52,9 @@ Some companies have no utility bill or lease in the company's name, for example 
 
 1. Click **Don't have this?** under the document.
 2. Explain in your own words why you cannot provide it and what you can offer instead. Use 20 to 1000 characters.
-3. Click **Save explanation**. You can submit the profile for review with the explanation in place of the document.
+3. Click **Send explanation**. You can submit the profile for review with the explanation in place of the document.
 
-A reviewer reads the explanation and accepts it or asks for a document. If they ask for a document, the row shows their reason; upload the document or one of the listed alternatives. You can withdraw an explanation while the profile is still a draft.
+A reviewer reads the explanation and accepts it or asks for a document. If they ask for a document, the row shows their reason; upload the document or one of the listed alternatives. Click **Withdraw explanation** to remove it while the profile is still a draft.
 
 ## What an individual account can do
 
@@ -75,7 +75,7 @@ When you register a business name or a company, move the workspace to it. Sendin
 
 1. Open **Business profiles** and click **Upgrade to a business** on your individual profile, or create a new profile and pick **Registered business name** or **Company**. The name is filled in from your individual profile; change it to the registered name.
 2. Upload the documents in its checklist and submit it. A reviewer approves the profile as usual.
-3. Once it is approved, click **Use for this workspace**. Because the workspace is already verified, this files an identity change for review instead of switching straight away. A banner says the change is waiting and that sending continues under your current identity and limits.
+3. Once it is approved, click **Switch to this identity**, then **Request identity change**. Because the workspace is already verified, this files an identity change for review instead of switching straight away. A banner says the change is waiting and that sending continues under your current identity and limits.
 4. When OpenSMS approves the change, the workspace switches to the business in one step. Your limits become those of a business: no spend limit beyond your own cap, the normal request rate and marketing messages allowed. You can now [apply for your own sender ID](sender-ids.md).
 
 You can cancel a waiting change from the banner. If OpenSMS turns the change down, the banner shows the reason and your current identity stays in place.
