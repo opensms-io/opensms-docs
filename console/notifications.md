@@ -36,12 +36,12 @@ Common notifications, and the link each one carries:
 | Title | When | Link |
 | --- | --- | --- |
 | Workspace created | Right after signup. "Your new workspace is ready in sandbox. Verify your email to begin sending test messages." | |
-| Company details submitted | You saved your company details. | |
+| Verification details submitted | You saved your business details. | |
 | Document uploaded | A verification document was received and is waiting for checks. | View uploaded document |
 | Documents submitted for review | All three verification documents are in. | View verification |
 | Verification needs attention | The OpenSMS team sent your verification back. | Review verification |
 
-You are also notified, with a link to act on it, about: verification approved (Continue onboarding), document approved or rejected, live access requested, sending status changed, sender evidence uploaded or rejected, sender ID rejected, sender registration rejected, low wallet balance (Add funds), spend cap warning or reached (Review spending), number renewal failed or release pending, webhook disabled (Review webhooks), route health changed or degraded or down (Review routes), and data export ready (Download export).
+You are also notified, with a link to act on it, about: verification approved (Continue onboarding), document approved or rejected, live access requested, sending status changed, sender evidence uploaded or rejected, sender ID rejected, sender registration rejected, low wallet balance (Add funds), spend cap warning or reached (Review spending), number renewal failed or release pending, webhook disabled (Review webhooks), route health changed or degraded or down (Review routes), data export ready (Download export), an explanation for a missing document accepted or turned down, an identity change awaiting review, approved, turned down or cancelled, and account limits updated (see [Account types](account-types.md)).
 
 ## Choose which alerts reach you
 

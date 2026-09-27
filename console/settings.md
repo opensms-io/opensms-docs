@@ -10,7 +10,7 @@ Open **Settings** at the bottom of the left-hand menu (`/app/settings`), or choo
 | --- | --- | --- |
 | Workspace | `/app/settings/workspace` | [Workspace](#workspace) |
 | Team | `/app/settings/team` | [Team](#team) |
-| Business verification | `/app/verification/company` | [Compliance and verification](compliance-and-verification.md#business-verification) |
+| Account verification | `/app/verification/company` (or **Business profiles** when they are turned on for your workspace) | [Compliance and verification](compliance-and-verification.md#business-verification) |
 | Security | `/app/settings/security` | [Security](#security) |
 | Notifications | `/app/settings/notifications` | [Notifications](#notifications) |
 | Legal | `/app/settings/legal` | [Legal](#legal) |

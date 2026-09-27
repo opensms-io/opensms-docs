@@ -13,7 +13,7 @@ The panel on the right, **Workspace status**, shows where you are:
 | Status | What it means | What happens next |
 | --- | --- | --- |
 | Sandbox | Every message is simulated. Nothing reaches a real handset and your wallet is never charged. | Clear the five required checks, accept the terms and the data processing agreement, then request a review. |
-| In review | You asked to go live and the workspace is with the OpenSMS review team. There is nothing left for you to do. | A reviewer checks your company details and documents. Sandbox sending keeps working while you wait. |
+| In review | You asked to go live and the workspace is with the OpenSMS review team. There is nothing left for you to do. | A reviewer checks the details and documents you supplied. Sandbox sending keeps working while you wait. |
 | Live | Review is done and the workspace sends real traffic. | Messages reach real phones and cost money; live API keys work; two-factor confirmation is required for live keys, wallet changes and deleting the workspace. |
 | Suspended | Sending is stopped by the OpenSMS team, usually after a compliance report or an unpaid balance. | Check [Compliance](compliance-and-verification.md) and [Billing](billing.md), then email info@opensms.io from the owner's address with your workspace name. Only the OpenSMS team can lift a suspension. |
 
@@ -31,10 +31,10 @@ The **Required to go live** card counts your progress ("0 / 5"). Each check has 
 | Check | What you do | Where |
 | --- | --- | --- |
 | Verify your email address | Enter the 6-digit code emailed to you. **Enter your code** opens the code screen; **Resend the email** sends a new one. | [Signing up](signing-up-and-signing-in.md#verify-your-email) |
-| Company details | Registered name, country of registration and registration number. | [Compliance and verification](compliance-and-verification.md#business-verification) |
+| Business details | Registered name, country of registration and registration number. For an account verified as an individual this row reads **Identity verification** (see [Account types](account-types.md)). | [Compliance and verification](compliance-and-verification.md#business-verification) |
 | Verification documents | Certificate of incorporation, proof of business address and a director's ID. | [Compliance and verification](compliance-and-verification.md#upload-your-documents) |
 | Fund your wallet | Put money in the live wallet. This does not switch on real sending by itself. | [Billing](billing.md#fund-the-live-wallet) |
-| KYC approval | Nothing to click. The OpenSMS team approves your company details and documents together. | |
+| KYC approval | Nothing to click. The OpenSMS team approves your details and documents together. | |
 
 Below that, **Terms and DPA** lists the terms of service and the data processing agreement with their versions. The owner must have accepted both; if you already did (usually at the [legal acceptance](legal-acceptance.md) screen) they show **ACCEPTED 1.0**, otherwise an **Accept** button. (A grey note under the card says an earlier acceptance "still shows an Accept button here"; that note is out of date, as the screenshots show the **ACCEPTED 1.0** badge.)
 
@@ -60,15 +60,15 @@ While you are in review, **Check for an update** fetches your latest status; the
 
 This is what happens with a new workspace when the review team sends a submission back.
 
-1. **Company details and documents submitted.** Both checks move to **IN REVIEW**.
+1. **Business details and documents submitted.** Both checks move to **IN REVIEW**.
 
    ![Company details and documents in review](../assets/screens/console/go-live/submitted.png)
 
-2. **The reviewer sends it back** with the reason "The registration number does not match the certificate. Please correct it." Company details, documents and KYC approval all show **NEEDS ATTENTION** with that reason, and a "Verification needs attention" [notification](notifications.md) arrives.
+2. **The reviewer sends it back** with the reason "The registration number does not match the certificate. Please correct it." Business details, documents and KYC approval all show **NEEDS ATTENTION** with that reason, and a "Verification needs attention" [notification](notifications.md) arrives.
 
    ![The checklist after the review team sent the verification back](../assets/screens/console/go-live/rejected.png)
 
-3. **Fix and resubmit.** The owner corrects the registration number and uploads a replacement certificate. Company details and documents go back to **IN REVIEW**; KYC approval keeps its **NEEDS ATTENTION** badge until the reviewer decides again.
+3. **Fix and resubmit.** The owner corrects the registration number and uploads a replacement certificate. Business details and documents go back to **IN REVIEW**; KYC approval keeps its **NEEDS ATTENTION** badge until the reviewer decides again.
 
    ![The checklist after resubmitting](../assets/screens/console/go-live/resubmitted.png)
 

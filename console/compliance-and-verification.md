@@ -1,6 +1,6 @@
 # Compliance and verification
 
-This guide covers two things that keep your messaging legal. **Compliance** (`/app/compliance`) is where you keep the list of numbers you must not message and read the quiet hours and content rules OpenSMS applies. **Business verification** (`/app/verification/company` and `/app/verification/documents`) is where the workspace owner tells OpenSMS who the business is and uploads the papers to prove it, which is required before you can [go live](go-live.md). It is written for workspace owners and admins, and for anyone who handles opt-outs or complaints.
+This guide covers two things that keep your messaging legal. **Compliance** (`/app/compliance`) is where you keep the list of numbers you must not message and read the quiet hours and content rules OpenSMS applies. **Account verification** (`/app/verification/company` and `/app/verification/documents`) is where the workspace owner tells OpenSMS who is sending and uploads the papers to prove it, which is required before you can [go live](go-live.md). It is written for workspace owners and admins, and for anyone who handles opt-outs or complaints.
 
 ## Compliance
 
@@ -76,31 +76,31 @@ Business verification (sometimes called KYC, "know your customer") is how OpenSM
 
 **Who can do this:** the workspace owner only. The server refuses anyone else with "workspace owner access required".
 
-There are two steps. Reach them from **Go live** (**Fill in your details**, **Upload documents**), from **Settings > Business verification**, or at `/app/verification/company`.
+There are two steps. Reach them from **Go live** (**Fill in your details**, **Upload documents**), from **Settings > Account verification**, or at `/app/verification/company`.
 
-### Step 1: company details
+### Step 1: business details
 
 1. Fill in the form:
 
    | Field | What to enter |
    | --- | --- |
-   | Company name | Your registered company name, for example `Acme Clinics Ltd`. |
+   | Registered business name | Your registered company or business name, for example `Acme Clinics Ltd`. |
    | Country of registration | The country the company is registered in. You can type to search the list. |
    | Registration number | The number on your certificate of incorporation, for example `PVT-2026-0042`. |
 
-2. Click **Save and continue**. You move on to the documents step, and Company details shows **IN REVIEW** on the [Go live](go-live.md) checklist.
+2. Click **Save and continue**. You move on to the documents step, and Business details shows **IN REVIEW** on the [Go live](go-live.md) checklist.
 
-![The company details form, filled in](../assets/screens/console/verification/company-filled.png)
+![The business details form, filled in](../assets/screens/console/verification/company-filled.png)
 
-Leaving a field empty shows "Enter your company name.", "Choose a country." or "Enter a registration number.". The red messages stay on screen after you fill the fields in and only clear when you click **Save and continue** again:
+Leaving a field empty shows "Enter your registered business name.", "Choose a country." or "Enter a registration number.". The red messages stay on screen after you fill the fields in and only clear when you click **Save and continue** again:
 
-![Company details with empty fields](../assets/screens/console/verification/company-errors.png)
+![Business details with empty fields](../assets/screens/console/verification/company-errors.png)
 
-Once submitted, the details are locked while they are in review or approved: the fields are greyed out, a line says "Your company details are under review. Continue to the document step.", and the button reads **Continue to documents**.
+Once submitted, the details are locked while they are in review or approved: the fields are greyed out, a line says "Your business details are under review. Continue to the document step.", and the button reads **Continue to documents**.
 
 If the reviewer sends your details back, the page shows **Review feedback:** followed by the reason, and the form opens for editing again:
 
-![Company details sent back with review feedback](../assets/screens/console/verification/company-rejected.png)
+![Business details sent back with review feedback](../assets/screens/console/verification/company-rejected.png)
 
 Correct the details and click **Save and continue** again.
 

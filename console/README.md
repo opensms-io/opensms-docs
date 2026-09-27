@@ -59,7 +59,7 @@ Some finished pages are not listed in the left-hand menu in this version of the 
 | Inbound | `/app/inbound` | [Inbound](inbound.md) |
 | Verification codes | `/app/otp` | [OTP](otp.md) |
 | Usage | `/app/usage` | [Usage](usage.md) |
-| Business verification | `/app/verification/company` | [Compliance and verification](compliance-and-verification.md#business-verification) (also reachable from [Settings](settings.md) and [Go live](go-live.md)) |
+| Account verification | `/app/verification/company` | [Compliance and verification](compliance-and-verification.md#business-verification) (also reachable from [Settings](settings.md) and [Go live](go-live.md)) |
 | System status (public, no sign-in needed) | `/status` | [System status page](status-page.md) |
 
 ## Roles in one table
