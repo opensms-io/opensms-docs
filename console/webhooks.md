@@ -43,7 +43,7 @@ An endpoint with no events ticked is allowed, but it will never be called; its d
 
 Every webhook request OpenSMS sends carries an `X-OpenSMS-Signature` header, made with a secret that belongs to the endpoint. Your developer's code uses that secret to check the request really came from OpenSMS.
 
-> **Known gap:** OpenSMS generates the secret and returns it once, when the endpoint is created (the API's create response includes `"secret": "whsec_..."`). The console does not display it, and there is no way to see it later. So an endpoint created in the console has a secret nobody can read, and its signatures cannot be checked. Until this is fixed, **have your developer create endpoints through the API** (`POST /v1/webhooks`) and store the secret from that response. The page's own note ("verify signatures with the copy you stored when the endpoint was created") assumes you have that copy.
+OpenSMS generates a signing secret when you create an endpoint. The console shows it once after creation, with a copy button. Store it in your application's secret manager before closing the dialog. OpenSMS cannot show it again later. If you close the dialog or lose the value, delete the endpoint and create a replacement to get a new secret.
 
 ## Check an endpoint and its deliveries
 
@@ -56,7 +56,7 @@ It shows:
 - the URL with a copy button (you see "Endpoint URL copied."), whether it is **ACTIVE**, and a health line such as "Delivering normally";
 - **Created**, **Consecutive failures** and the number of **Subscribed events**;
 - **Event subscriptions**;
-- **Signing secret** (an explanation only; see above);
+- **Signing secret** (shown once after creation; copy and store it securely);
 - **Recent deliveries**: each call OpenSMS made, with the **Event**, **Status** (for example PENDING or DELIVERED), the **Response** code your server gave ("Not yet" before it answers) and **When**, plus a summary such as "0 of 1 delivered".
 
 From the row menu of a delivery you can choose **Replay delivery** to send it again.
@@ -77,7 +77,7 @@ The toast says "Test event delivered." as soon as the test is queued, even befor
 
 ![Edit webhook](../assets/screens/console/webhooks/edit.png)
 
-As the form says, the signing secret cannot be shown or rotated here; if it is compromised or lost, delete the endpoint and create a replacement.
+The signing secret is not shown in the detail view and cannot be rotated here. If it is compromised or lost, delete the endpoint and create a replacement, then update your receiver with the new secret.
 
 If your endpoint keeps failing, OpenSMS disables it automatically and sends a "Webhook disabled" [notification](notifications.md). Fix your server, then re-enable it here.
 
