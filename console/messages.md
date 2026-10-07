@@ -99,7 +99,7 @@ The page shows:
 - **Lifecycle:** a timeline of each step with times (Accepted by the API, Scheduled, Submitted to a provider, the delivery receipt, and so on).
 - **Routing and attempts:** each attempt to hand the message to a provider, and the receipt for it.
 - **Status, Billing and Metadata** panels on the right. The carrier shown is worked out from the number's prefix; the page marks it as inferred, not verified.
-- **Number lookup:** **Look up number** checks the destination's carrier, whether it was ported to another network, and whether it is valid. Lookups are **charged per request**, and the charge is shown with the result. In sandbox the answer is simulated and the carrier shows as "Not verified".
+- **Number check:** **Look up number** shows available country, network, porting and validity evidence. Network, porting and validity can be unknown. The result includes when the evidence was checked and whether a saved result was reused. Historical evidence is not a guarantee of current network ownership or subscriber activity. The workspace price is shown before the request and with the result. A saved result may still be charged. In sandbox, checks are simulated and free. An uncertain result is not automatically retried; do not submit it again with a new request key. Read the saved result or contact support with its ID.
 
 Buttons in the header:
 

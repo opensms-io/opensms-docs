@@ -30,7 +30,7 @@ Guides for developers calling the API with a key.
 - [Sending messages](integrate/sending-messages.md): single messages, batches, scheduling, statuses
 - [Delivery reports and webhooks](integrate/delivery-reports-and-webhooks.md): events, payloads, signature verification, retries
 - [One-time passcodes](integrate/otp.md)
-- [Number lookup](integrate/lookup.md)
+- [Number checks](integrate/lookup.md)
 - [Inbound messages and numbers](integrate/inbound.md)
 - [Contacts and templates](integrate/contacts-and-templates.md)
 - [Realtime](integrate/realtime.md): the WebSocket event stream

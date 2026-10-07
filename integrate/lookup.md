@@ -1,18 +1,31 @@
 # Number lookup
 
-Number lookup tells you, for a phone number, its country, its current carrier, whether it was ported and whether it is valid, before you send to it. This page is for developers who want to clean lists, route by carrier or catch bad numbers at signup. Lookups are asynchronous operations: you request one, then read its result.
+Number checks return available evidence about a phone number, including its country, network, porting status and validity. Network, porting and validity fields can be `null` when there is no result to report. Evidence describes the number as of `checked_at`; it does not guarantee current ownership or subscriber activity. Checks can be useful for list hygiene and routing decisions, but should not be treated as proof that a message will be delivered.
+
+Before creating a check, request a quote with `GET /v1/lookup/quote?to=%2B254700000001`. The quote reports the country, effective workspace price, currency and whether a saved result is available. The standard Kenya price is KES 4, but your workspace price is authoritative. A saved result can still carry the disclosed lookup fee. Sandbox checks are free.
 
 ## Request a lookup
+
+Use the quoted price and availability to decide whether to request a check. The quote does not reserve funds; the accepted lookup response records the actual workspace price.
+
+```sh
+curl -s --get "$OPENSMS_API/v1/lookup/quote" \
+  --data-urlencode "to=+254700000001" \
+  -H "authorization: Bearer $OPENSMS_API_KEY"
+```
+
+The response includes `to`, `country`, `price`, `currency`, `cached`, `fresh`, `checked_at` and `available`. An unavailable quote means the lookup cannot be requested at that time. A cached quote may have a saved check date. When creating the check, send `expected_price` and `expected_currency` together with the values from this quote. If the price changes between quoting and requesting, the API returns `409` before holding funds. Request a fresh quote and decide whether to continue.
 
 `POST /v1/lookup` with a key that has `lookup:request` (or an owner, admin or developer session with `X-Workspace-ID` and `X-Environment`). `Idempotency-Key` is required (up to 200 characters).
 
 <!-- tabs label="Request a lookup" -->
 <!-- test:lookup-curl -->
 ```sh tab="cURL" title="Terminal"
+# Use expected_price and expected_currency returned by the quote. KES 4 shown here.
 curl -s -X POST $OPENSMS_API/v1/lookup \
   -H "authorization: Bearer $OPENSMS_API_KEY" -H 'content-type: application/json' \
   -H 'idempotency-key: lookup-1' \
-  -d '{"to":"+254700000001"}'
+  -d '{"to":"+254700000001","expected_price":"4.000000","expected_currency":"KES"}'
 ```
 
 ```ts tab="TypeScript" logo="typescript" title="lookup.ts"
@@ -20,7 +33,7 @@ const opensms = new Opensms({ apiKey: process.env.OPENSMS_API_KEY! });
 
 const lookup = await opensms.lookups.create({ to: '+254700000001' }, { idempotencyKey: 'lookup-1' });
 
-console.log(lookup.id, lookup.state, lookup.country, lookup.source);
+console.log(lookup.id, lookup.state, lookup.country, lookup.carrier);
 ```
 
 ```python tab="Python" logo="python" title="lookup.py"
@@ -28,7 +41,7 @@ client = Opensms(api_key=os.environ["OPENSMS_API_KEY"])
 
 lookup = client.lookups.create(to="+254700000001", idempotency_key="lookup-1")
 
-print(lookup["id"], lookup["state"], lookup["country"], lookup["source"])
+print(lookup["id"], lookup["state"], lookup["country"], lookup["carrier"])
 ```
 
 ```go tab="Go" logo="golang" title="main.go"
@@ -42,7 +55,7 @@ lookup, err := client.Lookups.Create(context.Background(),
 if err != nil {
 	log.Fatal(err)
 }
-log.Println(lookup.ID, lookup.State, lookup.Country, lookup.Source)
+log.Println(lookup.ID, lookup.State, lookup.Country, lookup.Carrier)
 ```
 
 ```php tab="PHP" logo="php" title="lookup.php"
@@ -50,7 +63,7 @@ $opensms = new Client(getenv('OPENSMS_API_KEY'));
 
 $lookup = $opensms->lookups->create(['to' => '+254700000001'], ['idempotencyKey' => 'lookup-1']);
 
-echo $lookup['id'], ' ', $lookup['state'], ' ', $lookup['country'], ' ', $lookup['source'], PHP_EOL;
+echo $lookup['id'], ' ', $lookup['state'], ' ', $lookup['country'], ' ', $lookup['carrier'], PHP_EOL;
 ```
 
 ```java tab="Java" logo="java" title="CreateLookup.java"
@@ -58,7 +71,7 @@ OpensmsClient opensms = new OpensmsClient(System.getenv("OPENSMS_API_KEY"));
 
 Lookup lookup = opensms.lookups().create("+254700000001", RequestOptions.idempotencyKey("lookup-1"));
 
-System.out.println(lookup.id + " " + lookup.state + " " + lookup.country + " " + lookup.source);
+System.out.println(lookup.id + " " + lookup.state + " " + lookup.country + " " + lookup.carrier);
 ```
 
 ```csharp tab="C#" logo="dotnet" title="Program.cs"
@@ -68,7 +81,7 @@ var lookup = await client.Lookups.CreateAsync(
     new CreateLookupParams { To = "+254700000001" },
     new RequestOptions { IdempotencyKey = "lookup-1" });
 
-Console.WriteLine($"{lookup.Id} {lookup.State} {lookup.Country} {lookup.Source}");
+Console.WriteLine($"{lookup.Id} {lookup.State} {lookup.Country} {lookup.Carrier}");
 ```
 
 ```ruby tab="Ruby" logo="ruby" title="lookup.rb"
@@ -76,7 +89,7 @@ client = Opensms::Client.new(api_key: ENV.fetch("OPENSMS_API_KEY"))
 
 lookup = client.lookups.create(to: "+254700000001", idempotency_key: "lookup-1")
 
-puts lookup.values_at(:id, :state, :country, :source).join(" ")
+puts lookup.values_at(:id, :state, :country, :carrier).join(" ")
 ```
 
 ```rust tab="Rust" logo="rust" title="src/main.rs"
@@ -91,7 +104,7 @@ let lookup = client
     .await?;
 
 let (state, country) = (lookup.state.unwrap_or_default(), lookup.country.unwrap_or_default());
-println!("{} {} {} {}", lookup.id, state, country, lookup.source.unwrap_or_default());
+println!("{} {} {} {}", lookup.id, state, country, lookup.carrier.as_deref().unwrap_or("unknown"));
 ```
 
 ```swift tab="Swift" logo="swift" title="main.swift"
@@ -100,7 +113,7 @@ let opensms = try OpensmsClient(apiKey: apiKey)
 
 let lookup = try await opensms.lookups.create(to: "+254700000001", idempotencyKey: "lookup-1")
 
-print(lookup.id, lookup.state ?? "", lookup.country ?? "", lookup.source ?? "")
+print(lookup.id, lookup.state ?? "", lookup.country ?? "", lookup.carrier ?? "unknown")
 ```
 <!-- /tabs -->
 
@@ -117,7 +130,9 @@ Real sandbox response (`200`):
   "source": "mock",
   "price": "0.000000",
   "currency": "KES",
-  "checked_at": "2026-09-24T07:27:19.372266+03:00"
+  "checked_at": "2026-09-24T07:27:19.372266+03:00",
+  "cached": false,
+  "fresh": false
 }
 ```
 
@@ -125,7 +140,7 @@ The status code tells you whether you already have the answer:
 
 | Status | Meaning |
 | --- | --- |
-| `200` | Completed immediately (always in the sandbox; in live when a fresh cached result exists). |
+| `200` | Completed immediately (always in the sandbox; in live when a saved result is available). |
 | `202` | Accepted; `state` is `queued`. Read it later with `GET /v1/lookup/{id}`. |
 
 ## Read a lookup
@@ -240,26 +255,28 @@ returns the same object as above. You can also subscribe to the `lookup.complete
 | `id` | Lookup operation ID. |
 | `state` | `queued`, `submitting`, `completed`, `failed` or `unknown`. |
 | `country` | ISO2 country resolved from the number. |
-| `carrier` | Carrier name, or null. |
+| `carrier` | Network name when available, otherwise null. |
 | `ported` | `true` or `false` when known, otherwise null. |
-| `valid` | `true` or `false` when the source is authoritative. **Null means no validity claim**, including every sandbox result. |
-| `source` | `hlr` (network query), `prefix` (numbering plan), `mock` (sandbox), or null. |
+| `valid` | `true` or `false` when known. **Null means no validity claim**, including sandbox results. |
 | `price`, `currency` | The price fixed when you requested it, in the workspace currency. `0` in the sandbox. |
-| `checked_at` | When the result was obtained, or null. |
+| `checked_at` | When the evidence was obtained, or null when no check time is available. |
+| `cached`, `fresh` | Whether saved evidence was reused and whether it is within the freshness window. Historical results are not a guarantee of current network ownership or activity. |
 
-`unknown` means the provider's outcome is uncertain. It stays readable, it is not retried automatically, and it does not by itself mean you are refunded; contact support if you need it resolved.
+`unknown` means the check outcome could not be confirmed. A useful partial result can be charged even when some fields remain null. An uncertain result may keep its funds held for review. It is not automatically retried. Do not make a second request with a new idempotency key to retry it. Read the original operation with `GET /v1/lookup/{id}` or contact support with its ID.
 
 ## Sandbox and live
 
 | | Sandbox (`sk_test_`) | Live (`sk_live_`) |
 | --- | --- | --- |
-| Result | Country from the prefix, `source: "mock"`, no carrier, ported or validity claim | From the configured lookup provider or a fresh cache |
-| Cost | `0` | The lookup price for the country (see `GET /v1/pricing?product=lookup`), reserved from the wallet and counted against the spend cap |
+| Result | Country and no network, porting or validity claim | Available evidence, which may leave network, porting or validity fields null; a saved result may be reused with its original check date even when it is no longer fresh |
+| Cost | `0` | The quoted workspace price for the country, reserved from the wallet and counted against the spend cap. A returned saved result can also be charged. |
 | Requirements | Any sandbox workspace | Live workspace, a configured lookup provider, a price for the country. An owner's session also needs two-factor authentication. |
 
 ## Idempotency
 
-The key is scoped to the workspace and environment. The same key with the same number returns the original operation (same `id`, no second charge). The same key with a different number is refused:
+The SDK snippets below show the basic create call. The quote-precondition fields are currently available through the REST API and will be added to SDK models in a follow-up.
+
+The key is scoped to the workspace and environment. The same key with the same number returns the original operation (same `id`, no second charge). The same key with a different number is refused. Use a new key only for a genuinely new intended check, never to retry an `unknown` operation:
 
 ```json
 {"type":"about:blank","title":"Conflict","status":409,"detail":"idempotency_conflict"}
@@ -270,13 +287,16 @@ The key is scoped to the workspace and environment. The same key with the same n
 | Status | `detail` | Meaning |
 | --- | --- | --- |
 | `400` | `Idempotency-Key is required and bounded to 200 characters` | Missing header. |
-| `400` | `Expected {to}.` | Body is not `{"to": "..."}` (unknown fields are refused). |
+| `400` | `Expected {to}.` | Body is not a lookup request (unknown fields are refused). |
+| `400` | `Both expected_price and expected_currency required.` | The optional quote precondition must include both fields or neither. |
+| `400` | `Invalid expected price or currency.` | Quote price or currency format is invalid. |
 | `401` | `missing or invalid API key` / `Authentication required.` | Bad credential: an unknown, revoked or expired `sk_` key is refused by the shared key check before the lookup handler runs; no credential, or a bearer value that is not a key or session, gets `Authentication required.` |
 | `403` | `Lookup scope or context denied.` | Missing scope, or `X-Workspace-ID` / `X-Environment` differs from the key's own. |
 | `403` | `workspace_not_live` | Live lookup before the workspace is live. |
 | `403` | `Current lookup authorization or live two-factor verification required.` | Role changed, or a live owner without two-factor. |
 | `402` | `insufficient_balance`, `insufficient_balance_or_spend_cap` | Live wallet or spend cap. |
 | `409` | `idempotency_conflict` | Key reused with a different number. |
+| `409` | `lookup_quote_changed` | The quoted price changed. No funds are held; request a new quote before deciding whether to continue. |
 | `422` | `invalid_destination` | The number is not valid E.164. |
 | `422` | `unresolved_destination_country`, `lookup_price_unavailable` | No country or no price for it. |
 | `503` | `lookup_provider_unavailable` | No live lookup provider configured. |

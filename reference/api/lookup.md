@@ -2,7 +2,7 @@
 
 # Number lookup
 
-Request and read carrier lookups (HLR-style) for a phone number. For developers who want to validate numbers or detect the current network before sending.
+Request a number check and read available country, network, porting and validity evidence. Some result fields are nullable, and saved results include their check date and freshness. For developers who want to make informed sending decisions without treating a number check as a delivery guarantee.
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
@@ -10,6 +10,7 @@ Back to the [API reference index](README.md). Shared shapes are in [Schemas](sch
 | --- | --- | --- |
 | POST | [`/v1/lookup`](#post-v1lookup) | Request an asynchronous scoped number lookup |
 | GET | [`/v1/lookup/{id}`](#get-v1lookupid) | Read current lookup state and nullable result |
+| GET | [`/v1/lookup/quote`](#get-v1lookupquote) | Quote a number check before requesting it |
 
 ## POST /v1/lookup
 
@@ -17,7 +18,7 @@ Back to the [API reference index](README.md). Shared shapes are in [Schemas](sch
 
 Operation ID: `requestLookup`. Tag: _none in contract_.
 
-Requires lookup:request API key scope, or owner/admin/developer customer session. A live owner session additionally requires activated two-factor authentication. Cookie mode uses the same role checks and CSRF header. Live requests require eligible workspace/provider configuration and reserve the immutable price against available wallet funds and spend cap. Sandbox uses mock data with no carrier/validity claim. Fresh compatible cache can complete synchronously. Idempotency is workspace/environment scoped: identical key and normalized destination return the original POST snapshot, without another purchase. GET the operation to observe progress. Unknown means provider outcome is uncertain; it does not authorize retry, refund or positive reconciliation.
+Requires lookup:request API key scope, or owner/admin/developer customer session. A live owner session additionally requires activated two-factor authentication. Cookie mode uses the same role checks and CSRF header. Live requests require eligible workspace configuration and reserve the immutable price against available wallet funds and spend cap. Sandbox uses simulated data with no network, porting or validity claim. Saved network evidence can complete synchronously, with its original check date and freshness flag. Idempotency is workspace/environment scoped: identical key and normalized destination return the original POST snapshot, without another purchase. GET the operation to observe progress. An unknown result may keep funds held for review; do not retry it with a new idempotency key. Useful partial results can be charged. Network, porting and validity fields can be null, and checked_at describes when the evidence was obtained.
 
 **Auth:** Session token (`Authorization: Bearer sess_...`), or API key (any scope).
 
@@ -34,6 +35,8 @@ Requires lookup:request API key scope, or owner/admin/developer customer session
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `to` | string | yes |  | International destination normalized by backend E.164 validation. |
+| `expected_price` | string | no |  | Optional quoted workspace price. Supply together with expected_currency to reject a changed quote before funds are held. Constraints: maxLength `32`, pattern `^[0-9]+(?:\.[0-9]{1,6})?$`. |
+| `expected_currency` | string | no |  | Required together with expected_price. Constraints: pattern `^[A-Z]{3}$`. |
 
 Unknown fields are rejected (`additionalProperties: false`).
 
@@ -47,7 +50,7 @@ Unknown fields are rejected (`additionalProperties: false`).
 | `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `402` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
-| `409` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `409` | Idempotency conflict or lookup_quote_changed. A changed quote is rejected before funds are held. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `429` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 | `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
@@ -171,7 +174,7 @@ Response `200` (`application/json`):
 }
 ```
 
-In the sandbox the lookup is answered by the mock source at zero cost.
+Sandbox checks are simulated, cost zero and make no network, porting or validity claim.
 
 ## GET /v1/lookup/{id}
 
@@ -315,4 +318,35 @@ Response `200` (`application/json`):
   "checked_at": "2026-09-24T07:40:30.321326+03:00"
 }
 ```
+
+## GET /v1/lookup/quote
+
+**Quote a number check before requesting it**
+
+Operation ID: `quoteLookup`. Tag: _none in contract_.
+
+Requires lookup:read or owner/admin/developer workspace membership. Sessions must select a workspace and environment. Returns the effective workspace price and whether a saved result is available. A quote does not reserve funds. The standard Kenya price is KES 4, while workspace overrides and the returned quote are authoritative. Network, porting and validity results may be null.
+
+**Auth:** Session token (`Authorization: Bearer sess_...`), or API key (any scope).
+
+**Parameters**
+
+| Name | In | Type | Required | Default | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `X-Workspace-ID` | header | string (uuid) | no |  | Session workspace membership scope; API keys derive workspace and reject conflicting headers. |
+| `X-Environment` | header | string | no |  | Required for sessions; API keys derive environment and reject conflicts. One of: `sandbox`, `live`. |
+| `to` | query | string | yes |  | International destination normalized by backend E.164 validation. Example: `+254700000001`. |
+
+**Request body:** none.
+
+**Responses**
+
+| Status | Description | Body |
+| --- | --- | --- |
+| `200` | Effective lookup price and saved-result availability | `application/json`: [LookupQuote](schemas.md#lookupquote) |
+| `400` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 

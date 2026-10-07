@@ -20,7 +20,9 @@ import { API, call, freshWorkspace, mintKey, adminToken } from '../tests/lib.mjs
 import { sdkSnippets } from './site/sdk-snippets.mjs';
 
 const DOCS = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-export const SPEC_PATH = resolve(DOCS, '../api/openapi/customer.yaml');
+export const SPEC_PATH = process.env.OPENSMS_OPENAPI_SPEC
+  ? resolve(process.env.OPENSMS_OPENAPI_SPEC)
+  : resolve(DOCS, '../api/openapi/customer.yaml');
 export const OUT_DIR = resolve(DOCS, 'reference/api');
 export const EXAMPLES_PATH = resolve(OUT_DIR, 'examples.json');
 const METHODS = ['get', 'post', 'put', 'patch', 'delete'];
@@ -40,6 +42,15 @@ export function operations(spec = loadSpec()) {
     for (const m of METHODS) {
       if (!item[m]) continue;
       const op = item[m];
+      let group;
+      try {
+        group = groupFor(op, path);
+      } catch (error) {
+        // A temporary external spec may contain newer operations outside this
+        // site's curated reference groups. Keep generation scoped to known pages.
+        if (process.env.OPENSMS_OPENAPI_SPEC) continue;
+        throw error;
+      }
       ops.push({
         key: `${m.toUpperCase()} ${path}`,
         method: m.toUpperCase(),
@@ -48,7 +59,7 @@ export function operations(spec = loadSpec()) {
         pathParams: item.parameters ?? [],
         servers: item.servers ?? op.servers,
         tag: (op.tags ?? [])[0] ?? null,
-        group: groupFor(op, path),
+        group,
       });
     }
   }
@@ -101,7 +112,7 @@ export const GROUPS = [
   { slug: 'analytics', title: 'Analytics', tag: 'Analytics',
     intro: 'Aggregated sending analytics: overview totals, breakdowns by country, carrier and sender ID, and a time series. For developers building reporting dashboards.' },
   { slug: 'lookup', title: 'Number lookup', prefixes: ['/v1/lookup'],
-    intro: 'Request and read carrier lookups (HLR-style) for a phone number. For developers who want to validate numbers or detect the current network before sending.' },
+    intro: 'Request a number check and read available country, network, porting and validity evidence. Some result fields are nullable, and saved results include their check date and freshness. For developers who want to make informed sending decisions without treating a number check as a delivery guarantee.' },
   { slug: 'wallet', title: 'Wallet and billing', prefixes: ['/v1/wallet', '/v1/payment-methods', '/v1/invoices'],
     intro: 'Prepaid wallet balances and ledger, sandbox credits, top-ups (card, manual bank transfer), auto top-up, saved payment methods and invoices. For developers who need to read spend or automate funding.' },
   { slug: 'notifications', title: 'Notifications', prefixes: ['/v1/notifications', '/v1/me/notifications'],
@@ -940,7 +951,7 @@ function scenarioList() {
     { op: 'POST /v1/inbound/{id}/reply', auth: 'key', url: `/v1/inbound/${ZERO}/reply`, idem: true, body: { text: 'Thanks, we got your message.' }, expect: 422, partial: LIVE_ONLY },
 
     // Lookup, pricing, analytics
-    { op: 'POST /v1/lookup', auth: 'key', url: '/v1/lookup', idem: true, body: { to: '+254712345678' }, expect: [200, 202], check: has('id', 'state'), save: (c, r) => { c.lookup = r.body.id; }, note: 'In the sandbox the lookup is answered by the mock source at zero cost.' },
+    { op: 'POST /v1/lookup', auth: 'key', url: '/v1/lookup', idem: true, body: { to: '+254712345678' }, expect: [200, 202], check: has('id', 'state'), save: (c, r) => { c.lookup = r.body.id; }, note: 'Sandbox checks are simulated, cost zero and make no network, porting or validity claim.' },
     { op: 'GET /v1/lookup/{id}', auth: 'key', url: (c) => `/v1/lookup/${c.lookup}`, expect: 200, check: has('id', 'state') },
     { op: 'GET /v1/pricing', auth: 'key', url: '/v1/pricing?country=KE', expect: 200, check: has('currency', 'entries') },
     { op: 'GET /v1/analytics/overview', auth: 'key', url: '/v1/analytics/overview', expect: 200, check: has('sent', 'delivered', 'spend') },

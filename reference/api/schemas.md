@@ -370,10 +370,40 @@ Type: string. Exact supported API key scope. Owner/admin issuers may use every v
 | `carrier` | string \| null | yes |  | Resolved carrier name, not a carrier UUID. |
 | `ported` | boolean \| null | yes |  |  |
 | `valid` | boolean \| null | yes |  | Null means no authoritative validity result, including sandbox mock. |
-| `source` | string \| null | yes |  | One of: `prefix`, `hlr`, `mock`, `null`. |
+| `source` | string \| null | yes |  | Legacy compatibility classification only. It is not a supplier identity or a freshness or validity signal. |
 | `price` | string | yes |  | Immutable operation price in workspace billing currency. Constraints: pattern `^[0-9]+(\.[0-9]+)?$`. |
 | `currency` | string | yes |  | Constraints: pattern `^[A-Z]{3}$`. |
 | `checked_at` | string (date-time) \| null | yes |  |  |
+| `cached` | boolean | no |  | A saved result was reused. |
+| `fresh` | boolean | no |  | Evidence is within its freshness window. Older evidence is historical as of `checked_at`. |
+
+## LookupQuote
+
+| Field | Type | Required | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `to` | string | yes |  | Normalized E.164 destination. |
+| `country` | string | yes |  | ISO2 country code. |
+| `price` | string | yes |  | Effective workspace price. |
+| `currency` | string | yes |  | Billing currency. |
+| `cached` | boolean | yes |  | A saved result is available. |
+| `fresh` | boolean | yes |  | Available saved evidence is within its freshness window. |
+| `checked_at` | string (date-time) \| null | yes |  | Date and time saved evidence was checked, or null. |
+| `available` | boolean | yes |  | Whether a check can be requested now. |
+| `cached` | boolean | no |  | A saved result was reused. |
+| `fresh` | boolean | no |  | Evidence is within its freshness window. Older evidence is historical as of `checked_at`. |
+
+## LookupQuote
+
+| Field | Type | Required | Default | Notes |
+| --- | --- | --- | --- | --- |
+| `to` | string | yes |  | Normalized E.164 destination. |
+| `country` | string | yes |  | ISO2 country code. |
+| `price` | string | yes |  | Effective workspace price. |
+| `currency` | string | yes |  | Billing currency. |
+| `cached` | boolean | yes |  | A saved result is available. |
+| `fresh` | boolean | yes |  | Available saved evidence is within its freshness window. |
+| `checked_at` | string (date-time) \| null | yes |  | Date and time saved evidence was checked, or null. |
+| `available` | boolean | yes |  | Whether a check can be requested now. |
 
 ## ManualTopupSubmission
 

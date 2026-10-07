@@ -5282,7 +5282,7 @@
         "currency",
         "checked_at"
       ],
-      "note": "In the sandbox the lookup is answered by the mock source at zero cost."
+      "note": "Sandbox checks are simulated, cost zero and make no network, porting or validity claim."
     }
   ],
   "POST /v1/members": [

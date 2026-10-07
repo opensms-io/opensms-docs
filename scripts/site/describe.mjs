@@ -8,6 +8,7 @@ export const MAX = 160;
 
 /** Hand-written descriptions for pages whose opening sentences do not fit. */
 export const OVERRIDES = {
+  'reference/api/lookup.md': 'Read nullable network and validity evidence, saved-result date and freshness, then check your workspace price before creating a number check.',
   'reference/api/legal.md': 'Read the current OpenSMS legal documents (terms, privacy policy and DPA), accept a version and list the recorded acceptances. Session tokens only.',
   'reference/api/notifications.md': 'The signed-in user\'s notification inbox and preferences: list notifications, mark them read, and read or update preferences. Session tokens only.',
   'console/README.md': 'Task-by-task guides to the OpenSMS web app: signing in, setting up a workspace, sending messages, managing sender IDs and keys, paying and going live.',
