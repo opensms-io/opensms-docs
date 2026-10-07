@@ -6,7 +6,7 @@ Every named schema in the customer contract (`components.schemas` in the OpenAPI
 
 Back to the [API reference index](README.md).
 
-[AdminRoleHint](#adminrolehint), [AnalyticsOverview](#analyticsoverview), [AssignNumberRequest](#assignnumberrequest), [AutoTopupSettings](#autotopupsettings), [Batch](#batch), [BatchInput](#batchinput), [BatchItem](#batchitem), [BatchStop](#batchstop), [Code](#code), [CompanyDetails](#companydetails), [CompanyDetailsSubmission](#companydetailssubmission), [CompleteLoginChallenge](#completeloginchallenge), [ComplianceContentRule](#compliancecontentrule), [ComplianceCountry](#compliancecountry), [ComplianceQuietHours](#compliancequiethours), [ContentRule](#contentrule), [CreateMessageRequest](#createmessagerequest), [Credentials](#credentials), [CustomerWorkspace](#customerworkspace), [DeletionCancelled](#deletioncancelled), [DimensionRow](#dimensionrow), [DimensionRows](#dimensionrows), [EmailVerified](#emailverified), [ExportStatus](#exportstatus), [InAppNotification](#inappnotification), [InboundListItem](#inboundlistitem), [InboundListItemPage](#inboundlistitempage), [InboundNumberRule](#inboundnumberrule), [InboundNumberRulePage](#inboundnumberrulepage), [InboundNumberRuleRequest](#inboundnumberrulerequest), [KeyListItem](#keylistitem), [KeyListItemPage](#keylistitempage), [KeyScope](#keyscope), [LoginChallenge](#loginchallenge), [LookupOperation](#lookupoperation), [ManualTopupSubmission](#manualtopupsubmission), [Message](#message), [MessageAttempt](#messageattempt), [MessageBilling](#messagebilling), [NotificationPreference](#notificationpreference), [Number](#number), [NumberPage](#numberpage), [OnboardingDocumentSubmission](#onboardingdocumentsubmission), [OTPResponse](#otpresponse), [OTPVerification](#otpverification), [PricingBook](#pricingbook), [PricingEntry](#pricingentry), [Problem](#problem), [ReceivedInvitation](#receivedinvitation), [SandboxMessage](#sandboxmessage), [SandboxWalletCredit](#sandboxwalletcredit), [SenderIdCreateRequest](#senderidcreaterequest), [SenderIdDraft](#senderiddraft), [SenderIdDraftInput](#senderiddraftinput), [SenderIdDraftPage](#senderiddraftpage), [SenderIdDraftPatch](#senderiddraftpatch), [SenderIdFeeQuote](#senderidfeequote), [SenderIdListItem](#senderidlistitem), [SenderIdListItemPage](#senderidlistitempage), [SendOTPRequest](#sendotprequest), [Session](#session), [SessionSummary](#sessionsummary), [SignupRequest](#signuprequest), [SMSTemplate](#smstemplate), [SMSTemplateInput](#smstemplateinput), [SuppressionImportResult](#suppressionimportresult), [SuppressionListItem](#suppressionlistitem), [SuppressionListItemPage](#suppressionlistitempage), [TimeSeriesRow](#timeseriesrow), [TimeSeriesRows](#timeseriesrows), [TwoFactorEnabled](#twofactorenabled), [TwoFactorSetup](#twofactorsetup), [TwoFactorValid](#twofactorvalid), [ValidationReport](#validationreport), [ValidationRow](#validationrow), [VerificationEmailAccepted](#verificationemailaccepted), [VerifyOTPRequest](#verifyotprequest), [WalletBalance](#walletbalance), [WalletBalanceCollection](#walletbalancecollection), [WalletLedgerCollection](#walletledgercollection), [WalletLedgerEntry](#walletledgerentry), [WalletTopupInitialization](#wallettopupinitialization), [Webhook](#webhook), [WebhookDelivery](#webhookdelivery), [WebhookPage](#webhookpage), [WebhookRequest](#webhookrequest), [WorkspaceMembership](#workspacemembership)
+[AdminRoleHint](#adminrolehint), [AnalyticsOverview](#analyticsoverview), [AssignNumberRequest](#assignnumberrequest), [AutoTopupSettings](#autotopupsettings), [Batch](#batch), [BatchInput](#batchinput), [BatchItem](#batchitem), [BatchStop](#batchstop), [Code](#code), [CompanyDetails](#companydetails), [CompanyDetailsSubmission](#companydetailssubmission), [CompleteLoginChallenge](#completeloginchallenge), [ComplianceContentRule](#compliancecontentrule), [ComplianceCountry](#compliancecountry), [ComplianceQuietHours](#compliancequiethours), [ContentRule](#contentrule), [CreateMessageRequest](#createmessagerequest), [Credentials](#credentials), [CustomerWorkspace](#customerworkspace), [DeletionCancelled](#deletioncancelled), [DimensionRow](#dimensionrow), [DimensionRows](#dimensionrows), [EmailVerified](#emailverified), [ExportStatus](#exportstatus), [InAppNotification](#inappnotification), [InboundListItem](#inboundlistitem), [InboundListItemPage](#inboundlistitempage), [InboundNumberRule](#inboundnumberrule), [InboundNumberRulePage](#inboundnumberrulepage), [InboundNumberRuleRequest](#inboundnumberrulerequest), [KeyListItem](#keylistitem), [KeyListItemPage](#keylistitempage), [KeyScope](#keyscope), [LoginChallenge](#loginchallenge), [LookupOperation](#lookupoperation), [LookupQuote](#lookupquote), [ManualTopupSubmission](#manualtopupsubmission), [Message](#message), [MessageAttempt](#messageattempt), [MessageBilling](#messagebilling), [NotificationPreference](#notificationpreference), [Number](#number), [NumberPage](#numberpage), [OnboardingDocumentSubmission](#onboardingdocumentsubmission), [OTPResponse](#otpresponse), [OTPVerification](#otpverification), [PricingBook](#pricingbook), [PricingEntry](#pricingentry), [Problem](#problem), [ReceivedInvitation](#receivedinvitation), [SandboxMessage](#sandboxmessage), [SandboxWalletCredit](#sandboxwalletcredit), [SenderIdCreateRequest](#senderidcreaterequest), [SenderIdDraft](#senderiddraft), [SenderIdDraftInput](#senderiddraftinput), [SenderIdDraftPage](#senderiddraftpage), [SenderIdDraftPatch](#senderiddraftpatch), [SenderIdFeeQuote](#senderidfeequote), [SenderIdListItem](#senderidlistitem), [SenderIdListItemPage](#senderidlistitempage), [SendOTPRequest](#sendotprequest), [Session](#session), [SessionSummary](#sessionsummary), [SignupRequest](#signuprequest), [SMSTemplate](#smstemplate), [SMSTemplateInput](#smstemplateinput), [SuppressionImportResult](#suppressionimportresult), [SuppressionListItem](#suppressionlistitem), [SuppressionListItemPage](#suppressionlistitempage), [TimeSeriesRow](#timeseriesrow), [TimeSeriesRows](#timeseriesrows), [TwoFactorEnabled](#twofactorenabled), [TwoFactorSetup](#twofactorsetup), [TwoFactorValid](#twofactorvalid), [ValidationReport](#validationreport), [ValidationRow](#validationrow), [VerificationEmailAccepted](#verificationemailaccepted), [VerifyOTPRequest](#verifyotprequest), [WalletBalance](#walletbalance), [WalletBalanceCollection](#walletbalancecollection), [WalletLedgerCollection](#walletledgercollection), [WalletLedgerEntry](#walletledgerentry), [WalletTopupInitialization](#wallettopupinitialization), [Webhook](#webhook), [WebhookDelivery](#webhookdelivery), [WebhookPage](#webhookpage), [WebhookRequest](#webhookrequest), [WorkspaceMembership](#workspacemembership)
 
 ## AdminRoleHint
 
@@ -370,39 +370,25 @@ Type: string. Exact supported API key scope. Owner/admin issuers may use every v
 | `carrier` | string \| null | yes |  | Resolved carrier name, not a carrier UUID. |
 | `ported` | boolean \| null | yes |  |  |
 | `valid` | boolean \| null | yes |  | Null means no authoritative validity result, including sandbox mock. |
-| `source` | string \| null | yes |  | Legacy compatibility classification only. It is not a supplier identity or a freshness or validity signal. |
+| `source` | string \| null | no |  | Legacy compatibility classification. It does not identify a supplier or indicate evidence freshness or validity. One of: `prefix`, `hlr`, `mock`, `null`. |
 | `price` | string | yes |  | Immutable operation price in workspace billing currency. Constraints: pattern `^[0-9]+(\.[0-9]+)?$`. |
 | `currency` | string | yes |  | Constraints: pattern `^[A-Z]{3}$`. |
 | `checked_at` | string (date-time) \| null | yes |  |  |
-| `cached` | boolean | no |  | A saved result was reused. |
-| `fresh` | boolean | no |  | Evidence is within its freshness window. Older evidence is historical as of `checked_at`. |
+| `cached` | boolean | yes |  | Saved network evidence was reused without another external check. |
+| `fresh` | boolean | yes |  | Evidence is within its freshness window. False means historical or unavailable evidence; refer to checked_at. |
 
 ## LookupQuote
 
 | Field | Type | Required | Default | Notes |
 | --- | --- | --- | --- | --- |
 | `to` | string | yes |  | Normalized E.164 destination. |
-| `country` | string | yes |  | ISO2 country code. |
-| `price` | string | yes |  | Effective workspace price. |
-| `currency` | string | yes |  | Billing currency. |
+| `country` | string | yes |  | Constraints: pattern `^[A-Z]{2}$`. |
+| `price` | string | yes |  | Effective workspace price in the workspace billing currency. Constraints: pattern `^[0-9]+(\.[0-9]+)?$`. |
+| `currency` | string | yes |  | Constraints: pattern `^[A-Z]{3}$`. |
 | `cached` | boolean | yes |  | A saved result is available. |
 | `fresh` | boolean | yes |  | Available saved evidence is within its freshness window. |
-| `checked_at` | string (date-time) \| null | yes |  | Date and time saved evidence was checked, or null. |
-| `available` | boolean | yes |  | Whether a check can be requested now. |
-| `cached` | boolean | no |  | A saved result was reused. |
-| `fresh` | boolean | no |  | Evidence is within its freshness window. Older evidence is historical as of `checked_at`. |
-
-## LookupQuote
-
-| Field | Type | Required | Default | Notes |
-| --- | --- | --- | --- | --- |
-| `to` | string | yes |  | Normalized E.164 destination. |
-| `country` | string | yes |  | ISO2 country code. |
-| `price` | string | yes |  | Effective workspace price. |
-| `currency` | string | yes |  | Billing currency. |
-| `cached` | boolean | yes |  | A saved result is available. |
-| `fresh` | boolean | yes |  | Available saved evidence is within its freshness window. |
-| `checked_at` | string (date-time) \| null | yes |  | Date and time saved evidence was checked, or null. |
+| `checked_at` | string (date-time) \| null | yes |  |  |
+| `reason` | string | no |  | Neutral reason that a quote is unavailable. No supplier details are included. One of: `workspace_not_live`, `lookup_price_unavailable`, `lookup_unavailable`, `lookup_pending_review`. |
 | `available` | boolean | yes |  | Whether a check can be requested now. |
 
 ## ManualTopupSubmission

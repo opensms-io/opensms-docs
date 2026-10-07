@@ -83,7 +83,9 @@ test('key examples show the documented shapes', () => {
   assert.match(first('POST /v1/webhooks').body.secret, /^whsec_/);
   assert.equal(first('POST /v1/sender-ids').status, 201);
   assert.equal(first('POST /v1/sender-ids').body.status, 'pending_admin');
-  assert.equal(first('POST /v1/lookup').body.source, 'mock');
+  assert.equal(first('POST /v1/lookup').body.cached, false);
+  assert.equal(first('POST /v1/lookup').body.fresh, true);
+  assert.equal('source' in first('POST /v1/lookup').body, false);
   assert.equal(first('POST /v1/wallet/sandbox-credits').body.simulated, true);
   assert.equal(first('GET /v1/account/export/{id}').body.status, 'ready');
   assert.equal(first('GET /status/subscribe/confirm').body.status, 'subscribed');

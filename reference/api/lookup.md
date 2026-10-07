@@ -8,9 +8,40 @@ Back to the [API reference index](README.md). Shared shapes are in [Schemas](sch
 
 | Method | Path | Summary |
 | --- | --- | --- |
+| GET | [`/v1/lookup/quote`](#get-v1lookupquote) | Quote a number check before requesting it |
 | POST | [`/v1/lookup`](#post-v1lookup) | Request an asynchronous scoped number lookup |
 | GET | [`/v1/lookup/{id}`](#get-v1lookupid) | Read current lookup state and nullable result |
-| GET | [`/v1/lookup/quote`](#get-v1lookupquote) | Quote a number check before requesting it |
+
+## GET /v1/lookup/quote
+
+**Quote a number check before requesting it**
+
+Operation ID: `quoteLookup`. Tag: _none in contract_.
+
+Requires lookup:read or owner/admin/developer workspace membership. Sessions must select a workspace and environment. Returns the effective workspace price and whether a saved result is available. A quote does not reserve funds. The standard Kenya price is KES 4, while workspace overrides and the returned quote are authoritative. Network, porting and validity results may be null.
+
+**Auth:** Session token (`Authorization: Bearer sess_...`), or API key (any scope).
+
+**Parameters**
+
+| Name | In | Type | Required | Default | Notes |
+| --- | --- | --- | --- | --- | --- |
+| `X-Workspace-ID` | header | string (uuid) | no |  | Session workspace membership scope; API keys derive workspace and reject conflicting headers. |
+| `X-Environment` | header | string | no |  | Required for sessions; API keys derive environment and reject conflicts. One of: `sandbox`, `live`. |
+| `to` | query | string | yes |  | International destination normalized by backend E.164 validation. Example: `+254700000001`. |
+
+**Request body:** none.
+
+**Responses**
+
+| Status | Description | Body |
+| --- | --- | --- |
+| `200` | Effective lookup price and saved-result availability | `application/json`: [LookupQuote](schemas.md#lookupquote) |
+| `400` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
+| `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 
 ## POST /v1/lookup
 
@@ -167,10 +198,11 @@ Response `200` (`application/json`):
   "carrier": null,
   "ported": null,
   "valid": null,
-  "source": "mock",
   "price": "0.000000",
   "currency": "KES",
-  "checked_at": "2026-09-24T07:40:30.321326+03:00"
+  "checked_at": "2026-09-24T07:40:30.321326+03:00",
+  "cached": false,
+  "fresh": true
 }
 ```
 
@@ -312,41 +344,11 @@ Response `200` (`application/json`):
   "carrier": null,
   "ported": null,
   "valid": null,
-  "source": "mock",
   "price": "0.000000",
   "currency": "KES",
-  "checked_at": "2026-09-24T07:40:30.321326+03:00"
+  "checked_at": "2026-09-24T07:40:30.321326+03:00",
+  "cached": false,
+  "fresh": true
 }
 ```
-
-## GET /v1/lookup/quote
-
-**Quote a number check before requesting it**
-
-Operation ID: `quoteLookup`. Tag: _none in contract_.
-
-Requires lookup:read or owner/admin/developer workspace membership. Sessions must select a workspace and environment. Returns the effective workspace price and whether a saved result is available. A quote does not reserve funds. The standard Kenya price is KES 4, while workspace overrides and the returned quote are authoritative. Network, porting and validity results may be null.
-
-**Auth:** Session token (`Authorization: Bearer sess_...`), or API key (any scope).
-
-**Parameters**
-
-| Name | In | Type | Required | Default | Notes |
-| --- | --- | --- | --- | --- | --- |
-| `X-Workspace-ID` | header | string (uuid) | no |  | Session workspace membership scope; API keys derive workspace and reject conflicting headers. |
-| `X-Environment` | header | string | no |  | Required for sessions; API keys derive environment and reject conflicts. One of: `sandbox`, `live`. |
-| `to` | query | string | yes |  | International destination normalized by backend E.164 validation. Example: `+254700000001`. |
-
-**Request body:** none.
-
-**Responses**
-
-| Status | Description | Body |
-| --- | --- | --- |
-| `200` | Effective lookup price and saved-result availability | `application/json`: [LookupQuote](schemas.md#lookupquote) |
-| `400` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
-| `401` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
-| `403` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
-| `422` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
-| `503` | The request could not be completed. | `application/problem+json`: [Problem](schemas.md#problem) |
 

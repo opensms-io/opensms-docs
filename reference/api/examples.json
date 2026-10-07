@@ -2208,10 +2208,11 @@
           "carrier": null,
           "ported": null,
           "valid": null,
-          "source": "mock",
           "price": "0.000000",
           "currency": "KES",
-          "checked_at": "2026-09-24T07:40:30.321326+03:00"
+          "checked_at": "2026-09-24T07:40:30.321326+03:00",
+          "cached": false,
+          "fresh": true
         }
       },
       "keys": [
@@ -2221,10 +2222,11 @@
         "carrier",
         "ported",
         "valid",
-        "source",
         "price",
         "currency",
-        "checked_at"
+        "checked_at",
+        "cached",
+        "fresh"
       ]
     }
   ],
@@ -5264,10 +5266,11 @@
           "carrier": null,
           "ported": null,
           "valid": null,
-          "source": "mock",
           "price": "0.000000",
           "currency": "KES",
-          "checked_at": "2026-09-24T07:40:30.321326+03:00"
+          "checked_at": "2026-09-24T07:40:30.321326+03:00",
+          "cached": false,
+          "fresh": true
         }
       },
       "keys": [
@@ -5277,10 +5280,11 @@
         "carrier",
         "ported",
         "valid",
-        "source",
         "price",
         "currency",
-        "checked_at"
+        "checked_at",
+        "cached",
+        "fresh"
       ],
       "note": "Sandbox checks are simulated, cost zero and make no network, porting or validity claim."
     }
