@@ -4,6 +4,20 @@ Every workspace starts in sandbox, where messages are simulated. Going live mean
 
 Open **Go live** in the left-hand menu, under **Workspace** (`/app/go-live`).
 
+## Current identity and live application flow
+
+Your **identity profile** stores the legal identity and exact evidence revisions. Your **live application** adds the workspace's messaging purpose and security checks. Approving identity evidence alone is separate from granting live workspace access.
+
+The owner selects an identity, completes the application and submits it for review. OpenSMS reviews the submitted application and its displayed requirements. Approval enables the workspace; a custom sender ID can still require separate carrier registration before use.
+
+If the workspace is already **Live**, you do not need to apply again merely because a draft exists. Saving a new draft preserves your current live access. The overview and profile pages use the workspace's current status, with the approved identity and any pending correction shown separately. Submitting changes that require pausing live access needs an explicit acknowledgement.
+
+A verified profile shows its approval checkmark. Evidence decisions belong to the revision being viewed. Profile-owned files do not have an extra, separate pending document review that you must complete after their evidence has already been approved.
+
+## Earlier onboarding checklist reference
+
+The screenshots and five-check walkthrough below describe the older onboarding path. For the current identity and project application, follow the requirements and status displayed on the application itself.
+
 ![The Go live page for a brand-new workspace](../assets/screens/console/go-live/sandbox.png)
 
 ## The stages

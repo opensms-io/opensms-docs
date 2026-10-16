@@ -83,8 +83,12 @@ Real money goes into the live wallet. In a sandbox workspace use **Fund live wal
 
 1. Enter the **Amount** in your currency.
 2. Choose **How you want to pay**: **Card**, **Mobile money** or **Bank transfer**.
-3. For card or mobile money, click **Continue to checkout**. A secure payment page opens in a new tab; credits land as soon as the payment completes there.
+3. For card or mobile money, click **Continue to checkout**. Secure checkout opens in the same tab so your signed-in workspace is preserved. After checkout you return through the OpenSMS payment-return page to Billing, where the recorded payment status is checked.
 4. For bank transfer, attach a **Proof of payment** (a screenshot or bank slip, as an image or PDF) and click **Submit for review**. Our team checks the transfer, and the credits land once it is approved. You see "Proof of payment submitted. Your live wallet will be funded after review."
+
+Returning from checkout does not by itself confirm payment. Billing shows **Pending**, **Confirmed**, or the recorded failure result. If confirmation is delayed, refresh the payment status rather than starting another payment. Wallet credits appear after verified payment confirmation.
+
+If your sign-in has expired, the payment-return page explains how to sign in and resume checking. It does not display private payment details while signed out. When funding a sender invoice, return to that invoice after the wallet credit is confirmed and select **Pay from live wallet**; funding alone does not pay the invoice.
 
 ![Choosing bank transfer and attaching a proof of payment](../assets/screens/console/billing/fund-live-bank.png)
 
