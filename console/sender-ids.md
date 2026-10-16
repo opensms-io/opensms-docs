@@ -42,7 +42,7 @@ The list and detail page show the current registration stage and next step. Paym
 | Refunded or Cancelled | This package is no longer continuing. A refund returns the recorded full payment to the live wallet. |
 | Suspended or Authorization review | Sending is paused while the restriction or authorization is reviewed. |
 
-The progress panel shows the invoice, registration milestones, selected networks and blockers. A Kenya bundle currently uses one shared carrier attestation for the selected networks. Network rows show that shared package decision; they are not independent carrier approvals. The package stays pending until all selected networks are confirmed.
+The progress panel shows the invoice, registration milestones, selected networks and blockers. A Kenya package is reviewed as a bundle. Its network rows show the shared package decision, not independently recorded approvals. Activation waits for confirmation on all selected networks.
 
 ## Apply for a sender ID
 

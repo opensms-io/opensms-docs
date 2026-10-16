@@ -19,7 +19,7 @@ Use the workflow panel to see whether payment, OpenSMS review, queued filing, ex
 - **Changes requested:** pre-acceptance applicants can update the application. Corrections to an already accepted filing require support review; uploading a revision does not silently replace the accepted filing.
 - **Registration rejected, Refunded, Cancelled, Suspended, Authorization review:** follow the displayed reason and next action. A refund takes precedence over the historical paid status in the customer workflow.
 
-Kenya packages currently use a shared attestation covering every selected network. The network rows show that bundle decision, not independent approvals. Do not approve a whole package on partial carrier evidence.
+Kenya packages are reviewed as a bundle requiring confirmation on every selected network. Network rows show the shared package decision, not independently recorded approvals. Do not approve a whole package on partial carrier evidence.
 
 ## Earlier application flow and recorded examples
 
