@@ -13,7 +13,7 @@ Currencies are reported separately. Changing the currency selects a different se
 | Revenue | Posted customer charges less recorded refunds in the selected period. Wallet top-ups are excluded. Paid sender packages awaiting carrier submission are deferred. |
 | Recorded supplier cost | Supplier costs recorded for activity in the selected period. Costs are dated independently of customer charges, so billable retries and failed attempts can still contribute costs. |
 | Gross profit | Revenue less supplier costs, before overhead and unrecorded payment processing fees. Unavailable when required costs are missing. This is an operational figure, not a formal net-profit statement. |
-| Confirmed cash received | Confirmed customer funding received during the period, shown separately from revenue. |
+| Customer funding received | Gross confirmed customer top-ups during the period, shown separately from revenue. This does not deduct payment reversals, chargebacks, or processing fees and is not net cash flow. |
 | Available wallet credits | Current live wallet credits available for spending. Reserved credits are shown separately. These balances can include administrative credits and are not a bank balance. |
 | Unpaid sender invoices | Current sender registration invoices awaiting payment. |
 | Deferred sender payments | Paid sender packages awaiting carrier submission. These payments have not yet been included in dashboard revenue. |
