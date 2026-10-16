@@ -4,7 +4,7 @@
 import { SITE, SECTIONS } from './config.mjs';
 import { escapeHtml as esc, wbrPath, langMark } from './markdown.mjs';
 
-const MARK = (h = 26, cls = '') => `<svg class="mark${cls ? ` ${cls}` : ''}" viewBox="0 0 286 368" height="${h}" aria-hidden="true" focusable="false"><g fill="var(--mark)"><rect width="120" height="275" rx="60"/><rect x="145" y="92" width="120" height="275" rx="60"/><path d="M264 292 285 351 250 346Z"/></g></svg>`;
+const brandLockup = (assets) => `<span class="brand-lockup"><img class="when-light" src="${assets.lockupLight}" width="125" height="32" alt=""><img class="when-dark" src="${assets.lockupWhite}" width="125" height="32" alt=""></span>`;
 
 // Same boot script as the landing: the theme cookie (or localStorage) set by either
 // site decides the theme before first paint. It also swaps the no-js class for js
@@ -31,11 +31,10 @@ export function head({ title, description, canonical, ogImage, ogAlt, ogUrl = ca
     `<link rel="preload" href="${assets.fontFigtree}" as="font" type="font/woff2" crossorigin>`,
     `<link rel="stylesheet" href="${assets.css}">`,
     `<script src="${assets.js}" defer></script>`,
-    '<link rel="icon" href="/favicon.ico" sizes="32x32">',
-    '<link rel="icon" type="image/svg+xml" href="/favicon.svg">',
-    '<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">',
-    '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
-    '<link rel="manifest" href="/manifest.json">',
+    `<link rel="icon" type="image/svg+xml" href="${SITE.base}assets/favicon.svg">`,
+    `<link rel="icon" type="image/png" sizes="32x32" href="${SITE.base}assets/favicon-32x32.png">`,
+    `<link rel="apple-touch-icon" href="${SITE.base}assets/apple-touch-icon.png">`,
+    `<link rel="manifest" href="${SITE.base}manifest.json">`,
   ];
   if (markdownUrl) tags.push(`<link rel="alternate" type="text/markdown" href="${markdownUrl}" title="Markdown">`);
   tags.push(`<link rel="alternate" type="text/plain" href="${SITE.base}llms.txt" title="llms.txt">`);
@@ -68,7 +67,7 @@ export function head({ title, description, canonical, ogImage, ogAlt, ogUrl = ca
   return tags.join('\n');
 }
 
-function header({ icons, activeSection }) {
+function header({ icons, activeSection, assets }) {
   const links = [
     ['get-started', 'Get started', `${SITE.base}getting-started/overview/`],
     ['integrate', 'Integrate', `${SITE.base}integrate/authentication/`],
@@ -81,7 +80,7 @@ function header({ icons, activeSection }) {
   <div class="top-inner">
     <button type="button" class="icon-btn menu-btn" data-drawer-open aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">${icons.icon('menu')}<span class="sr-only">Open navigation</span></button>
     <div class="brand">
-      <a href="/" class="brand-mark" aria-label="OpenSMS home">${MARK(26)}<span class="brand-word"><span class="w-open">open</span><span class="w-sms">sms</span></span></a>
+      <a href="/" class="brand-mark" aria-label="OpenSMS home">${brandLockup(assets)}</a>
       <a href="${SITE.base}" class="brand-docs">Docs</a>
     </div>
     <nav class="top-nav" aria-label="Sections">
@@ -198,7 +197,7 @@ const FOOTER_REVIEWS = [
   ['SaaSHub', 'https://www.saashub.com/opensms'],
 ];
 
-function footer({ icons }) {
+function footer({ icons, assets }) {
   const year = 2026;
   const cols = FOOTER_COLUMNS.map(([title, links]) => `<div class="footer-col"><h2 class="footer-heading">${title}</h2><ul>${links.map(([label, href]) => `<li><a href="${href}">${label}</a></li>`).join('')}</ul></div>`).join('');
   const social = FOOTER_SOCIAL.map(([name, icon, href]) => `<li><a class="footer-icon" href="${href}" rel="me noopener" aria-label="OpenSMS on ${name}">${icons.icon(icon, 18)}</a></li>`).join('');
@@ -206,7 +205,7 @@ function footer({ icons }) {
   return `<footer class="site-footer">
   <div class="footer-top">
     <div class="footer-brand">
-      <a href="/" class="brand-mark" aria-label="OpenSMS home">${MARK(26)}<span class="brand-word"><span class="w-open">open</span><span class="w-sms">sms</span></span></a>
+      <a href="/" class="brand-mark" aria-label="OpenSMS home">${brandLockup(assets)}</a>
       <p class="footer-tagline">Prepaid SMS API for businesses sending across Africa. Based in Kenya.</p>
       <a class="back-link" href="/">${icons.icon('arrow-left4', 14)}<span>Back to opensms.io</span></a>
       <p class="footer-copy">&copy; ${year} OpenSMS. All rights reserved.</p>
@@ -262,7 +261,7 @@ export function articlePage({ page, prev, next, icons, pagesByPath, assets, head
     const chev = dir === 'prev' ? icons.icon('arrow-left4', 18, 'pager-chev') : icons.icon('arrow-right4', 18, 'pager-chev');
     return `<a class="pager pager-${dir}" href="${p.url}" rel="${dir}">${dir === 'prev' ? chev : ''}<span class="pager-text"><span class="pager-label">${dir === 'prev' ? 'Previous' : 'Next'}<span class="pager-section"> / ${esc(p.section.title)}</span></span> <span class="pager-title">${esc(p.navLabel)}</span></span>${dir === 'next' ? chev : ''}</a>`;
   };
-  const body = `${header({ icons, activeSection: page.section.id })}
+  const body = `${header({ icons, activeSection: page.section.id, assets })}
 <div class="shell">
 ${sidebar({ icons, pagesByPath, current: page.path })}
 <main class="main" id="content">
@@ -296,12 +295,12 @@ ${page.html}
   ${toc ? `<aside class="toc" aria-label="On this page"><p class="toc-title">On this page</p><nav>${toc}</nav><a class="toc-top" href="#content">${icons.icon('arrow-up3', 14)}Back to top</a></aside>` : '<aside class="toc toc-empty" aria-hidden="true"></aside>'}
 </main>
 </div>
-${footer({ icons })}
+${footer({ icons, assets })}
 ${searchDialog({ icons })}`;
   return shell({ headHtml, body, icons, bodyClass: 'is-doc' });
 }
 
-export function homePage({ icons, pagesByPath, sections, headHtml, stats }) {
+export function homePage({ icons, pagesByPath, sections, headHtml, stats, assets }) {
   // Four equal cards, each with the pages people open most in that section.
   const PICKS = {
     integrate: ['integrate/sending-messages.md', 'integrate/delivery-reports-and-webhooks.md', 'integrate/otp.md', 'integrate/mcp.md'],
@@ -331,7 +330,7 @@ export function homePage({ icons, pagesByPath, sections, headHtml, stats }) {
   const quick = pagesByPath.get('getting-started/quickstart.md');
   const overview = pagesByPath.get('getting-started/overview.md');
   const browse = sections.filter((s) => s.id !== 'get-started');
-  const body = `${header({ icons, activeSection: null })}
+  const body = `${header({ icons, activeSection: null, assets })}
 ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
 <main id="content" class="home">
   <section class="hero">
@@ -388,12 +387,12 @@ ${browse.map(card).join('\n')}
     </div>
   </section>
 </main>
-${footer({ icons })}
+${footer({ icons, assets })}
 ${searchDialog({ icons })}`;
   return shell({ headHtml, body, icons, bodyClass: 'is-home' });
 }
 
-export function notFoundPage({ icons, pagesByPath, headHtml }) {
+export function notFoundPage({ icons, pagesByPath, headHtml, assets }) {
   const links = [
     ['getting-started/quickstart.md', 'flash'],
     ['integrate/sending-messages.md', 'sms'],
@@ -403,7 +402,7 @@ export function notFoundPage({ icons, pagesByPath, headHtml }) {
     const page = pagesByPath.get(p);
     return `<li><a href="${page.url}">${icons.icon(ic, 18)}<span>${esc(page.section.title === 'API reference' ? 'API reference' : page.navLabel === 'Introduction' ? 'Web app guides' : page.navLabel)}</span>${icons.icon('arrow-right4', 14, 'nf-chev')}</a></li>`;
   }).join('');
-  const body = `${header({ icons, activeSection: null })}
+  const body = `${header({ icons, activeSection: null, assets })}
 ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
 <main id="content" class="notfound">
   <svg class="hero-curves" viewBox="0 0 736 920" aria-hidden="true" focusable="false"><g fill="none" stroke="var(--curve)" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="var(--curve)"/></svg>
@@ -416,7 +415,7 @@ ${sidebar({ icons, pagesByPath, current: null, drawerOnly: true })}
     <a class="ghost-btn" href="${SITE.base}">${icons.icon('arrow-left4', 16)}Back to the docs home</a>
   </div>
 </main>
-${footer({ icons })}
+${footer({ icons, assets })}
 ${searchDialog({ icons })}`;
   return shell({ headHtml, body, icons, bodyClass: 'is-404' });
 }

@@ -3,8 +3,8 @@
 // lockup top left, an indigo rule and an indigo mono label, a weight 600 Figtree
 // title, the description, the hero curves with the mark on a white tile (the
 // docs home gets the landing home's speech pills), and a footer rule with the
-// URL and SMS / OTP / API. The fonts (./og/fonts) and the lockup (./og) are
-// copies of the landing's, and satori and resvg are pinned to the landing's
+// URL and SMS / OTP / API. The fonts (./og/fonts) and approved artwork (./brand)
+// are local copies, and satori and resvg are pinned to the landing's
 // versions, so a docs card and a landing card are drawn the same way.
 //
 // Cards are cached in .cache/og/ under a key made of the template version, a hash
@@ -58,12 +58,13 @@ const FONTS = [
   return { name, weight, style: 'normal', data, file, version: fontVersion(data) };
 });
 
-const LOCKUP = readFileSync(new URL('opensms-lockup-h-light.svg', HERE), 'utf8');
+const LOCKUP = readFileSync(new URL('brand/opensms-lockup-h-light.svg', import.meta.url), 'utf8');
+const MARK = readFileSync(new URL('brand/opensms-mark-light.svg', import.meta.url), 'utf8');
 const LIBS = { satori: require('satori/package.json').version, resvg: require('@resvg/resvg-js/package.json').version };
 
 const svgUri = (svg) => `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`;
 const lockup = svgUri(LOCKUP);
-const mark = (fill) => svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 286 368"><g fill="${fill}"><rect width="120" height="275" rx="60"/><rect x="145" y="92" width="120" height="275" rx="60"/><path d="M264 292 285 351 250 346Z"/></g></svg>`);
+const mark = (fill) => svgUri(MARK.replace('fill="#29158E"', `fill="${fill}"`));
 const curves = svgUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 736 920"><g fill="none" stroke="${C.curve}" stroke-width="74" stroke-linecap="round"><path d="M470 110 C 300 300, 250 470, 430 640 C 560 760, 640 720, 660 560"/><path d="M120 300 C 40 520, 120 760, 380 800"/></g><circle cx="498" cy="58" r="52" fill="${C.curve}"/></svg>`);
 const smile = svgUri('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"><path d="M19.0702 4.95008C23.0402 8.92008 22.9702 15.4 18.8702 19.29C15.0802 22.88 8.93021 22.88 5.13021 19.29C1.02021 15.4 0.950194 8.92008 4.93019 4.95008C8.83019 1.04008 15.1702 1.04008 19.0702 4.95008Z" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path opacity="0.4" d="M15.8399 16.0703C13.7199 18.0703 10.2799 18.0703 8.16992 16.0703" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>');
 
@@ -92,14 +93,14 @@ function heroArt() {
     iconLeft ? null : icon);
   return [
     pill(C.indigo, '#FFFFFF', ['Send through', 'one API'], img(smile, 52, 52), true, { left: 770, top: 176 }),
-    pill(C.pill2, C.ink, ['Routes ranked by', 'health and price'], h('div', { display: 'flex', width: 56, height: 56, borderRadius: 999, background: C.surface, alignItems: 'center', justifyContent: 'center' }, img(mark(C.indigo), 25, 32)), false, { left: 812, top: 318 }),
+    pill(C.pill2, C.ink, ['Routes ranked by', 'health and price'], h('div', { display: 'flex', width: 56, height: 56, borderRadius: 999, background: C.surface, alignItems: 'center', justifyContent: 'center' }, img(mark(C.indigo), 26, 30)), false, { left: 812, top: 318 }),
   ];
 }
 
 function markArt() {
   return [
     h('div', { position: 'absolute', left: 842, top: 170, width: 236, height: 236, borderRadius: 56, background: C.surface, display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 30px 60px -34px rgba(41,21,142,.55)' },
-      img(mark(C.indigo), 104, 134)),
+      img(mark(C.indigo), 104, 120)),
   ];
 }
 
@@ -127,7 +128,7 @@ function card({ title, section, path, description }) {
 // Everything that changes the pixels, apart from the card's own text.
 export const OG_KEY = {
   template: TEMPLATE_VERSION,
-  source: createHash('sha256').update(readFileSync(new URL(import.meta.url))).update(LOCKUP).digest('hex').slice(0, 16),
+  source: createHash('sha256').update(readFileSync(new URL(import.meta.url))).update(LOCKUP).update(MARK).digest('hex').slice(0, 16),
   fonts: FONTS.map((f) => ({ name: f.name, weight: f.weight, file: f.file, version: f.version, sha: createHash('sha256').update(f.data).digest('hex').slice(0, 16) })),
   libs: LIBS,
 };

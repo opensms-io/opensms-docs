@@ -365,6 +365,26 @@ const assets = {
 write(assets.css.slice(SITE.base.length), css);
 write(assets.js.slice(SITE.base.length), js);
 
+// Keep the approved outlined artwork inside the docs output. The two lockups
+// are selected by the page theme, including a manually chosen theme.
+for (const [key, file] of [['lockupLight', 'opensms-lockup-h-light.svg'], ['lockupWhite', 'opensms-lockup-h-white.svg']]) {
+  const source = readFileSync(join(HERE, 'brand', file));
+  const out = `assets/${file.replace('.svg', `.${hash(source)}.svg`)}`;
+  write(out, source);
+  assets[key] = `${SITE.base}${out}`;
+}
+const markLight = readFileSync(join(HERE, 'brand', 'opensms-mark-light.svg'), 'utf8');
+const markWhite = readFileSync(join(HERE, 'brand', 'opensms-mark-white.svg'));
+write('assets/favicon.svg', markLight.replace('</svg>', '<style>@media (prefers-color-scheme: dark) { path { fill: #FFFFFF; } }</style></svg>'));
+write('assets/favicon-32x32.png', await sharp(Buffer.from(markLight)).resize(32, 32, { fit: 'contain', background: '#00000000' }).png().toBuffer());
+const whiteIcon = await sharp(markWhite).resize(280, 280, { fit: 'contain', background: '#00000000' }).png().toBuffer();
+const squareIcon = await sharp({ create: { width: 512, height: 512, channels: 4, background: '#29158E' } })
+  .composite([{ input: whiteIcon, gravity: 'centre' }]).png().toBuffer();
+write('assets/icon-512.png', squareIcon);
+write('assets/apple-touch-icon.png', await sharp(squareIcon).resize(180, 180).png().toBuffer());
+write('manifest.json', JSON.stringify({ name: SITE.name, short_name: 'OpenSMS Docs', start_url: SITE.base, scope: SITE.base,
+  display: 'standalone', background_color: '#F4F4F6', theme_color: '#29158E', icons: [{ src: `${SITE.base}assets/icon-512.png`, sizes: '512x512', type: 'image/png' }] }));
+
 // Images referenced by published pages, plus their WebP variants (cached in
 // .cache/img/ by a hash of the source file, width and encoder settings).
 const WEBP = { quality: 80, effort: 5 };
@@ -393,12 +413,13 @@ const ogCache = join(CACHE, 'og');
 const ogJobs = [
   ...pages.map((p) => ({ title: p.title, section: p.section.title, path: p.url, description: p.description, file: p.ogUrl })),
   { title: 'Build with OpenSMS', section: 'Home', path: SITE.base, description: 'Guides, API reference and SDKs for sending SMS across Africa.', file: `${SITE.base}og/index.png` },
+  { title: 'Page not found', section: 'Docs', path: `${SITE.base}404.html`, description: 'Find guides, SDKs and API reference for OpenSMS.', file: `${SITE.base}og/not-found.png` },
 ];
 for (const job of ogJobs) {
   if (await ogImage(job, join(OUT, job.file.slice(SITE.base.length)), ogCache)) rendered += 1;
 }
 
-const ORG = { '@type': 'Organization', '@id': `${SITE.origin}/#organization`, name: 'OpenSMS', url: `${SITE.origin}/`, logo: `${SITE.origin}/icon-512.png` };
+const ORG = { '@type': 'Organization', '@id': `${SITE.origin}/#organization`, name: 'OpenSMS', url: `${SITE.origin}/`, logo: abs(`${SITE.base}assets/icon-512.png`) };
 const WEBSITE_ID = `${abs(SITE.base)}#website`;
 
 // Article pages.
@@ -465,7 +486,7 @@ pages.forEach((page, i) => {
     title: SITE.homeTitle, description: SITE.homeDescription, canonical: abs(SITE.base), ogImage: abs(`${SITE.base}og/index.png`),
     ogAlt: 'OpenSMS Docs: guides, API reference and SDKs', markdownUrl: `${SITE.base}index.md`, ld, assets, type: 'website',
   });
-  write('index.html', homePage({ icons, pagesByPath, sections: SECTIONS, headHtml, stats }));
+  write('index.html', homePage({ icons, pagesByPath, sections: SECTIONS, headHtml, stats, assets }));
   searchIndex.lastmod = lastmod;
 }
 
@@ -473,8 +494,8 @@ pages.forEach((page, i) => {
 {
   const icons = new IconSet();
   const headHtml = head({ title: `Docs page not found | ${SITE.name}`, description: 'This page does not exist in the OpenSMS docs. Search the docs or start from the quickstart, the integration guides or the API reference.', noindex: true, assets,
-    type: 'website', ogUrl: abs(`${SITE.base}404.html`), ogImage: `${SITE.origin}/og/not-found.png`, ogAlt: 'Page not found | OpenSMS' });
-  write('404.html', notFoundPage({ icons, pagesByPath, headHtml }));
+    type: 'website', ogUrl: abs(`${SITE.base}404.html`), ogImage: abs(`${SITE.base}og/not-found.png`), ogAlt: 'Page not found | OpenSMS Docs' });
+  write('404.html', notFoundPage({ icons, pagesByPath, headHtml, assets }));
 }
 
 // Search index.
