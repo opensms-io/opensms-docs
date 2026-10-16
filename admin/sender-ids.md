@@ -4,6 +4,27 @@ A sender ID is the name or number a message appears to come from, such as `ACMEP
 
 ![Sender ID applications queue](../assets/screens/admin/sender-ids.png)
 
+## Current registration workflow
+
+Customer and admin sender lists and detail pages show the same derived registration stage, alongside the underlying review and financial records. **Platform approved**, **Paid**, and **Active** are different states. An accepted Kenya quote creates an invoice; the invoice is paid from the customer's live wallet before carrier filing. It must not be charged again at submission.
+
+Use the workflow panel to see whether payment, OpenSMS review, queued filing, external submission, or the carrier decision is the next step. It also distinguishes a confirmed submission from a started call whose outcome still needs confirmation. Never retry an uncertain external filing automatically.
+
+- **Payment needed:** the applicant must pay the current invoice.
+- **Paid, under OpenSMS review:** check current business identity, evidence and filing prerequisites.
+- **Carrier filing queued:** internal work is queued. An unstarted manual filing can still be cancelled, with a full wallet refund if paid.
+- **Filing with carrier / Awaiting carrier decision:** submission is in progress or confirmed. Record the outcome with the required evidence.
+- **Carrier filing needs review / Registration on hold:** inspect the blocker and resolve or escalate it. Do not present an uncertain call as a confirmed submission.
+- **Active:** current identity and the purchased carrier registration are approved. A paid package alone never grants sending access on an unapproved network.
+- **Changes requested:** pre-acceptance applicants can update the application. Corrections to an already accepted filing require support review; uploading a revision does not silently replace the accepted filing.
+- **Registration rejected, Refunded, Cancelled, Suspended, Authorization review:** follow the displayed reason and next action. A refund takes precedence over the historical paid status in the customer workflow.
+
+Kenya packages currently use a shared attestation covering every selected network. The network rows show that bundle decision, not independent approvals. Do not approve a whole package on partial carrier evidence.
+
+## Earlier application flow and recorded examples
+
+The examples below document the earlier direct application path. The current business application and invoice flow above governs newly accepted Kenya packages. Older direct registrations retain their recorded fee and review history.
+
 ## How an application moves
 
 1. The customer uploads three documents (certificate, signatory ID, authorization letter) and requests the sender for one or more countries. Status: `pending_admin`. One provider registration per country and provider is created with status `pending`.

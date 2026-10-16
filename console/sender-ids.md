@@ -21,18 +21,28 @@ Each row shows the name and its type (alphanumeric), the markets it is registere
 
 Every workspace also sees **OPENSMS**, the platform's shared sender, already **Approved**. You can send with it straight away (in sandbox) while your own name is being reviewed.
 
-### Statuses
+### Registration workflow
 
-| Status | Meaning |
+The list and detail page show the current registration stage and next step. Payment, OpenSMS review, and carrier registration are separate facts. **Paid does not mean active.**
+
+| Stage | What happens next |
 | --- | --- |
-| Draft | Saved but not submitted. Only your workspace can see it; nothing has been filed. |
-| Pending admin | Submitted. OpenSMS is reviewing your request and documents. |
-| Pending provider | OpenSMS approved it and has filed it with the carriers' providers; waiting for them. |
-| Approved | Ready to use. It appears in the Sender ID picker when you [compose](messages.md#send-a-message). |
-| Rejected | Not accepted. The reason is shown, and you can amend and resubmit. |
-| Suspended | Was approved but has been stopped. Contact OpenSMS support. |
+| Application draft | Complete the application and submit it for review. |
+| OpenSMS review | Wait while the application and current evidence are reviewed. |
+| Payment needed | Open and pay the accepted package invoice from the live wallet. |
+| Paid, under OpenSMS review | Payment is recorded; OpenSMS checks the filing prerequisites. Do not pay again. |
+| Carrier filing queued | OpenSMS prepares the filing. A queued internal task does not mean the carrier has received it. |
+| Filing with carrier | Submission has started. Wait for confirmation. |
+| Awaiting carrier decision | The filing is submitted and awaiting the carrier's decision. |
+| Carrier filing needs review | The submission outcome is uncertain. Contact support; do not submit or pay again. |
+| Active | The sender is ready on its approved networks, subject to the workspace's live sending requirements. |
+| Changes requested | Read the reason. Before registration acceptance, update the application where offered. An accepted filing that needs correction requires support review. |
+| Registration on hold | A current prerequisite needs attention. Follow the displayed instruction or contact support. |
+| Registration rejected | Read the decision. Contact support about the next step and any eligible finance review. |
+| Refunded or Cancelled | This package is no longer continuing. A refund returns the recorded full payment to the live wallet. |
+| Suspended or Authorization review | Sending is paused while the restriction or authorization is reviewed. |
 
-On the detail page each market's filing has its own status too (**PENDING**, **SUBMITTED**, **APPROVED** or **REJECTED**), because every carrier decides separately.
+The progress panel shows the invoice, registration milestones, selected networks and blockers. A Kenya bundle currently uses one shared carrier attestation for the selected networks. Network rows show that shared package decision; they are not independent carrier approvals. The package stays pending until all selected networks are confirmed.
 
 ## Apply for a sender ID
 
@@ -60,7 +70,7 @@ The server returns the current quote and availability for the selected package. 
 
 Open the invoice from the confirmation link or **Billing > Invoices**. Select **Pay from live wallet** to pay the one-time amount. If your live balance is too low, the payment returns `402`: fund the live wallet, wait until the credit is confirmed, then select **Pay from live wallet** again. Payment is recorded once for the invoice; carrier submission does not charge you a second time.
 
-You can cancel the registration invoice before carrier submission. If it was paid, the full amount returns to the same live wallet; if unpaid, no payment is taken. After carrier submission, there is no automatic refund. Contact support if a finance exception is needed.
+You can cancel the registration invoice before external submission starts, including while a manual filing is only queued. If it was paid, the full amount returns to the same live wallet; if unpaid, no payment is taken. Once an external call has started, including an uncertain outcome, ordinary cancellation is unavailable until the filing is resolved. After carrier submission, there is no automatic refund. Contact support if a finance exception is needed.
 
 ### Pricing and PDF guides
 
@@ -76,7 +86,7 @@ Open a sender ID from the list (`/app/sender-ids/<id>`).
 
 The page shows:
 
-- the name, its status badge, and a refresh button to reload the status;
+- the name, its current workflow stage, and a refresh button to reload the status;
 - **Sample message** you filed;
 - **Registration progress**: the status of the selected package's carrier filing, with filing and review times when available. The accepted package price, selected networks and payment status are on the invoice in Billing. Document chips show the file name, version and review state (`pending`, `approved` or `rejected`, with the reason when rejected);
 - **Details**: type, use case, status, when it was filed and how many carrier filings there are.
