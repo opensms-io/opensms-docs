@@ -67,10 +67,8 @@ html[data-theme="dark"] .when-light, html:not([data-theme="dark"]) .when-dark { 
 .top { position: sticky; top: 0; z-index: 40; height: var(--header-h); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid var(--line-soft); }
 .top-inner { height: 100%; display: flex; align-items: center; gap: clamp(16px, 2.4vw, 36px); padding: 0 var(--gutter); max-width: 1680px; margin: 0 auto; }
 .brand { display: flex; align-items: center; gap: 12px; flex: none; }
-.brand-mark { display: inline-flex; align-items: center; gap: 10px; }
-.brand-word { font-size: 19px; font-weight: 600; letter-spacing: -.04em; }
-.w-open { color: var(--brand-text); } .w-sms { color: #4B34D6; }
-html[data-theme="dark"] .w-open { color: #FFFFFF; } html[data-theme="dark"] .w-sms { color: #8C7EF0; }
+.brand-mark, .brand-lockup { display: inline-flex; align-items: center; }
+.brand-lockup img { display: block; width: 125px; height: 32px; max-width: none; }
 .brand-docs { font-family: var(--mono); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-2); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px 3px; }
 .brand-docs:hover { border-color: var(--brand-text); }
 .top-nav { display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); min-width: 0; }
@@ -582,8 +580,7 @@ kbd { font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--mu
   .prose td code { white-space: normal; overflow-wrap: anywhere; }
 }
 @media (max-width: 420px) {
-  .brand-word { font-size: 18px; }
-  .brand-mark .mark { height: 24px; }
+  .top .brand-lockup img { width: 109px; height: 28px; }
   .top-inner { gap: 10px; }
   .top-right { gap: 8px; }
   .hero-search { height: 52px; font-size: 14.5px; }
@@ -591,6 +588,13 @@ kbd { font-family: var(--mono); font-size: 11px; line-height: 1; color: var(--mu
   .hero-ctas > a { flex: 1 1 100%; justify-content: center; }
   .doc-head h1 { font-size: 32px; }
   .chip { padding: 0 10px; }
+}
+@media (max-width: 360px) {
+  .top-inner { gap: 6px; }
+  .top .brand { gap: 6px; }
+  .top .brand-lockup img { width: 100px; height: 26px; }
+  .top .brand-docs { font-size: 10px; padding: 3px 5px; }
+  .top-right { gap: 6px; }
 }
 /* Without JavaScript: hide the controls that need it, and show the navigation
    as a plain list after the page instead of in the drawer. */
