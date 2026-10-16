@@ -1,30 +1,42 @@
 # Dashboard
 
-The dashboard is the first page every operator sees after signing in (`/admin`). It gives a quick count of workspaces, providers, countries and routes, plus how many incidents and alert rules exist and the status of each provider. It is for every role, as a starting point before you open a detailed page. It has no actions of its own.
+The admin dashboard at `/admin` starts with the business figures for finance administrators and superadmins. Operations and support administrators see links to the review queues available to their role. Financial data is private to finance administrators and superadmins.
 
-![Dashboard with counters and provider health](../assets/screens/admin/dashboard.png)
+## Financial overview
 
-## What each part shows
+Choose **Month to date**, **Last 7 days**, **Last 30 days**, or **Last 90 days**. The dashboard defaults to month to date in KES. Reporting days follow Africa/Nairobi time, and the current day runs up to the report's refresh time.
 
-| Tile | What it counts | Where the number comes from |
-|---|---|---|
-| Workspaces | Workspaces that are not deleted | `GET /admin/v1/workspaces?limit=200`. The tile counts one page, so it stops at 200. Use [Workspaces](workspaces.md) for the real list. |
-| Active providers | Providers with status `active`, and the total underneath | `GET /admin/v1/providers` |
-| Countries covered | Countries with status `active`, and the total underneath | The public catalogue `GET /v1/countries`, the same list customers see. Countries that are hidden from customers are not in the total; see [Countries](countries.md) for all of them. |
-| Healthy routes | Routes whose effective health (manual override if set, otherwise automatic) is `healthy`, and the total | `GET /admin/v1/routes`. Disabled routes are counted too. |
-| Incidents | Every incident, resolved ones included | `GET /admin/v1/incidents` (ops and superadmin only) |
-| Alert rules | Alert rules you are allowed to see | `GET /admin/v1/alerts` (ops, finance and superadmin) |
-| Provider health | One row per provider: protocol, adapter and status | `GET /admin/v1/providers` |
+Currencies are reported separately. Changing the currency selects a different set of live transactions; it does not convert the entire business using a current exchange rate. Sandbox activity is excluded.
 
-For `finance` and `support`, the Incidents tile cannot load because the API refuses that role (and for `support`, Alert rules too).
+| Figure | Meaning |
+|---|---|
+| Revenue | Posted customer charges less recorded refunds in the selected period. Wallet top-ups are excluded. Paid sender packages awaiting carrier submission are deferred. |
+| Recorded supplier cost | Supplier costs recorded for activity in the selected period. Costs are dated independently of customer charges, so billable retries and failed attempts can still contribute costs. |
+| Gross profit | Revenue less supplier costs, before overhead and unrecorded payment processing fees. Unavailable when required costs are missing. This is an operational figure, not a formal net-profit statement. |
+| Confirmed cash received | Confirmed customer funding received during the period, shown separately from revenue. |
+| Available wallet credits | Current live wallet credits available for spending. Reserved credits are shown separately. These balances can include administrative credits and are not a bank balance. |
+| Unpaid sender invoices | Current sender registration invoices awaiting payment. |
+| Deferred sender payments | Paid sender packages awaiting carrier submission. These payments have not yet been included in dashboard revenue. |
 
-## Typical use
+**Daily trend** compares revenue with recorded supplier cost. Use the day control to inspect a date, or expand **View daily figures** for a table. The **By product** section separates SMS, number lookups, sender registrations, numbers, and other fees.
 
-1. Open the dashboard and compare **Healthy routes** with the total. A gap means some routes are degraded or down: go to [Routes](routes.md) and look at the Health column.
-2. Check the provider list for any provider that should be `active` but shows `PENDING INTEGRATION`, `TESTING` or `DISABLED`. Open it from [Providers](providers.md).
-3. If there is an open incident, go to [Incidents](incidents.md) to post an update.
-4. Use the bell in the header to open your [notification inbox](notifications.md). A dot on the bell means there are unread notifications.
+Read the cost-coverage labels before relying on gross profit. Missing costs are not treated as zero. Expand **How these figures are calculated** for the reporting basis.
+
+## Needs attention
+
+The dashboard links to payment reviews, sender invoices, workspace verifications, live applications, sender ID requests, incidents, and notifications as permitted by your role. Open the relevant queue for its current items and decisions.
+
+Technical provider health and routing details remain available on their dedicated admin pages.
+
+## Refresh and errors
+
+Use **Refresh** to load a new snapshot. Changing the period or currency also refreshes the financial overview. If the report cannot load, use **Retry financial overview**. An unavailable report is not displayed as zero revenue.
 
 ## Related
 
-- [Routes](routes.md), [Providers](providers.md), [Incidents](incidents.md), [Notifications](notifications.md)
+- [Payments](payments.md)
+- [Pricing](pricing.md)
+- [Workspaces](workspaces.md)
+- [Providers](providers.md)
+- [Routes](routes.md)
+- [Notifications](notifications.md)
