@@ -36,85 +36,37 @@ On the detail page each market's filing has its own status too (**PENDING**, **S
 
 ## Apply for a sender ID
 
-Click **Apply for a new sender ID** (or **Continue application** on a draft). The application opens as a full-screen, seven-step page at `/app/sender-ids/new`. The step counter is in the bottom-right corner, and **Back to dashboard** at the top right leaves the wizard.
+Owners and admins use **Apply for a new sender ID** at `/app/sender-ids/new`. The current business application has five stages: sender details, business, evidence, review and status. **Save for later** keeps an editable draft. Submitting the application starts review only. It does not register with a carrier, create a charge or debit your wallet.
 
-From step 2 on, **Save for later** stores everything you have entered as a draft ("Application draft saved. You can continue it from Sender IDs."). Each **Continue** also saves the draft.
+1. **Sender details:** enter an alphanumeric name of up to 11 characters, select the countries where you want to use it, choose the message purpose and add a sample message. OpenSMS checks whether the name can be requested in each selected market. Protected names may require extra authorization. Market selection is explicit. A country suggested during signup from your IP address or browser locale can be changed, and it never changes an existing workspace's country.
+2. **Your business:** choose a registered business profile and an authorized signatory. You can reuse saved business details and see the exact revisions attached to this sender application.
+3. **Markets and evidence:** choose an available registration option for each market and attach the required incorporation, address, signatory identity and authorization evidence. The authorization letter must cover this sender, business, signatory, routes and valid dates. Documents are scanned and reviewed.
+4. **Review:** check the exact name, business, routes, message and evidence versions, confirm the authorization scope, then select **Submit application for review**. The application may wait for business verification or receive a request for changes.
+5. **Status:** check the review result and revision history. Registration choices appear only after the current application, business profile and all required evidence have been approved.
 
-### Step 1: pick how you want to send
+### Choose a Kenya registration package
 
-Click the **YOUR BRAND** card (marked **NEEDS APPROVAL**) and then **Continue**. The button is greyed out until the card is picked.
+Once the application is **Approved for registration**, choose the networks. These are one-time guide prices in Kenya shillings, with **no VAT charged**:
 
-![Step 1](../assets/screens/console/sender-ids/wizard-1-kind.png)
+| Networks | Guide price |
+| --- | ---: |
+| Safaricom | KES 7,500 |
+| Airtel | KES 7,500 |
+| Telkom | KES 5,000 |
+| Safaricom + Airtel | KES 13,500 |
+| All three networks | KES 18,500 |
 
-### Step 2: choose your sender ID
+The server returns the current quote and availability for the selected package. A package can be unavailable even when its guide price is shown, including while OpenSMS issuer details are not configured. Review the current total and accept that exact quote. If the quote or availability changes, refresh it before accepting. **Create registration invoice** records the accepted package and issues an invoice with the issuer details in effect at acceptance, but takes no wallet payment yet. You can download the invoice PDF immediately. Carrier submission waits for payment and the remaining reviews.
 
-1. Type the name. It is changed to capitals, and anything other than letters and numbers is removed. The counter shows how many of the 11 characters you have used.
-2. The three rules must all turn green: **11 characters or fewer**, **Letters and numbers only**, **Not a reserved sender ID**.
-3. Wait for "This name is available to request. Approval is still required."
-4. Tick **I own this brand or have permission to use it**.
-5. Click **Continue**.
+Open the invoice from the confirmation link or **Billing > Invoices**. Select **Pay from live wallet** to pay the one-time amount. If your live balance is too low, the payment returns `402`: fund the live wallet, wait until the credit is confirmed, then select **Pay from live wallet** again. Payment is recorded once for the invoice; carrier submission does not charge you a second time.
 
-The **Preview** shows how the name will look on a phone.
+You can cancel the registration invoice before carrier submission. If it was paid, the full amount returns to the same live wallet; if unpaid, no payment is taken. After carrier submission, there is no automatic refund. Contact support if a finance exception is needed.
 
-![Step 2 with an available name](../assets/screens/console/sender-ids/wizard-2-name.png)
+### Pricing and PDF guides
 
-### Step 3: where will you send
+The public [pricing page](https://opensms.io/pricing/#sender-ids) has generic PDF downloads. The same four documents are available at `/v1/public/documents/{ID}/download` with IDs `sender-id-pricing`, `sms-pricing`, `message-types-guide` and `sender-ids-outside-kenya`. Public copies contain no private business name.
 
-Click each market (country) you need. A tick appears on the ones you pick. Each row shows the carriers there and how long approval usually takes (for example **PROVIDER REVIEW**). When your picks are checked you see "Sender ID can be requested in the selected markets." If a name is blocked in one market, that market and the reason are shown instead.
-
-![Step 3 with Kenya picked](../assets/screens/console/sender-ids/wizard-3-markets.png)
-
-Each carrier in a market needs its own filing, and some charge a fee (shown in step 6).
-
-### Step 4: what will you send
-
-1. Pick the **Traffic type**: OTP, Transactional or Marketing. Each card shows an example message. Nothing is picked at first, and you cannot continue until you pick one.
-2. Type a **Sample message**: a real example of what you will send. Carriers read it.
-3. Click **Continue**.
-
-![Step 4](../assets/screens/console/sender-ids/wizard-4-traffic.png)
-
-### Step 5: verify your business (documents)
-
-Carriers need three documents before they approve a new sender ID. All three are required.
-
-| Document | What it is |
-| --- | --- |
-| Certificate of incorporation | A copy of your business registration certificate. |
-| Signatory ID | A government-issued ID for the person authorising this sender ID. |
-| Letter of authorization | A signed letter authorising OpenSMS to file on your behalf. |
-
-1. Click **UPLOAD** on a row (or drop the file on it). Files must be **PDF, PNG or JPEG, up to 10 MiB**.
-2. When a file is accepted the row turns green and shows **ATTACHED** with the file name and size. The **x** removes it.
-3. Repeat for all three, then click **Continue**.
-
-![All three documents attached](../assets/screens/console/sender-ids/wizard-5-documents.png)
-
-The server checks that each file really is a PDF, PNG or JPEG, not just that its name ends in `.pdf`. A damaged or fake file turns the row red with "document must be a valid PDF, PNG or JPEG" and a **RETRY** label:
-
-![A file the server refused](../assets/screens/console/sender-ids/wizard-5-bad-file.png)
-
-As the page notes, uploaded files are security-scanned and reviewed by a person before anything is filed with carriers.
-
-### Step 6: check and file
-
-The review card lists the sender ID, markets, traffic type, sample message and "3 of 3 attached". Below it, **Carrier registration fees** lists each market and provider with its current fee, and an **Estimated total** when there are fees.
-
-1. Check everything. Use **Back** to change anything.
-2. Tick **I have reviewed these filing fees and authorize submission**. Fees may be charged to your workspace wallet when each filing is submitted.
-3. Click **Submit for review**.
-
-![Step 6, before ticking the fee box](../assets/screens/console/sender-ids/wizard-6-review.png)
-
-If the fees changed while you were on this page, the submission is refused, the tick is cleared, and the new quote is loaded: review it and tick again.
-
-When no provider charges a registration fee, the fee line reads **0** and "No registration fees are currently listed."
-
-### Step 7: filed
-
-You see "Sender ID request submitted for review." and **Your sender ID request is in review**, with a summary and one line per market marked **IN REVIEW**. Click **View sender ID** to open its detail page.
-
-![Application filed](../assets/screens/console/sender-ids/wizard-7-filed.png)
+Owners and admins can obtain versions prepared for the verified legal name from `/v1/business-profiles/{profile_id}/kenya-documents` and its document download links. Access requires the current Kenya business identity and all required evidence to be approved. These documents are guides and quotes, not registration approval.
 
 ## Check an application
 
@@ -126,7 +78,7 @@ The page shows:
 
 - the name, its status badge, and a refresh button to reload the status;
 - **Sample message** you filed;
-- **Per-carrier registrations**: one row per market and provider, with its own status, any fee, the provider's reference once filed, when it was filed and answered, and a chip per document with its file name, version and review state (`pending`, `approved` or `rejected`, plus the reviewer's reason when rejected);
+- **Registration progress**: the status of the selected package's carrier filing, with filing and review times when available. The accepted package price, selected networks and payment status are on the invoice in Billing. Document chips show the file name, version and review state (`pending`, `approved` or `rejected`, with the reason when rejected);
 - **Details**: type, use case, status, when it was filed and how many carrier filings there are.
 
 An approved name that needs no carrier filing (like the shared `OPENSMS`) says **No per-carrier filing needed**:
@@ -160,4 +112,4 @@ A rejected **document** (its chip says `rejected` with a reason) is replaced the
 - [Onboarding](onboarding.md) (where your first sender ID draft is started)
 - [Messages](messages.md) (using an approved sender ID)
 - [Routes](routes.md) (which markets you can actually reach)
-- [Billing](billing.md) (registration fees come out of your wallet)
+- [Billing](billing.md) (paying the registration invoice from the live wallet)

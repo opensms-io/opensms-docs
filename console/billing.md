@@ -1,6 +1,6 @@
 # Billing
 
-OpenSMS is prepaid: you put money in a wallet and each message is paid for from it. The Billing page shows your balance, lets you add credits, lists every movement on the wallet and, once your workspace is live, shows payments, invoices and saved payment methods. This guide is for workspace owners, admins and finance members, who can add credits, and for anyone else who wants to see the balance.
+OpenSMS is prepaid: you put money in a wallet and each message is paid for from it. The Billing page shows your balance, lets you add credits, lists every movement on the wallet and shows live-wallet payments, sender registration invoices and saved payment methods when you select the live wallet. This guide is for workspace owners, admins and finance members, who can add credits, and for anyone else who wants to see the balance.
 
 Open **Billing** in the left-hand menu, under **Workspace** (`/app/billing`). The page title is **Credits**.
 
@@ -15,7 +15,7 @@ Every workspace has two separate wallets in its currency (the currency comes fro
 
 Sandbox credits never carry over to the live wallet. You can put money in the live wallet **before** you are approved (it is one of the [Go live](go-live.md) requirements), but that alone does not switch on real sending.
 
-The page shows the wallet for the workspace's current status: a sandbox workspace sees its sandbox wallet.
+Use the wallet switch to view sandbox or live funds. A sandbox workspace can view and fund its separate live wallet before approval; funding does not enable live sending.
 
 ## Who can do what
 
@@ -35,7 +35,7 @@ If your role cannot add credits, the buttons are greyed out and hovering says "Y
 - **Available sandbox credits** (or **Available balance** once live): what you can spend now. The line below says whether any of it is held for messages still being sent, for example "Your full wallet balance of KES 10,000.00 is available to spend."
 - **Add sandbox credits** and **Fund live wallet** (sandbox workspaces), or **Add credits** and **Auto top-up** (live workspaces).
 - A grey box explaining sandbox credits (sandbox only).
-- Tabs: **Overview** and **Transactions** always; **Payments**, **Invoices** and **Payment methods** once live. "All amounts in KES" (your currency) is shown at the right.
+- Tabs: **Overview** and **Transactions** for either wallet; **Payments**, **Invoices** and **Payment methods** when viewing the live wallet. "All amounts in KES" (your currency) is shown at the right.
 
 ### Overview tab
 
@@ -95,9 +95,9 @@ Requirements the server checks:
 
 ![Card checkout refused because the payer's email is not verified](../assets/screens/console/billing/fund-live-card-error.png)
 
-## Live-only tabs
+## Live-wallet tabs
 
-These appear only once the workspace is live.
+Select the live wallet to see these tabs, including while your workspace is still awaiting live approval.
 
 ### Payments
 
@@ -105,7 +105,16 @@ Each settled payment into the wallet with its date, status (for example **Paid**
 
 ### Invoices
 
-One invoice per billing period once the period closes, with its number, period, issue date, subtotal, VAT and total. The **...** menu on a row has **Download PDF** (owners, admins and finance only; other roles see "Your role can view invoices but not download their PDFs."). If no PDF is attached yet you see "No PDF is attached to this invoice yet." Empty: "No invoices yet" with "An invoice is issued for each billing period once it closes."
+**Invoices** lists sender registration invoices and their payment status. Open a sender registration invoice to see the selected networks, one-time total and VAT of **KES 0.00**. OpenSMS is not VAT registered, so no VAT is charged. This is a commercial invoice, not a tax invoice.
+
+A Kenya sender invoice is issued only after an approved application and current package quote are accepted. The five guide prices are [listed in Sender IDs](sender-ids.md#choose-a-kenya-registration-package); the server's current quote and availability, including configured issuer details, control what can be accepted. The invoice records the issuer details in effect at acceptance. Creating it does not charge the wallet.
+
+1. Select **Pay from live wallet** to pay. A `402` means the balance is insufficient. Use **Fund wallet for this invoice**, wait for the top-up to be confirmed, then retry **Pay from live wallet**.
+2. **Send invoice to listed members** queues an email to verified workspace owners and finance members. The email directs them to sign in and view the invoice. Sending does not pay it.
+3. **Download PDF** retrieves the issued invoice through the authenticated endpoint `GET /v1/invoices/{id}/pdf`. Owners, admins and finance members can download it as soon as the quote has been accepted, before payment or email delivery.
+4. **Cancel registration invoice** is available before carrier submission. A paid invoice is fully refunded to the same live wallet; an unpaid one is voided without a charge. Once submitted to the carrier, there is no automatic refund.
+
+Carrier registration waits for payment and required review. Paying the invoice does not by itself approve a sender name or business evidence, and carrier submission does not take a second payment. Monthly statement drafts remain internal to OpenSMS and are not customer invoices.
 
 ### Payment methods
 
@@ -126,7 +135,7 @@ Click **Save settings**. You see "Auto top-up settings saved."
 
 ## Statements
 
-There is no statements page for customers. OpenSMS prepares monthly statement drafts for its own finance team (in the operator console), but they are not shown in the customer app. For your own records, use the **Transactions** tab, **Invoices** once you are live, or a full [data export](settings.md#data-export).
+There is no statements page for customers. OpenSMS prepares monthly statement drafts for its own finance team (in the operator console), but they are not shown in the customer app. For your own records, use the **Transactions** tab, any issued sender registration **Invoices** in the live wallet, or a full [data export](settings.md#data-export).
 
 ## Related
 

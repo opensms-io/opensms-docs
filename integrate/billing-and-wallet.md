@@ -338,8 +338,7 @@ for entry in prices.entries ?? [] {
 {
   "currency": "KES",
   "entries": [
-    {"country_iso2":"KE","country_name":"Kenya","carrier_id":null,"carrier_name":null,"product":"sms","min_monthly_volume":0,"markup_type":"absolute_price","markup_value":"1.000000","sell_currency":"KES","sell_amount":"1.000000","converted_amount":"1.000000","converted_currency":"KES","workspace_override":false,"effective_from":"2026-09-24T07:08:21.163602+03:00","fx_rate":"1"},
-    {"country_iso2":"KE","country_name":"Kenya","carrier_id":null,"carrier_name":null,"product":"sms","min_monthly_volume":100000,"markup_type":"absolute_price","markup_value":"0.800000","sell_currency":"KES","sell_amount":"0.800000","converted_amount":"0.800000","converted_currency":"KES","workspace_override":false,"effective_from":"2026-09-24T07:08:21.163602+03:00","fx_rate":"1"}
+    {"country_iso2":"KE","country_name":"Kenya","carrier_id":null,"carrier_name":null,"product":"sms","min_monthly_volume":0,"markup_type":"absolute_price","markup_value":"0.600000","sell_currency":"KES","sell_amount":"0.600000","converted_amount":"0.600000","converted_currency":"KES","workspace_override":false,"effective_from":"2026-10-16T00:00:00+03:00","fx_rate":"1"}
   ],
   "product": "sms",
   "workspace_id": "29ce64bb-8ec7-424f-8f44-9c0f22393323"
@@ -356,7 +355,7 @@ for entry in prices.entries ?? [] {
 
 Precedence is your workspace override, then country and carrier, then country. If a country has no `product=lookup` price, live lookups there are refused with `lookup_price_unavailable`.
 
-**Volume tiers are listed but not applied.** At send time the API uses only the `min_monthly_volume: 0` row, so the 100,000-message tier above does not lower the price charged today.
+**Volume tiers do not activate automatically.** Kenya's public base price is KES 0.60 per SMS. A lower volume rate requires an agreed workspace price override; reaching a message count alone does not change the billing rate. Check the current workspace price before sending.
 
 ### Public catalogue
 
@@ -365,17 +364,14 @@ No credentials needed:
 | Call | Returns |
 | --- | --- |
 | `GET /v1/countries` | Active countries with the base `price_per_message` (your workspace's if you send a workspace credential). |
-| `GET /v1/countries/{iso2}/routes` | Currently routable providers with `sell_price` and latency. |
 | `GET /v1/countries/{iso2}/carriers` | Carriers and their prefixes. |
 | `GET /v1/countries/{iso2}/compliance` | Quiet hours, stop keywords, content rules. |
 
 Abridged to one country:
 
 ```json
-{"iso2":"KE","name":"Kenya","dial_code":"+254","currency":"KES","status":"active","price_per_message":{"amount":"1.000000","currency":"KES"},"sender_kinds":[],"providers_available":0}
+{"iso2":"KE","name":"Kenya","dial_code":"+254","currency":"KES","status":"active","price_per_message":{"amount":"0.600000","currency":"KES"},"sender_kinds":[],"providers_available":0}
 ```
-
-`GET /v1/countries/{iso2}/routes` returns `[]` for a country with no live provider configured.
 
 ## How a message is charged
 
@@ -431,18 +427,21 @@ Top-ups are live only. Real refusals:
 
 Initializing a payment never credits the wallet. If a top-up call times out, retry with the same `Idempotency-Key`; a new key could start a second payment. See [going live](../getting-started/going-live.md#5-fund-the-live-wallet) for the manual transfer example.
 
-## Invoices
+## Kenya sender registration packages and invoices
 
-`GET /v1/invoices` and `GET /v1/invoices/{id}` are for owners, admins and finance members with a browser session, `X-Workspace-ID` and `X-Environment`. API keys get `401` `"Browser session required."` Session only: the SDKs authenticate with API keys and do not include this call, so it is shown with cURL.
+After a business sender application and its current evidence are approved for registration, request a server quote for the selected Kenya networks. The guide prices are one-time amounts: Safaricom KES 7,500; Airtel KES 7,500; Telkom KES 5,000; Safaricom plus Airtel KES 13,500; all three KES 18,500. No VAT is charged. The server may mark a package unavailable; the displayed guide amount is not an acceptance or a payment.
 
-```sh
-curl -s $OPENSMS_API/v1/invoices -H "authorization: Bearer $SESSION" -H "x-workspace-id: $WORKSPACE" -H 'x-environment: live'
-```
+For browser sessions, `GET /v1/sender-id-drafts/{draft_id}/business-application/quote?networks=safaricom,airtel` returns the current package quote after approval, when OpenSMS issuer details are configured. `POST /v1/sender-id-drafts/{draft_id}/business-application/register` accepts that quote with `version`, `quote_id` and `networks`, plus `X-Environment: live` and an `Idempotency-Key`. A stale quote returns `409`; refresh and review it before retrying. Acceptance issues the sender registration invoice with an immutable issuer snapshot and issue time, and creates pending registration records, with no wallet debit.
 
-```json
-{"items":[],"next_cursor":null}
-```
+`GET /v1/invoices` and `GET /v1/invoices/{id}` require an owner, admin or finance browser session, `X-Workspace-ID` and `X-Environment`. API keys are not accepted. The invoice response includes `kind: "sender_registration"`, the accepted `networks`, `status`, `subtotal`, `vat_percent`, `vat_amount`, `total`, and payment and delivery timestamps when present. Sender registration invoices are separate from monthly statement drafts, which remain internal.
 
-Invoice fields: `id`, `workspace_id`, `number`, `environment`, `currency`, `period_start`, `period_end`, `subtotal`, `vat_percent` (a number), `vat_amount`, `total`, `pdf_url` (null when there is no PDF) and `issued_at`.
+| Action | Endpoint | Result |
+| --- | --- | --- |
+| Pay from the live wallet | `POST /v1/invoices/{id}/pay` | Debits the one-time amount and marks the invoice paid. An insufficient balance returns `402`; top up, wait for confirmed wallet credit, then retry. |
+| Send to billing recipients | `POST /v1/invoices/{id}/send` | Queues an invoice email for verified workspace owners and finance members. It does not pay the invoice. |
+| Download issued PDF | `GET /v1/invoices/{id}/pdf` | Returns the authenticated commercial invoice as soon as the quote is accepted, before payment or email delivery. |
+| Cancel before carrier submission | `POST /v1/invoices/{id}/void` | Voids an unpaid invoice, or refunds a paid one in full to the same live wallet. After carrier submission, there is no automatic refund. |
 
-**The list is always empty on the current build:** no code issues invoices yet. A monthly worker drafts statements for operator review, but those are not exposed to customers and are not invoices. Use the [ledger](#ledger) for your own reconciliation until invoicing ships.
+Each action is scoped to the workspace and invoice. Carrier submission requires the paid invoice and the remaining approval gates. It does not debit the wallet again. OpenSMS is not VAT registered; the invoice shows zero VAT and does not claim tax-invoice or eTIMS status.
+
+For customer-facing guides, the public [pricing page](https://opensms.io/pricing/#sender-ids) and `GET /v1/public/documents` list four generic PDFs. Download one at `/v1/public/documents/{ID}/download`, using `sender-id-pricing`, `sms-pricing`, `message-types-guide` or `sender-ids-outside-kenya`. Public copies contain no private business name. Owners and admins can request personalized versions from `/v1/business-profiles/{profile_id}/kenya-documents` after the current Kenya business identity and all required evidence are approved.
