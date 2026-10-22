@@ -8,6 +8,12 @@ Most calls on this page need a console session with `X-Workspace-ID`, not an API
 
 ![The console's Go live page, showing the five required checks, the sandbox workspace status and the Request to go live button](../assets/screens/developer/go-live.png)
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](../integrate/sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Summary
 
 | # | Step | Who | API |

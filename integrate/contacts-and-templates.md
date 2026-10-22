@@ -14,6 +14,12 @@ Every `POST` on these resources requires `Idempotency-Key`. Lists return `{items
 
 The examples use the [SDKs](sdk.md) or cURL. Each SDK sends an `Idempotency-Key` on its own; the examples pass one derived from the record, so a rerun of the same code replays instead of creating a duplicate.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Templates
 
 <!-- tabs label="SDK language" -->

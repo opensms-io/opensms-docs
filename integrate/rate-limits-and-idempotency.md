@@ -2,6 +2,12 @@
 
 The API limits requests per API key and messages per recipient number. The `Idempotency-Key` header lets you retry a request without it taking effect twice. It is for developers building send paths that must never double-send and must behave well under load or network failures.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Rate limits
 
 ### Per API key

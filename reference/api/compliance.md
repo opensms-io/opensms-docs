@@ -6,6 +6,12 @@ Per-country compliance rules (stop keywords, quiet hours, content rules) and the
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](../../integrate/sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 | Method | Path | Summary |
 | --- | --- | --- |
 | GET | [`/v1/content-rules`](#get-v1content-rules) | List enabled content rules |

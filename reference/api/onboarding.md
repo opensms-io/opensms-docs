@@ -6,6 +6,12 @@ The live-sending onboarding flow: onboarding state, phone verification, company 
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](../../integrate/sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 | Method | Path | Summary |
 | --- | --- | --- |
 | POST | [`/v1/onboarding/phone/send`](#post-v1onboardingphonesend) | Owner requests phone verification using the configured service SMS account |

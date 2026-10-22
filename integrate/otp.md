@@ -2,6 +2,12 @@
 
 The OTP API generates a numeric code, sends it by SMS, and later checks the code your user types in. OpenSMS stores only a hash of the code, so you never handle or store it. This page is for developers adding phone verification or two-step login to their product.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## How it works
 
 1. Your server calls `POST /v1/otp/send` with the user's phone number. OpenSMS generates the code, sends it as an `otp` traffic message, and returns an `otp_id`.

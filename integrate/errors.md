@@ -2,6 +2,12 @@
 
 Every OpenSMS error response uses the same JSON shape, `application/problem+json` (RFC 9457 problem details). This page describes that shape, what each HTTP status means, every machine-readable `code` the API emits, and which errors are safe to retry. It is for developers writing error handling around the API. All examples are real API responses.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## The problem shape
 
 ```json

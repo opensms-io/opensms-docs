@@ -4,6 +4,12 @@ OpenSMS is prepaid: live messages, lookups, virtual numbers and sender registrat
 
 Money is always a decimal string (`"1.000000"`), never a float. Parse it with a decimal type.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Balances
 
 `GET /v1/wallet` with a key that has `wallet:read` (owner or admin keys only), or any member's session with `X-Workspace-ID` and `X-Environment`. A key returns the wallet of its own environment.
