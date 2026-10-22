@@ -2,6 +2,12 @@
 
 This page describes the API surface for receiving SMS: renting a virtual number, attaching inbound rules to it, listing received messages and replying to them. It is for developers planning two-way messaging. Read the status note first: parts of this surface are not yet connected to a working receive path.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Current status
 
 | Piece | State in the current API code |

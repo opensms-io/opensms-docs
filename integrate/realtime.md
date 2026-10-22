@@ -2,6 +2,12 @@
 
 The realtime endpoint pushes workspace events (message status changes, lookups, key changes and more) over a WebSocket as they happen. It is for developers building live dashboards or internal tools, and for server processes that prefer a stream to [webhooks](delivery-reports-and-webhooks.md). It is not a delivery guarantee: events sent while you are disconnected are not replayed, so use webhooks or the REST API as the source of truth.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Connect
 
 ```text

@@ -4,6 +4,12 @@ OpenSMS tells your system about message status changes and other events by POSTi
 
 Carrier delivery reports (DLRs) reach OpenSMS from its providers; OpenSMS turns them into message status changes and then into `message.delivered`, `message.failed` and `message.expired` events for your webhooks. You never receive raw provider callbacks.
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Register an endpoint
 
 `POST /v1/webhooks` with a key that has `webhooks:write` or `webhooks:manage` (or an owner, admin or developer session with `X-Workspace-ID` and `X-Environment`). `Idempotency-Key` is required.
