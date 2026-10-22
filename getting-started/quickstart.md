@@ -12,6 +12,8 @@ You need `curl`. From step 4 on, every example also has a tab for each [official
 export OPENSMS_API=https://opensms.io
 ```
 
+SDKs must be given this base URL until their default changes, because `https://api.opensms.io` does not resolve today.
+
 ## 1. Create an account and workspace
 
 `POST /v1/auth/signup` creates your user, a sandbox workspace in which you are the owner, and a session.
