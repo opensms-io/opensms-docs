@@ -6,13 +6,13 @@ This guide takes you from nothing to a sandbox message in about five minutes: cr
 
 You need `curl`. From step 4 on, every example also has a tab for each [official SDK](../integrate/sdk.md): install the one for your language to follow along in code.
 
-> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup), or [sign in](https://opensms.io/login) if you already have one. The API origin to use below is `https://opensms.io`.
+> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup), or [sign in](https://opensms.io/login) if you already have one. The API origin to use below is `https://api.opensms.io`; `https://opensms.io` also serves the same API paths.
 
 ```sh
-export OPENSMS_API=https://opensms.io
+export OPENSMS_API=https://api.opensms.io
 ```
 
-SDKs must be given this base URL until their default changes, because `https://api.opensms.io` does not resolve today.
+The SDKs default to `https://opensms.io`, which serves the same API paths. Set `OPENSMS_BASE_URL` to use `https://api.opensms.io` instead (see the [SDK guide](../integrate/sdk.md#client-setup)).
 
 ## 1. Create an account and workspace
 
@@ -254,7 +254,7 @@ The same send over plain HTTP, with no dependency, then a read of the message it
 // send.mjs: send one sandbox message and read it back (Node 18 or newer).
 import { randomUUID } from 'node:crypto';
 
-const API = process.env.OPENSMS_API; // the API origin, https://opensms.io
+const API = process.env.OPENSMS_API; // the API origin, https://api.opensms.io
 const KEY = process.env.OPENSMS_API_KEY; // sk_test_...
 
 async function opensms(method, path, { body, idempotencyKey } = {}) {
@@ -298,7 +298,7 @@ The same over plain HTTP with `requests` (Python 3.9 or newer).
 import os, sys, uuid
 import requests
 
-API = os.environ["OPENSMS_API"]  # the API origin, https://opensms.io
+API = os.environ["OPENSMS_API"]  # the API origin, https://api.opensms.io
 KEY = os.environ["OPENSMS_API_KEY"]  # sk_test_...
 session = requests.Session()
 session.headers["Authorization"] = f"Bearer {KEY}"

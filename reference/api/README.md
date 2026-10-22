@@ -6,7 +6,7 @@ The exact contract of the OpenSMS customer API, for developers integrating with 
 
 Contract version `0.1.0` (OpenAPI `3.1.0`): 136 paths, 173 operations, 87 named schemas.
 
-> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup) to get a sandbox API key. The API origin to use as `$OPENSMS_API` is `https://opensms.io`.
+> **Getting access.** Create an account at [opensms.io/signup](https://opensms.io/signup) to get a sandbox API key. The API origin to use as `$OPENSMS_API` is `https://api.opensms.io`.
 
 ## Pages
 
