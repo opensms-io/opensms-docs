@@ -8,6 +8,12 @@ Both credentials go in the same header:
 Authorization: Bearer sk_test_OHtA3aYT...
 ```
 
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+
+```sh
+export OPENSMS_API=https://opensms.io
+```
+
 ## Which credential to use
 
 | Task | Session (`sess_`) | API key (`sk_test_` / `sk_live_`) |
