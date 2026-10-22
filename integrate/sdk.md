@@ -95,7 +95,7 @@ is `https://opensms.io`, the hosted API, so you only set it for a different orig
 
 <!-- tabs label="SDK language" -->
 ```sh tab="cURL" title="Terminal"
-export OPENSMS_API=https://opensms.io
+export OPENSMS_API=https://api.opensms.io
 export OPENSMS_API_KEY=sk_test_...
 
 curl -s $OPENSMS_API/v1/wallet -H "authorization: Bearer $OPENSMS_API_KEY"
@@ -391,7 +391,7 @@ A sandbox key (`sk_test_...`) talks to your sandbox; a live key (`sk_live_...`) 
 key alone selects the workspace, so the clients never send `X-Workspace-ID`.
 
 A fuller example: read the wallet, send, and handle a refusal. Save it as `example.mjs` and run it
-with `OPENSMS_API_KEY` and `OPENSMS_BASE_URL=https://opensms.io` set:
+with `OPENSMS_API_KEY` and `OPENSMS_BASE_URL=https://api.opensms.io` set:
 
 <!-- test:sdk-example -->
 ```js title="example.mjs"
@@ -399,7 +399,7 @@ import { Opensms, OpensmsError } from '@opensms/sdk';
 
 const opensms = new Opensms({
   apiKey: process.env.OPENSMS_API_KEY,
-  // OPENSMS_BASE_URL=https://opensms.io (the built-in default host does not resolve today)
+  // OPENSMS_BASE_URL=https://api.opensms.io (optional: the built-in default is https://opensms.io)
   baseUrl: process.env.OPENSMS_BASE_URL,
 });
 

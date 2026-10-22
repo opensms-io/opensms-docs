@@ -6,10 +6,10 @@ Current legal documents (terms, privacy, DPA) and the workspace's recorded accep
 
 Back to the [API reference index](README.md). Shared shapes are in [Schemas](schemas.md); conventions (auth headers, errors, pagination, idempotency) are in the [index](README.md#conventions).
 
-The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](../../integrate/sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://api.opensms.io`; `https://opensms.io` also serves the same API paths. The SDKs default to `https://opensms.io`, and `OPENSMS_BASE_URL` (see the [SDK guide](../../integrate/sdk.md#client-setup)) points them at either origin.
 
 ```sh
-export OPENSMS_API=https://opensms.io
+export OPENSMS_API=https://api.opensms.io
 ```
 
 | Method | Path | Summary |

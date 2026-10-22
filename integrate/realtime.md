@@ -2,10 +2,10 @@
 
 The realtime endpoint pushes workspace events (message status changes, lookups, key changes and more) over a WebSocket as they happen. It is for developers building live dashboards or internal tools, and for server processes that prefer a stream to [webhooks](delivery-reports-and-webhooks.md). It is not a delivery guarantee: events sent while you are disconnected are not replayed, so use webhooks or the REST API as the source of truth.
 
-The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://api.opensms.io`; `https://opensms.io` also serves the same API paths. The SDKs default to `https://opensms.io`, and `OPENSMS_BASE_URL` (see the [SDK guide](sdk.md#client-setup)) points them at either origin.
 
 ```sh
-export OPENSMS_API=https://opensms.io
+export OPENSMS_API=https://api.opensms.io
 ```
 
 ## Connect
@@ -75,7 +75,7 @@ The [SDKs](sdk.md) do not include a WebSocket client, so connect with your langu
 <!-- test:realtime-node -->
 ```js
 // realtime.mjs (Node 22 or newer: global WebSocket)
-const API = process.env.OPENSMS_API; // the API origin, https://opensms.io
+const API = process.env.OPENSMS_API; // the API origin, https://api.opensms.io
 const ws = new WebSocket(API.replace(/^http/, 'ws') + '/v1/realtime', {
   headers: { authorization: `Bearer ${process.env.OPENSMS_API_KEY}` },
 });

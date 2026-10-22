@@ -4,10 +4,10 @@ Number checks return available evidence about a phone number, including its coun
 
 Before creating a check, request a quote with `GET /v1/lookup/quote?to=%2B254700000001`. The quote reports the country, effective workspace price, currency and whether a saved result is available. The standard Kenya price is KES 4, but your workspace price is authoritative. A saved result can still carry the disclosed lookup fee. Sandbox checks are free.
 
-The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://opensms.io`. SDKs must be given this base URL (`OPENSMS_BASE_URL` in the [SDK guide](sdk.md#client-setup) examples) until their default changes, because `https://api.opensms.io` does not resolve today.
+The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://api.opensms.io`; `https://opensms.io` also serves the same API paths. The SDKs default to `https://opensms.io`, and `OPENSMS_BASE_URL` (see the [SDK guide](sdk.md#client-setup)) points them at either origin.
 
 ```sh
-export OPENSMS_API=https://opensms.io
+export OPENSMS_API=https://api.opensms.io
 ```
 
 ## Request a lookup
