@@ -4,6 +4,12 @@ OpenSMS is prepaid: you put money in a wallet and each message is paid for from 
 
 Open **Billing** in the left-hand menu, under **Workspace** (`/app/billing`). The page title is **Credits**.
 
+## SMS prices and parts
+
+SMS prices apply **per part**, not per message regardless of length. The current standard Kenya rate is KES 0.60 per part. The verified premium Kenya Safaricom option is USD 0.30 per part, converted to your workspace currency using the configured exchange rate. Recent verified charges were KES 38.937 per part; this is an example of the recorded conversion, not a fixed KES rate. These prices do not establish coverage or rates for other countries or carriers.
+
+Your actual recipient, approved sender, eligible route, workspace pricing and message encoding determine the charge. For example, two parts at KES 0.60 cost KES 1.20. Emoji or other Unicode characters can increase the number of parts. Review the current estimate before sending; available routes, prices and exchange rates may change, and the send response records the locked total. See [Routes](routes.md) and [encoding and segments](../integrate/sending-messages.md#encoding-and-segments).
+
 ## Two wallets: sandbox and live
 
 Every workspace has two separate wallets in its currency (the currency comes from the country you chose at signup, for example KES for Kenya):

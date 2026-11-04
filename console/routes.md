@@ -1,57 +1,33 @@
 # Routes
 
-A route is the path a message takes to a phone: through a messaging provider to a mobile carrier in a country. The Routes page lists, for every country OpenSMS serves, which carriers can be reached, through which provider, at what cost and how healthy each route is. It also holds the one routing choice you control: whether OpenSMS may fall back to another route when the preferred one is unavailable. This guide is for anyone who wants to know whether a country can be reached, and for owners and admins who decide on fallback.
+A route is the path a message takes to a phone through a messaging provider and mobile carrier. Open **Routes** under **Messaging** (`/app/routes`) to check the destinations and carrier options currently available to your workspace.
 
-Open **Routes** in the left-hand menu, under **Messaging** (`/app/routes`).
+## Check destination availability
 
-![The Routes page before any provider is connected](../assets/screens/console/routes/routes.png)
+Select a country and review its carrier options, availability and customer price where one can be quoted. These are customer routing options, not a supplier catalogue. Supplier costs, credentials and internal route IDs are not exposed.
 
-## Check which countries you can reach
+A country being listed or selected during [onboarding](onboarding.md) does not establish a working route. Sending also requires an eligible destination, approved sender, healthy route and verified price. An unavailable option or missing price requires a fresh check before sending.
 
-1. Open **Routes**.
-2. Under **Provider routes**, click a country tab. Each tab shows the country name and how many routes it has, and the heading gives the total in the form "N across M markets".
-3. Read the table for that country:
+## How a route is selected
 
-   | Column | Meaning |
-   | --- | --- |
-   | Carrier | The mobile network, or **All carriers** when one route covers the whole country. |
-   | Provider | The messaging provider OpenSMS uses for this route. |
-   | Cost | OpenSMS's own cost for this route per message, or **Quote required** when there is no fixed price. This is not the price you pay; see [Billing](billing.md). |
-   | Health | **HEALTHY**, or a warning state when the route is degraded or down. |
+OpenSMS selects an eligible route for the destination and sender under your workspace routing policy. The sender you choose can affect which routes are eligible and the price. An approved sender name does not by itself prove which route was used.
 
-The list shows active markets only. Picking a market during [onboarding](onboarding.md) does not add routes; routes appear when OpenSMS connects a provider to a carrier in that country.
+Owners and admins control **Allow provider fallback**. When enabled, another eligible route may be attempted if the preferred submission fails. With fallback blocked, OpenSMS does not automatically switch to another provider. A saved preferred provider, where configured, is a preference only and cannot bypass sender, destination, health or pricing checks. Changes apply to future accepted messages; queued messages keep their accepted policy.
 
-### Empty states
+## Domestic, international and premium pricing
 
-| You see | Meaning |
-| --- | --- |
-| No routes configured. "None of the 6 live markets has a provider route set up yet. Routes appear here once a provider is connected to a carrier." | Countries are switched on, but no provider is connected yet. |
-| No routes in *country* | That one country has no connected provider yet. |
-| No active markets yet | No country is switched on for sending. |
-| Couldn't load routes | The list could not be fetched. Click **Retry**. |
+Route scope describes the verified route design: **Domestic**, **International** or **Global**. An unknown or mixed scope stays unclassified. Global scope does not mean every country or carrier is available. Premium pricing is separate from scope: a premium rate alone does not establish that a route is international or global.
 
-When a route changes health you get a "Route health changed" [notification](notifications.md), unless you turned it off in [Settings > Notifications](settings.md#notifications).
+The current Kenya standard rate is **KES 0.60 per SMS part**. For the currently verified premium Kenya Safaricom option, the rate is **USD 0.30 per part**, converted into the workspace currency using the configured exchange rate. Recent verified charges were **KES 38.937 per part**. That is a recorded example, not a fixed KES rate or a price for every destination. Available routes, workspace prices and exchange rates can change.
 
-## Allow provider fallback
+Review the current estimate for the actual recipient, sender and text before sending. Long messages cost more because each SMS part is billed. The send response records the locked total price; see [Billing](billing.md#sms-prices-and-parts) and the [API quote example](../integrate/sending-messages.md#preview-the-price).
 
-**Who can do this:** owners and admins. Other roles see "Only the workspace owner or an admin can change routing fallback." instead of the switch.
+## Confirm what happened
 
-**Allow provider fallback** decides what happens when the cheapest healthy route for a message is not available:
-
-| Switch | Effect |
-| --- | --- |
-| On | Delivery falls back to the next route. |
-| Off | Traffic is held rather than rerouted. |
-
-1. Click the switch next to **Allow provider fallback**.
-2. The change saves immediately. You see "Provider fallback allowed." or "Provider fallback blocked."
-
-A new workspace starts with fallback **off**, as in the screenshot.
-
-There is no way to pin a particular provider from this page; the product does not support it.
+The message and its attempt history show the recorded route scope and pricing classification when sufficient routing evidence exists. An unattempted or uncertain message can remain unclassified. A route attempt is not proof of delivery; use the message status and delivery report.
 
 ## Related
 
-- [Onboarding](onboarding.md) (choosing markets)
-- [Messages](messages.md) ("No delivery route is available for this destination right now.")
+- [Messages](messages.md)
+- [Billing](billing.md)
 - [Notifications](notifications.md)
