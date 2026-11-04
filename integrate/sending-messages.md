@@ -2,6 +2,21 @@
 
 This page covers outbound SMS through the API: single sends, scheduling and cancellation, batches, sender IDs, encoding and segments, the status lifecycle and delivery attempts. It is for developers building the sending side of an integration. Authentication is covered in [authentication](authentication.md); status notifications in [delivery reports and webhooks](delivery-reports-and-webhooks.md).
 
+## Preview the price
+
+Use `POST /v1/messages/quote` with the same recipient, text and approved `sender_id` you intend to send. The quote uses normal route selection and multipart pricing without sending or reserving funds:
+
+```sh
+curl -s -X POST https://api.opensms.io/v1/messages/quote \
+  -H "authorization: Bearer $OPENSMS_API_KEY" \
+  -H 'content-type: application/json' \
+  -d '{"to":"+254700000001","text":"Your order A-1001 has shipped.","sender_id":"TextSMS","traffic_type":"transactional"}'
+```
+
+Read `price_per_part`, `parts`, `total_amount`, `currency` and `sufficient_funds`. A quote does not guarantee later admission: prices, routing eligibility, exchange rates and available funds can change. The send response records the locked total price for all parts. Sandbox quotes are zero and do not establish a live price.
+
+The current Kenya standard rate is KES 0.60 per part. The verified premium Kenya Safaricom option is USD 0.30 per part, converted using the configured exchange rate. Recent verified charges were KES 38.937 per part. This is a recorded conversion example, not a fixed KES rate or worldwide tariff. Always quote the actual destination, sender and text. See [Routes](../console/routes.md) for scope and availability.
+
 ## Send one message
 
 The examples on this page write the API origin as `$OPENSMS_API`. Set it to `https://api.opensms.io`; `https://opensms.io` also serves the same API paths. The SDKs default to `https://opensms.io`, and `OPENSMS_BASE_URL` (see the [SDK guide](sdk.md#client-setup)) points them at either origin.
@@ -18,7 +33,7 @@ curl -s -X POST $OPENSMS_API/v1/messages \
   -H "authorization: Bearer $OPENSMS_API_KEY" \
   -H 'content-type: application/json' \
   -H 'idempotency-key: order-1001-shipped' \
-  -d '{"to":"+254700000001","text":"Your order A-1001 has shipped.","traffic_type":"transactional","metadata":{"order_id":"A-1001"}}'
+  -d '{"to":"+254700000001","text":"Your order A-1001 has shipped.","sender_id":"TextSMS","traffic_type":"transactional","metadata":{"order_id":"A-1001"}}'
 ```
 
 ```ts tab="TypeScript" logo="typescript" title="send-order-update.ts"
@@ -617,8 +632,9 @@ To contest a `held` message, contact support with the message ID; there is no cu
 | Field | Meaning |
 | --- | --- |
 | `id`, `sequence` | Attempt identity and order. |
-| `route_id`, `route_name` | The route used; the name reads `provider / country ISO2 / carrier` (or `All carriers`). |
-| `provider`, `provider_message_id` | The provider and its reference. |
+| `route_id`, `route_name` | `route_id` is the compatibility value `opensms`; the name contains country ISO2 and carrier (or `All carriers`). Supplier names and external references are not exposed. |
+| `route_scope`, `route_scope_source` | Verified domestic, international or global route design and its source, or unknown. Global does not guarantee availability outside this destination. |
+| `route_class`, `route_class_source` | Recorded standard or premium pricing classification and its source. Premium pricing does not establish route scope or successful delivery. |
 | `status` | `submitting`, `submission_unknown`, `submitted`, `not_accepted`, `delivered`, `failed` or `expired`. |
 | `error_code` | Safe classification, see below. |
 | `price`, `currency` | The customer price quoted on this attempt. Do not add attempt prices together; use the message's `billing`. |
